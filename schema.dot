@@ -1,0 +1,16 @@
+
+digraph G {
+    rankdir=LR;
+    node [shape=record, fontname=Helvetica, fontsize=10];
+
+    characters [label="{ characters | id : int\l name : text\l level : int\l }"];
+    primary_scores [label="{ primary_scores | id : int\l name : text\l }"];
+    secondary_scores [label="{ secondary_scores | id : int\l name : text\l }"];
+    character_primary_stats [label="{ character_primary_stats | character_id : int\l score_id : int\l current_value : int\l }"];
+    character_secondary_stats [label="{ character_secondary_stats | character_id : int\l score_id : int\l current_value : int\l }"];
+
+    character_primary_stats -> characters [label="character_id"];
+    character_primary_stats -> primary_scores [label="score_id"];
+    character_secondary_stats -> characters [label="character_id"];
+    character_secondary_stats -> secondary_scores [label="score_id"];
+}

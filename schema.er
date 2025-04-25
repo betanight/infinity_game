@@ -1,0 +1,22 @@
+[character_primary_stats]
+    *character_id {label:"INTEGER"}
+    *score_id {label:"INTEGER"}
+    current_value {label:"INTEGER"}
+[characters]
+    *id {label:"INTEGER"}
+    level {label:"INTEGER"}
+    name {label:"TEXT"}
+[primary_scores]
+    *id {label:"INTEGER"}
+    name {label:"TEXT"}
+[character_secondary_stats]
+    *character_id {label:"INTEGER"}
+    *score_id {label:"INTEGER"}
+    current_value {label:"INTEGER"}
+[secondary_scores]
+    *id {label:"INTEGER"}
+    name {label:"TEXT"}
+primary_scores."id" 1--* character_primary_stats."score_id"
+characters."id" 1--* character_primary_stats."character_id"
+characters."id" 1--* character_secondary_stats."character_id"
+secondary_scores."id" 1--* character_secondary_stats."score_id"
