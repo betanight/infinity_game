@@ -13,7 +13,7 @@ __pycache__/
 *.json
 
 /push_template.js
-/firebase.js
+system_database/firebase.js
 
 # Firebase credentials
 credentials/firebaseKey.json
