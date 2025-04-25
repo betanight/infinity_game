@@ -2,6 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
 const { execSync } = require("child_process");
+const readline = require("readline");
+
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
 const primaryStats = {
   Strength: "strength_skills",
@@ -39,9 +42,9 @@ function allocateInitialSkillPoints(skillChoices) {
   const dbFile = getLatestDbFile();
   const db = new sqlite3.Database(dbFile);
 
-  db.serialize(() => {
-    const allStats = { ...primaryStats, ...secondaryStats };
+  const allStats = { ...primaryStats, ...secondaryStats };
 
+  db.serialize(() => {
     for (const stat in allStats) {
       const skillTable = allStats[stat];
       const selectedSkill = skillChoices[stat];
@@ -72,21 +75,10 @@ function allocateInitialSkillPoints(skillChoices) {
   db.close();
 }
 
-const readline = require("readline");
-
-if (require.main === module) {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
-  rl.question("What is this adventurer's name?: ", (name) => {
-    createCharacter(name);
-    rl.close();
-  });
-}
-
 module.exports = {
   createCharacter,
   allocateInitialSkillPoints,
+  getLatestDbFile,
   primaryStats,
-  secondaryStats,
-  getLatestDbFile
+  secondaryStats
 };
