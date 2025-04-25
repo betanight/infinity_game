@@ -12,6 +12,8 @@ __pycache__/
 # Ignore all JSON files
 *.json
 
+/push_template.js
+
 # Firebase credentials
 credentials/firebaseKey.json
 
