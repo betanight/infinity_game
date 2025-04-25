@@ -12,6 +12,9 @@ __pycache__/
 # Ignore all JSON files
 *.json
 
+# Firebase credentials
+credentials/firebaseKey.json
+
 # Distribution / packaging
 .Python
 build/
