@@ -1,16 +1,17 @@
-// Your Firebase Config (replace placeholders if needed)
+// Your Firebase Config
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    apiKey: "AIzaSyC2V2EUMC8YdoDeNEB2btla_NJLQ5bPWv0",
+    authDomain: "infinity-e0f55.firebaseapp.com",
     databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    projectId: "infinity-e0f55",
+    storageBucket: "infinity-e0f55.appspot.com", // ✅ fixed typo here!
+    messagingSenderId: "120929977477",
+    appId: "1:120929977477:web:45dc9989f834f69a9195ec",
+    measurementId: "G-PFFQDN2MHX"
   };
   
   // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
   
   // Fetch and display all characters
