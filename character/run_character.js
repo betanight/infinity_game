@@ -7,7 +7,6 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-// Start by asking for character name
 rl.question("What is this adventurer's name?: ", async (name) => {
   try {
     await createCharacter(name);
@@ -21,18 +20,32 @@ rl.question("What is this adventurer's name?: ", async (name) => {
       skills.forEach((skill, idx) => console.log(`${idx + 1}. ${skill}`));
 
       await new Promise(resolve => {
-        rl.question(`Choose a skill for ${stat} (number): `, async (answer) => {
-          const choice = parseInt(answer);
-          if (!isNaN(choice) && choice >= 1 && choice <= skills.length) {
-            const skillChosen = skills[choice - 1];
-            await allocateSkillPoint(name, stat, skillChosen);
-          } else {
-            console.log("Invalid choice, skipping.");
-          }
-          resolve();
-        });
+        function askSkill() {
+          rl.question(`Choose a skill for ${stat} (number or type 'skip'): `, async (answer) => {
+            if (answer.trim().toLowerCase() === "skip") {
+              console.log(`⏩ Skipping ${stat} skill allocation for now.`);
+              resolve();
+              return;
+            }
+
+            const choice = parseInt(answer);
+            if (!isNaN(choice) && choice >= 1 && choice <= skills.length) {
+              const skillChosen = skills[choice - 1];
+              await allocateSkillPoint(name, stat, skillChosen);
+              console.log(`✅ Skill '${skillChosen}' allocated for ${stat}!`);
+              resolve();
+            } else {
+              console.log("❌ Invalid choice. Please select a valid number or type 'skip'.");
+              askSkill(); // Ask again if invalid
+            }
+          });
+        }
+        askSkill();
       });
     }
+
+    console.log(`\n🎉 All skills processed for ${name}! Character setup complete.`);
+
   } catch (err) {
     console.error("❌ Error:", err.message);
   } finally {
