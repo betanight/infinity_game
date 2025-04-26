@@ -43,8 +43,6 @@ function promptUserForSkills(stats, callback) {
       console.error("❌ primaryStats is undefined or invalid.");
       return;
     }
-  
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
     const selected = {};
     const statKeys = Object.keys(stats);
     let index = 0;
