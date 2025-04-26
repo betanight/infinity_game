@@ -1,7 +1,5 @@
 const { db } = require("./firebase"); // ✅ pulls db from firebase.js
 
-const app = initializeApp(firebaseConfig);
-
 const fullTemplate = {
     meta: {
       character_id: "",
