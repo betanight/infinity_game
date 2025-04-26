@@ -13,9 +13,10 @@ async function getAvailableSkills(statType) {
   const ref = db.ref(`template/skills/${statType}`);
   const snapshot = await ref.once("value");
   const data = snapshot.val();
-  if (!data) return [];
   
-  return Object.keys(data); // 🔥 Pulls only the skill names!
+  if (!data) return [];
+
+  return Object.keys(data);  // 🔥 This returns actual skill names like "Anchor Stance", "Grip Strength", etc.
 }
 
 // Allocate a skill point to a skill
