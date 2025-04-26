@@ -11,6 +11,12 @@ async function createCharacter(name) {
   const characterRef = db.ref(`characters/${name.toLowerCase()}`);
   await characterRef.set(template);
 
+  const refs = db.ref(`characters/${name.toLowerCase()}`);
+  await refs.set({
+    created_at: Date.now(),
+    skills: {} // placeholder
+  });  
+
   console.log(`✅ Character '${name}' created in Firebase.`);
 }
 
