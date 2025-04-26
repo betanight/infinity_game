@@ -20,7 +20,7 @@ const fullTemplate = {
       Presence: 0
     },
     skills: {
-      Strength: { skills: { "Anchor Stance": { description: "Plant yourself solidly to resist being pushed or knocked down.", effective_value: 0 },
+      Strength = { "Anchor Stance": { description: "Plant yourself solidly to resist being pushed or knocked down.", effective_value: 0 },
         "Grip Strength": { description: "Hold and carry heavy objects with powerful hand and forearm muscles.", effective_value: 0 },
         "Bodyweight Force": { description: "Utilize your own body weight to maximize pushing or pulling power.", effective_value: 0 },
         "Brute Force": { description: "Apply overwhelming strength to break through obstacles.", effective_value: 0 },
@@ -44,9 +44,10 @@ const fullTemplate = {
         "Shoulder Strength": { description: "Strengthen shoulder muscles for greater reach and leverage.", effective_value: 0 },
         "Stone Stance": { description: "Become immovable once you plant your feet firmly.", effective_value: 0 },
         "Weapon Mastery": { description: "Handle large melee weapons with strength and control.", effective_value: 0 },
-        "Weight Toss": { description: "Throw heavy objects accurately and forcefully.", effective_value: 0 } } },
+        "Weight Toss": { description: "Throw heavy objects accurately and forcefully.", effective_value: 0 } },
 
-      Dexterity: { skills: { "Acrobatics": { description: "Perform flips, rolls, and agile maneuvers with grace.", effective_value: 0 },
+      Dexterity: {
+        "Acrobatics": { description: "Perform flips, rolls, and agile maneuvers with grace.", effective_value: 0 },
         "Aimed Shot": { description: "Precisely fire or throw projectiles at distant or moving targets.", effective_value: 0 },
         "Ambidexterity": { description: "Use both hands with equal proficiency for tasks or combat.", effective_value: 0 },
         "Missile Snaring": { description: "Catch incoming projectiles with swift movements.", effective_value: 0 },
@@ -67,9 +68,11 @@ const fullTemplate = {
         "Trigger Discipline": { description: "Improve accuracy and safety when using firearms or ranged tools.", effective_value: 0 },
         "Vital Point Targeting": { description: "Strike weak points to disable enemies swiftly.", effective_value: 0 },
         "Weapon Finesse": { description: "Apply agility instead of strength to attacks with light weapons.", effective_value: 0 },
-        "Whip Control": { description: "Master flexible weapons such as whips or chains.", effective_value: 0 } } },
+        "Whip Control": { description: "Master flexible weapons such as whips or chains.", effective_value: 0 } 
+      },
 
-      Constitution: { skills: { "Acid Resistance": { description: "Reduce the effects of corrosive substances.", effective_value: 0 },
+      Constitution: {
+        "Acid Resistance": { description: "Reduce the effects of corrosive substances.", effective_value: 0 },
         "Adaptability": { description: "Adjust to harsh environments and unexpected challenges more easily.", effective_value: 0 },
         "Blood Circulation": { description: "Maintain consistent body performance under stress.", effective_value: 0 },
         "Bludgeoning Resistance": { description: "Reduce damage from blunt weapons or impacts.", effective_value: 0 },
@@ -100,9 +103,11 @@ const fullTemplate = {
         "Thunder Resistance": { description: "Endure damage from forceful sound or vibrations.", effective_value: 0 },
         "Toughness": { description: "Reduce the severity of injuries taken.", effective_value: 0 },
         "Toxin Resistance": { description: "Withstand poisons and harmful substances.", effective_value: 0 },
-        "Vitality": { description: "Enhance overall physical robustness and health.", effective_value: 0 } } },
+        "Vitality": { description: "Enhance overall physical robustness and health.", effective_value: 0 } 
+      },
 
-      Intelligence: { skills: { "Arcana": { description: "Recall knowledge related to magic, spells, and mystical traditions.", effective_value: 0 },
+      Intelligence: {
+        "Arcana": { description: "Recall knowledge related to magic, spells, and mystical traditions.", effective_value: 0 },
         "Codebreaking": { description: "Decipher encrypted messages, hidden languages, and secret codes.", effective_value: 0 },
         "Cognitive Adaptability": { description: "Quickly shift mental focus to solve new or changing problems.", effective_value: 0 },
         "Engineering": { description: "Apply scientific principles to design structures, machines, and tools.", effective_value: 0 },
@@ -121,9 +126,11 @@ const fullTemplate = {
         "Psychic Defense": { description: "Form mental shields to block psychic and telepathic attacks.", effective_value: 0 },
         "Religious Studies": { description: "Comprehend theology, divine orders, and mythological systems.", effective_value: 0 },
         "Strategic Foresight": { description: "Predict enemy actions and devise effective countermeasures.", effective_value: 0 },
-        "Tactical Planning": { description: "Organize battlefield tactics and small-unit coordination.", effective_value: 0 } } },
+        "Tactical Planning": { description: "Organize battlefield tactics and small-unit coordination.", effective_value: 0 } 
+      },
 
-      Wisdom: { skills: { "Absorptive Listening": { description: "Internalize important details from conversations and teachings.", effective_value: 0 },
+      Wisdom: {
+        "Absorptive Listening": { description: "Internalize important details from conversations and teachings.", effective_value: 0 },
         "Caution Awareness": { description: "Recognize hidden dangers, traps, and signs of ambush.", effective_value: 0 },
         "Conflict De-escalation": { description: "Calm tensions and prevent fights through words or presence.", effective_value: 0 },
         "Consequential Thinking": { description: "Understand long-term consequences of short-term actions.", effective_value: 0 },
@@ -145,9 +152,11 @@ const fullTemplate = {
         "Practical Judgment": { description: "Choose effective solutions based on real-world constraints.", effective_value: 0 },
         "Situational Awareness": { description: "Maintain constant awareness of surrounding threats and opportunities.", effective_value: 0 },
         "Spiritual Intuition": { description: "Sense the presence of otherworldly forces or sacred energies.", effective_value: 0 },
-        "Wisdom Reception": { description: "Accept new ideas and truths even if they challenge old beliefs.", effective_value: 0 } } },
+        "Wisdom Reception": { description: "Accept new ideas and truths even if they challenge old beliefs.", effective_value: 0 } 
+      },
 
-      Charisma: { skills: { "Ambassadorial Presence": { description: "Represent yourself or a group with dignity and authority.", effective_value: 0 },
+      Charisma: {
+        "Ambassadorial Presence": { description: "Represent yourself or a group with dignity and authority.", effective_value: 0 },
         "Audience Reading": { description: "Quickly gauge the mood and desires of a gathered crowd.", effective_value: 0 },
         "Boast": { description: "Use confident exaggerations to build your reputation.", effective_value: 0 },
         "Charm": { description: "Win others over with natural friendliness and likability.", effective_value: 0 },
@@ -176,9 +185,11 @@ const fullTemplate = {
         "Smooth Talk": { description: "Talk your way out of trouble or into advantageous deals.", effective_value: 0 },
         "Soul Resonance": { description: "Forge instant emotional bonds through profound empathy.", effective_value: 0 },
         "Stage Presence": { description: "Command the attention of an audience even without speaking.", effective_value: 0 },
-        "Storyweaving": { description: "Craft captivating tales and narratives that inspire and teach.", effective_value: 0 } } },
+        "Storyweaving": { description: "Craft captivating tales and narratives that inspire and teach.", effective_value: 0 } 
+      },
 
-      Willpower: { skills: { "Burden Endurance": { description: "Resist collapse even when carrying extreme mental strain.", effective_value: 0 },
+      Willpower: {
+        "Burden Endurance": { description: "Resist collapse even when carrying extreme mental strain.", effective_value: 0 },
         "Crisis Resolve": { description: "Stay focused and decisive during life-threatening situations.", effective_value: 0 },
         "Endless March": { description: "Keep moving forward long after physical exhaustion sets in.", effective_value: 0 },
         "Fearless Will": { description: "Suppress fear responses to horror, danger, or despair.", effective_value: 0 },
@@ -192,9 +203,11 @@ const fullTemplate = {
         "Steadfast Focus": { description: "Maintain unwavering attention in the face of distractions.", effective_value: 0 },
         "Temptation Resistance": { description: "Refuse bribes, seductions, or manipulative promises.", effective_value: 0 },
         "Unbreakable Spirit": { description: "Remain hopeful and resilient even after devastating losses.", effective_value: 0 },
-        "Unflinching Courage": { description: "Face overwhelming odds without hesitation.", effective_value: 0 } } },
+        "Unflinching Courage": { description: "Face overwhelming odds without hesitation.", effective_value: 0 } 
+      },
 
-      Spirit: { skills: { "Aura Extension": { description: "Extend your spiritual presence to influence the environment subtly.", effective_value: 0 },
+      Spirit: {
+        "Aura Extension": { description: "Extend your spiritual presence to influence the environment subtly.", effective_value: 0 },
         "Awakened Resonance": { description: "Align your inner spirit with nearby energies and entities.", effective_value: 0 },
         "Binding Oath": { description: "Forge solemn spiritual bonds, such as pacts or sworn brotherhoods.", effective_value: 0 },
         "Divine Connection": { description: "Channel the blessings or judgments of greater beings.", effective_value: 0 },
@@ -207,9 +220,11 @@ const fullTemplate = {
         "Soul Anchoring": { description: "Resist attempts to displace or manipulate your soul.", effective_value: 0 },
         "Spirit Communication": { description: "Converse with non-corporeal beings and entities.", effective_value: 0 },
         "Spiritual Endurance": { description: "Endure attacks or hardships aimed at your soul rather than body.", effective_value: 0 },
-        "Vision Quests": { description: "Undertake journeys to access prophetic or hidden knowledge.", effective_value: 0 } } },
+        "Vision Quests": { description: "Undertake journeys to access prophetic or hidden knowledge.", effective_value: 0 } 
+      },
 
-      Instinct: { skills: { "Danger Sense": { description: "Subconsciously detect imminent threats before they happen.", effective_value: 0 },
+      Instinct: {
+        "Danger Sense": { description: "Subconsciously detect imminent threats before they happen.", effective_value: 0 },
         "Heightened Hearing": { description: "Hear faint sounds and distant noises beyond normal ranges.", effective_value: 0 },
         "Heightened Sight": { description: "Notice visual details like motion, camouflage, or distant movement.", effective_value: 0 },
         "Heightened Smell": { description: "Detect scents and chemical changes in the environment.", effective_value: 0 },
@@ -221,9 +236,11 @@ const fullTemplate = {
         "Spatial Reflexes": { description: "React automatically to threats from any direction.", effective_value: 0 },
         "Terrain Intuition": { description: "Move naturally through difficult or hazardous terrain.", effective_value: 0 },
         "Scent Memory": { description: "Recall and distinguish unique scents with precision.", effective_value: 0 },
-        "Hunting Drive": { description: "Focus intensely when pursuing prey, targets, or goals.", effective_value: 0 } } },
+        "Hunting Drive": { description: "Focus intensely when pursuing prey, targets, or goals.", effective_value: 0 } 
+      },
 
-      Presence: { skills: { "Aura Projection": { description: "Radiate an aura of command, calm, or fear.", effective_value: 0 },
+      Presence: {
+        "Aura Projection": { description: "Radiate an aura of command, calm, or fear.", effective_value: 0 },
         "Emotional Echo": { description: "Sense lingering emotions in a location or object.", effective_value: 0 },
         "Empathic Surge": { description: "Briefly amplify the emotional states of yourself or others.", effective_value: 0 },
         "Emotional Camouflage": { description: "Suppress or mask your own emotions to avoid detection.", effective_value: 0 },
@@ -234,7 +251,8 @@ const fullTemplate = {
         "Spiritual Pulse": { description: "Send out ripples that detect major emotional disturbances.", effective_value: 0 },
         "Purity of Soul": { description: "Project an undeniable aura of truth, innocence, or virtue.", effective_value: 0 },
         "Dominant Aura": { description: "Overwhelm the weaker-willed by asserting your presence forcefully.", effective_value: 0 },
-        "Emotional Resilience": { description: "Recover quickly from emotional trauma or manipulation.", effective_value: 0 } } }
+        "Emotional Resilience": { description: "Recover quickly from emotional trauma or manipulation.", effective_value: 0 } 
+      }
     }
   };
 
