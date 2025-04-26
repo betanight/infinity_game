@@ -73,6 +73,8 @@ function getSkillOptionsFromDb(tableName, callback) {
   });
 }
 
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
 rl.question("What is this adventurer's name?: ", (name) => {
   createCharacter(name);
   const dbName = `${name.split(" ")[0].toLowerCase()}_infinity.db`;
