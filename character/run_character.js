@@ -3,9 +3,9 @@ const { createCharacter, allocateInitialSkillPoints, primaryStats, getLatestDbFi
 const sqlite3 = require("sqlite3").verbose();
 const readline = require("readline");
 
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
 function promptUserForSkills(stats, doneCallback) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
   if (!stats || typeof stats !== "object") {
     console.error("❌ primaryStats is undefined or invalid.");
     return;
@@ -17,7 +17,8 @@ function promptUserForSkills(stats, doneCallback) {
 
   function nextStat() {
     if (index >= statKeys.length) {
-      doneCallback(selected); // 🔁 Use callback instead of inline
+      rl.close();
+      doneCallback(selected);
       return;
     }
 
@@ -53,6 +54,7 @@ function promptUserForSkills(stats, doneCallback) {
 
   nextStat();
 }
+
 
 
 function getSkillOptionsFromDb(tableName, callback) {
