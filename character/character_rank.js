@@ -3,7 +3,6 @@ const { db } = require("../firebase/firebase"); // ✅ CORRECT
 
 // Function to create a new character by copying the template
 async function createCharacter(name) {
-  const db = getDatabase();
   const snapshot = await get(child(ref(db), "template"));
   if (!snapshot.exists()) {
     throw new Error("Template not found!");
