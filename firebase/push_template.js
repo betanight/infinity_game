@@ -1,6 +1,5 @@
-const { initializeApp } = require("firebase/app");
-const { getDatabase, ref, set } = require("firebase/database");
-const firebaseConfig = require("../credentials/firebaseKey.json");
+const { db } = require("../firebase/firebase");
+const { ref, set } = require("firebase/database");
 
 const app = initializeApp(firebaseConfig);
 

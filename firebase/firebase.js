@@ -34,6 +34,7 @@ function updateSkill(name, statType, skillName, newValue) {
 }
 
 module.exports = {
+  db,  // <-- This is crucial for push_template.js and future files!
   saveCharacter,
   getCharacter,
   updateSkill
