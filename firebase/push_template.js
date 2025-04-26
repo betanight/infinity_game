@@ -226,7 +226,7 @@ const fullTemplate = {
         "Terrain Intuition": { description: "Move naturally through difficult or hazardous terrain.", effective_value: 0 },
         "Scent Memory": { description: "Recall and distinguish unique scents with precision.", effective_value: 0 },
         "Hunting Drive": { description: "Focus intensely when pursuing prey, targets, or goals.", effective_value: 0 } } },
-        
+
       Presence: { skills: { "Aura Projection": { description: "Radiate an aura of command, calm, or fear.", effective_value: 0 },
         "Emotional Echo": { description: "Sense lingering emotions in a location or object.", effective_value: 0 },
         "Empathic Surge": { description: "Briefly amplify the emotional states of yourself or others.", effective_value: 0 },
@@ -242,7 +242,7 @@ const fullTemplate = {
     }
   };
 
-// Upload to Firebase
+// push to Firebase to make database
 const db = getDatabase(app);
 set(ref(db, "template/"), fullTemplate)
   .then(() => console.log("✅ Full template uploaded to Firebase"))
