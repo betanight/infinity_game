@@ -9,81 +9,77 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f5f7fa;
+      background-color: #111;
+      color: #f0f0f0;
       margin: 0;
       padding: 20px;
     }
-
+  
     h1 {
       text-align: center;
-      margin-bottom: 30px;
+      color: #fff;
     }
-
+  
     .dashboard {
       display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
       gap: 40px;
-      justify-content: center;
+      margin-top: 30px;
     }
-
-    .panel {
-      background: #ffffff;
-      padding: 20px;
+  
+    .card {
+      background-color: #1e1e1e;
       border-radius: 10px;
-      width: 400px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+      width: 45%;
+      min-width: 300px;
     }
-
-    .panel h2 {
-      margin-top: 0;
-      font-size: 20px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
+  
+    .card h2 {
+      border-bottom: 1px solid #444;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      color: #ffffff;
     }
-
+  
     ul {
       list-style: none;
-      padding: 0;
+      padding-left: 0;
     }
-
+  
     li {
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-
-    div {
-      font-size: 14px;
-    }
-
-    pre {
-      background: #eee;
-      padding: 10px;
+      padding: 8px;
+      background-color: #2c2c2c;
+      border: 1px solid #333;
+      margin-bottom: 6px;
       border-radius: 5px;
-      overflow-x: auto;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
-
+  
+    li:hover {
+      background-color: #3a3a3a;
+    }
+  
     .skill-detail {
-      font-weight: normal;
-      margin-left: 10px;
-      font-size: 13px;
+      background-color: #1b1b1b;
+      border-left: 4px solid #888;
+      margin: 4px 0 4px 10px;
+      padding: 5px 10px;
+      font-size: 0.9em;
+    }
+  
+    pre {
+      background-color: #262626;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      color: #d1d1d1;
     }
   </style>
-</head>
-<body>
-
-  <h1>Infinity Game Dashboard</h1>
-
-  <div class="dashboard">
-    <div class="panel">
-      <h2>Characters</h2>
-      <ul id="character-list"></ul>
-    </div>
-
-    <div class="panel">
-      <h2>Template Preview</h2>
-      <pre id="template-output">{ Loading... }</pre>
-    </div>
-  </div>
-
+  
 </body>
 </html>
