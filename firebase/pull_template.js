@@ -1,5 +1,6 @@
-const { db } = require("./firebase"); // ✅ Connect to Firebase
+const { db } = require("./firebase");
 const fs = require("fs");
+const path = require("path");
 
 async function pullTemplate() {
   try {
@@ -11,9 +12,17 @@ async function pullTemplate() {
       return;
     }
 
-    // Save it locally
-    fs.writeFileSync("template_downloaded.json", JSON.stringify(templateData, null, 2));
-    console.log("✅ Template pulled and saved to template_downloaded.json");
+    // Make sure the logs folder exists
+    const logsDir = path.join(__dirname, "..", "logs");
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir);
+    }
+
+    // Save it into the logs folder
+    const outputPath = path.join(logsDir, "template_downloaded.json");
+    fs.writeFileSync(outputPath, JSON.stringify(templateData, null, 2));
+
+    console.log(`✅ Template pulled and saved to ${outputPath}`);
   } catch (error) {
     console.error("❌ Error pulling template:", error);
   }
