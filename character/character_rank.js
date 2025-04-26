@@ -9,12 +9,13 @@ async function createCharacter(name) {
   });
 }
 
-// Get all available skills for a stat
 async function getAvailableSkills(statType) {
   const ref = db.ref(`template/skills/${statType}`);
   const snapshot = await ref.once("value");
   const data = snapshot.val();
-  return data ? Object.keys(data) : [];
+  if (!data) return [];
+  
+  return Object.keys(data); // 🔥 Pulls only the skill names!
 }
 
 // Allocate a skill point to a skill
