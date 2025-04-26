@@ -14,56 +14,98 @@ const firebaseConfig = {
   
   // Load template for preview
   function loadTemplate() {
-    db.ref("template").once("value").then(snapshot => {
-      document.getElementById("template-output").textContent = JSON.stringify(snapshot.val(), null, 2);
-    });
-  }
+    const output = document.getElementById("template-output");
+    output.innerHTML = "<p>Loading...</p>";
+  
+    db.ref("template/skills").once("value")
+      .then(snapshot => {
+        const skillsData = snapshot.val();
+        if (!skillsData) {
+          output.innerHTML = "<p>No template data found.</p>";
+          return;
+        }
+  
+        const primaryOrder = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+        const secondaryOrder = ["Instinct", "Presence", "Spirit", "Willpower"];
+  
+        let html = "";
+  
+        function buildSection(stat) {
+          if (skillsData[stat]) {
+            html += `
+              <details style="margin-bottom: 1rem;">
+                <summary style="font-weight: bold; text-decoration: underline; font-size: 1.2rem; cursor: pointer;">${stat}</summary>
+                <ul style="margin-left: 1rem; margin-top: 0.5rem;">`;
+  
+            const statSkills = skillsData[stat];
+            for (const skill in statSkills) {
+              const desc = statSkills[skill].description || "No description";
+              html += `<li style="margin-bottom: 0.3rem;"><strong>${skill}</strong>: ${desc}</li>`;
+            }
+  
+            html += `</ul>
+              </details>`;
+          }
+        }
+  
+        primaryOrder.forEach(stat => buildSection(stat));
+        secondaryOrder.forEach(stat => buildSection(stat));
+  
+        output.innerHTML = html;
+      })
+      .catch(err => {
+        output.innerHTML = "<p>Error loading template.</p>";
+        console.error("Error loading template:", err);
+      });
+  }    
   
   // Load characters into the sidebar
   function loadCharacters() {
-    db.ref("characters").once("value").then(snapshot => {
-      const characters = snapshot.val();
-      const list = document.getElementById("character-list");
-      list.innerHTML = "";
+    const list = document.getElementById("character-list");
+    list.innerHTML = "<li>Loading...</li>";
   
-      if (!characters) {
-        list.innerHTML = "<li>No characters found.</li>";
-        return;
-      }
+    db.ref("characters").once("value")
+      .then(snapshot => {
+        const characters = snapshot.val();
+        list.innerHTML = "";
   
-      Object.entries(characters).forEach(([name, data]) => {
-        const li = document.createElement("li");
-        li.textContent = name;
-        li.style.cursor = "pointer";
+        if (!characters) {
+          list.innerHTML = "<li>No characters found.</li>";
+          return;
+        }
   
-        // Expand/collapse skills
-        li.addEventListener("click", () => {
-          const existing = li.querySelector("ul");
-          if (existing) {
-            existing.remove();
-          } else {
-            const skills = data.skills || {};
-            const skillList = document.createElement("ul");
+        Object.entries(characters).forEach(([name, data]) => {
+          const characterLi = document.createElement("li");
+          characterLi.textContent = name;
+          characterLi.style.cursor = "pointer";
   
-            const stats = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
-            stats.forEach(stat => {
-              const skillGroup = skills[stat]?.skills || {};
-              const found = Object.entries(skillGroup).find(([, info]) => info.effective_value > 0);
-              const chosen = found ? `${found[0]} (Level ${found[1].effective_value})` : "empty";
+          const detail = document.createElement("ul");
+          detail.style.display = "none";
+          detail.style.marginTop = "0.5rem";
   
-              const skillLine = document.createElement("li");
-              skillLine.className = "skill-detail";
-              skillLine.textContent = `${stat}: ${chosen}`;
-              skillList.appendChild(skillLine);
-            });
+          const skills = data.skills || {};
+          Object.entries(skills).forEach(([stat, skillMap]) => {
+            if (!skillMap) return;
+            const entries = Object.entries(skillMap).filter(([, val]) => val > 0);
+            if (entries.length === 0) return;
   
-            li.appendChild(skillList);
-          }
+            const statLi = document.createElement("li");
+            const formatted = entries.map(([skill, val]) => `${skill} (level ${val})`);
+            statLi.textContent = `${stat}: ${formatted.join(", ")}`;
+            detail.appendChild(statLi);
+          });
+  
+          characterLi.onclick = () => {
+            detail.style.display = detail.style.display === "none" ? "block" : "none";
+          };
+  
+          list.appendChild(characterLi);
+          if (detail.children.length > 0) list.appendChild(detail);
         });
-  
-        list.appendChild(li);
+      })
+      .catch(err => {
+        list.innerHTML = `<li>Error loading characters: ${err.message}</li>`;
       });
-    });
   }
   
   window.onload = () => {

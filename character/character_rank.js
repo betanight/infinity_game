@@ -20,7 +20,6 @@ async function createCharacter(name) {
   console.log(`✅ Character '${name}' created in Firebase.`);
 }
 
-
 async function getAvailableSkills(statType) {
   const ref = db.ref(`template/skills/${statType}`);
   const snapshot = await ref.once("value");
@@ -28,7 +27,7 @@ async function getAvailableSkills(statType) {
   
   if (!data) return [];
 
-  return Object.keys(data);  // 🔥 This returns actual skill names like "Anchor Stance", "Grip Strength", etc.
+  return Object.keys(data);
 }
 
 // Allocate a skill point to a skill
