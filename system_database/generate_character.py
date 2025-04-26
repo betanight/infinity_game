@@ -48,20 +48,9 @@ def generate_character_db(character_name):
     insert_willpower_skills(db_filename)
     insert_wisdom_skills(db_filename)
 
-    cursor.execute("SELECT 1 FROM characters WHERE name = ?", (character_name,))
-    if cursor.fetchone():
-        print(f"Character '{character_name}' already exists. Skipping creation.")
-    else:
-        create_character(character_name, db_filename)
-        print(f"You have created a new character at level 0! Welcome, {character_name}.")
-
-    conn.commit()
-    conn.close()
-
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         character_name = sys.argv[1]
+        generate_character_db(character_name)
     else:
-        character_name = input("You have created a new character at level 0! What is this adventurer's name?: ")
-
-    generate_character_db(character_name)
+        print("Error: No character name provided.")
