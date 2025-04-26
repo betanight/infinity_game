@@ -1,88 +1,37 @@
-const fs = require("fs");
-const path = require("path");
-const sqlite3 = require("sqlite3").verbose();
-const { execSync } = require("child_process");
-const readline = require("readline");
+const { saveCharacter, getCharacter, updateSkill } = require("../firebase/firebase");
+const { getDatabase, ref, get, child } = require("firebase/database");
 
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
-const primaryStats = {
-  Strength: "strength_skills",
-  Dexterity: "dexterity_skills",
-  Constitution: "constitution_skills",
-  Intelligence: "intelligence_skills",
-  Wisdom: "wisdom_skills",
-  Charisma: "charisma_skills"
-};
-
-const secondaryStats = {
-  Instinct: "instinct_skills",
-  Presence: "presence_skills",
-  Spirit: "spirit_skills",
-  Willpower: "willpower_skills"
-};
-
-function getLatestDbFile() {
-  const files = fs.readdirSync(".");
-  const dbFiles = files.filter(file => file.endsWith("_infinity.db"));
-  if (dbFiles.length === 0) throw new Error("No character database found in the current directory.");
-  return dbFiles.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
-}
-
-const { spawnSync } = require("child_process");
-
-function createCharacter(name) {
-  try {
-    const result = spawnSync("python3.11", ["-m", "system_database.generate_character", name], { stdio: "inherit" });
-    if (result.error) {
-      throw result.error;
-    }
-  } catch (err) {
-    console.error("Failed to create character via Python:", err.message);
+// Function to create a new character by copying the template
+async function createCharacter(name) {
+  const db = getDatabase();
+  const snapshot = await get(child(ref(db), "template"));
+  if (!snapshot.exists()) {
+    throw new Error("Template not found!");
   }
+  const templateData = snapshot.val();
+  await saveCharacter(name, templateData);
+  console.log(`✅ Character '${name}' created based on template.`);
 }
 
-function allocateInitialSkillPoints(skillChoices) {
-  const dbFile = getLatestDbFile();
-  const db = new sqlite3.Database(dbFile);
+// Function to update a specific skill value
+async function allocateSkillPoint(characterName, statType, skillName) {
+  await updateSkill(characterName, statType, skillName, 1); // Give +1 starting point
+  console.log(`✅ Allocated 1 point to ${skillName} under ${statType}.`);
+}
 
-  const allStats = { ...primaryStats, ...secondaryStats };
-
-  db.serialize(() => {
-    for (const stat in allStats) {
-      const skillTable = allStats[stat];
-      const selectedSkill = skillChoices[stat];
-
-      if (!selectedSkill) {
-        console.warn(`No skill selected for ${stat}. Skipping.`);
-        continue;
-      }
-
-      const query = `
-        UPDATE ${skillTable}
-        SET effective_value = effective_value + 1
-        WHERE name = ?
-      `;
-
-      db.run(query, [selectedSkill], function (err) {
-        if (err) {
-          console.error(`Error updating ${selectedSkill} in ${skillTable}:`, err.message);
-        } else if (this.changes === 0) {
-          console.warn(`Skill '${selectedSkill}' not found in ${skillTable}.`);
-        } else {
-          console.log(`Allocated 1 point to '${selectedSkill}' in ${stat}.`);
-        }
-      });
-    }
-  });
-
-  db.close();
+// Function to get available skills for a stat
+async function getAvailableSkills(statType) {
+  const db = getDatabase();
+  const snapshot = await get(child(ref(db), `template/skills/${statType}`));
+  if (!snapshot.exists()) {
+    console.warn(`No skills found for ${statType}`);
+    return [];
+  }
+  return Object.keys(snapshot.val());
 }
 
 module.exports = {
   createCharacter,
-  allocateInitialSkillPoints,
-  getLatestDbFile,
-  primaryStats,
-  secondaryStats
+  allocateSkillPoint,
+  getAvailableSkills
 };
