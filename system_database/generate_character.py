@@ -59,9 +59,9 @@ def generate_character_db(character_name):
     conn.close()
 
 if __name__ == "__main__":
-    if sys.stdin.isatty():
-        character_name = input("You have created a new character at level 0! What is this adventurer's name?: ")
+    if len(sys.argv) > 1:
+        character_name = sys.argv[1]
     else:
-        character_name = sys.stdin.read().strip()
+        character_name = input("You have created a new character at level 0! What is this adventurer's name?: ")
 
-generate_character_db(character_name)
+    generate_character_db(character_name)

@@ -55,8 +55,6 @@ function promptUserForSkills(stats, doneCallback) {
   nextStat();
 }
 
-
-
 function getSkillOptionsFromDb(tableName, callback) {
   const dbFile = getLatestDbFile();
   const db = new sqlite3.Database(dbFile);

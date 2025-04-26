@@ -29,10 +29,14 @@ function getLatestDbFile() {
   return dbFiles.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
 }
 
+const { spawnSync } = require("child_process");
+
 function createCharacter(name) {
   try {
-    const command = `echo '${name}' | python3.11 -m system_database.generate_character`;
-    execSync(command, { stdio: "inherit", shell: "/bin/bash" });
+    const result = spawnSync("python3.11", ["-m", "system_database.generate_character", name], { stdio: "inherit" });
+    if (result.error) {
+      throw result.error;
+    }
   } catch (err) {
     console.error("Failed to create character via Python:", err.message);
   }
