@@ -20,7 +20,7 @@ const fullTemplate = {
       Presence: 0
     },
     skills: {
-      Strength = { "Anchor Stance": { description: "Plant yourself solidly to resist being pushed or knocked down.", effective_value: 0 },
+      Strength : { "Anchor Stance": { description: "Plant yourself solidly to resist being pushed or knocked down.", effective_value: 0 },
         "Grip Strength": { description: "Hold and carry heavy objects with powerful hand and forearm muscles.", effective_value: 0 },
         "Bodyweight Force": { description: "Utilize your own body weight to maximize pushing or pulling power.", effective_value: 0 },
         "Brute Force": { description: "Apply overwhelming strength to break through obstacles.", effective_value: 0 },
