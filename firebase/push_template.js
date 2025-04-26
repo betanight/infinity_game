@@ -1,4 +1,4 @@
-const { db } = require("../firebase/firebase");
+const { db } = require("./firebase"); // ✅ pulls db from firebase.js
 const { ref, set } = require("firebase/database");
 
 const app = initializeApp(firebaseConfig);
@@ -241,8 +241,6 @@ const fullTemplate = {
     }
   };
 
-// push to Firebase to make database
-const db = getDatabase(app);
-set(ref(db, "template/"), fullTemplate)
-  .then(() => console.log("✅ Full template uploaded to Firebase"))
-  .catch(err => console.error(err));
+  db.ref("template").set(fullTemplate)
+  .then(() => console.log("✅ Template uploaded to Firebase."))
+  .catch((error) => console.error("❌ Failed to upload:", error));
