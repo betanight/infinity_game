@@ -8,6 +8,11 @@ logs/
 
 # Node and package files
 node_modules/
+package-lock.json
+
+# Firebase emulation or cache
+.firebase/
+.firebaserc
 
 # Database files
 *.db
@@ -17,12 +22,20 @@ node_modules/
 # Python artifacts
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pkl
+*.egg
+*.egg-info/
+.Python
+
+# Virtual environments
 .env
 .venv/
 env/
 ENV/
 venv/
-.Python
 
 # Editor settings
 .vscode/
@@ -33,7 +46,7 @@ venv/
 # Jupyter Notebooks
 .ipynb_checkpoints/
 
-# OS and Misc
+# macOS and Windows artifacts
 .DS_Store
 Thumbs.db
 
@@ -41,3 +54,6 @@ Thumbs.db
 build/
 dist/
 *.log
+
+*.env
+*.secret.json
