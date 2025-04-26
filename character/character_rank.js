@@ -1,13 +1,19 @@
 const { db } = require("../firebase/firebase");
 
-// Create a new character
 async function createCharacter(name) {
-  const ref = db.ref(`characters/${name.toLowerCase()}`);
-  await ref.set({
-    level: 0,
-    skills: {}
-  });
+  const ref = db.ref("template");
+  const snapshot = await ref.once("value");
+  const template = snapshot.val();
+
+  if (!template) throw new Error("Template not found in Firebase.");
+
+  template.meta.character_id = name;
+  const characterRef = db.ref(`characters/${name.toLowerCase()}`);
+  await characterRef.set(template);
+
+  console.log(`✅ Character '${name}' created in Firebase.`);
 }
+
 
 async function getAvailableSkills(statType) {
   const ref = db.ref(`template/skills/${statType}`);
@@ -29,6 +35,7 @@ async function allocateSkillPoint(characterName, statType, skillName) {
 
 module.exports = {
   createCharacter,
-  getAvailableSkills,
-  allocateSkillPoint
+  allocateSkillPoint,
+  getAvailableSkills
 };
+
