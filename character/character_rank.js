@@ -1,36 +1,32 @@
-const { saveCharacter, getCharacter, updateSkill } = require("../firebase/firebase");
-const { db } = require("../firebase/firebase"); // ✅ CORRECT
+const { db } = require("../firebase/firebase");
 
-// Function to create a new character by copying the template
+// Create a new character
 async function createCharacter(name) {
-  const snapshot = await get(child(ref(db), "template"));
-  if (!snapshot.exists()) {
-    throw new Error("Template not found!");
-  }
-  const templateData = snapshot.val();
-  await saveCharacter(name, templateData);
-  console.log(`✅ Character '${name}' created based on template.`);
+  const ref = db.ref(`characters/${name.toLowerCase()}`);
+  await ref.set({
+    level: 0,
+    skills: {}
+  });
 }
 
-// Function to update a specific skill value
-async function allocateSkillPoint(characterName, statType, skillName) {
-  await updateSkill(characterName, statType, skillName, 1); // Give +1 starting point
-  console.log(`✅ Allocated 1 point to ${skillName} under ${statType}.`);
-}
-
-// Function to get available skills for a stat
+// Get all available skills for a stat
 async function getAvailableSkills(statType) {
-  const db = getDatabase();
-  const snapshot = await get(child(ref(db), `template/skills/${statType}`));
-  if (!snapshot.exists()) {
-    console.warn(`No skills found for ${statType}`);
-    return [];
-  }
-  return Object.keys(snapshot.val());
+  const ref = db.ref(`template/skills/${statType}`);
+  const snapshot = await ref.once("value");
+  const data = snapshot.val();
+  return data ? Object.keys(data) : [];
+}
+
+// Allocate a skill point to a skill
+async function allocateSkillPoint(characterName, statType, skillName) {
+  const ref = db.ref(`characters/${characterName.toLowerCase()}/skills/${statType}/${skillName}`);
+  const snapshot = await ref.once("value");
+  const currentValue = snapshot.val() || 0;
+  await ref.set(currentValue + 1);
 }
 
 module.exports = {
   createCharacter,
-  allocateSkillPoint,
-  getAvailableSkills
+  getAvailableSkills,
+  allocateSkillPoint
 };
