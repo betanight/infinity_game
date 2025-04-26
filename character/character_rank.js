@@ -1,5 +1,5 @@
 const { saveCharacter, getCharacter, updateSkill } = require("../firebase/firebase");
-const { getDatabase, ref, get, child } = require("firebase/database");
+const { db } = require("../firebase/firebase"); // ✅ CORRECT
 
 // Function to create a new character by copying the template
 async function createCharacter(name) {
