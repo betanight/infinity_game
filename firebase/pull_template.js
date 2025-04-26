@@ -18,8 +18,14 @@ async function pullTemplate() {
       fs.mkdirSync(logsDir);
     }
 
-    // Save it into the logs folder
-    const outputPath = path.join(logsDir, "template_downloaded.json");
+    // Get month and day
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const filename = `template_${month}-${day}.json`;
+    const outputPath = path.join(logsDir, filename);
+
+    // Save into logs folder
     fs.writeFileSync(outputPath, JSON.stringify(templateData, null, 2));
 
     console.log(`✅ Template pulled and saved to ${outputPath}`);
