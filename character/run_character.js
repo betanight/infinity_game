@@ -1,3 +1,4 @@
+const { db } = require("../firebase/firebase");
 const readline = require("readline");
 const { createCharacter, allocateSkillPoint, getAvailableSkills } = require("./character_rank");
 
