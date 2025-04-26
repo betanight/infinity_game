@@ -1,5 +1,4 @@
 const { db } = require("./firebase"); // ✅ pulls db from firebase.js
-const { ref, set } = require("firebase/database");
 
 const app = initializeApp(firebaseConfig);
 
