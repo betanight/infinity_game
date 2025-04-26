@@ -1,89 +1,73 @@
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-function loadCharacters() {
-  db.ref("characters").once("value")
-    .then(snapshot => {
+// Firebase initialization
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "infinity-e0f55.firebaseapp.com",
+    databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
+    projectId: "infinity-e0f55",
+    storageBucket: "infinity-e0f55.appspot.com",
+    messagingSenderId: "120929977477",
+    appId: "1:120929977477:web:45dc9989f834f69a9195ec",
+    measurementId: "G-PFFQDN2MHX"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  
+  // Load template for preview
+  function loadTemplate() {
+    db.ref("template").once("value").then(snapshot => {
+      document.getElementById("template-output").textContent = JSON.stringify(snapshot.val(), null, 2);
+    });
+  }
+  
+  // Load characters into the sidebar
+  function loadCharacters() {
+    db.ref("characters").once("value").then(snapshot => {
       const characters = snapshot.val();
       const list = document.getElementById("character-list");
       list.innerHTML = "";
-
-      if (characters) {
-        Object.keys(characters).forEach(name => {
-          const li = document.createElement("li");
-          li.textContent = name;
-          li.style.cursor = "pointer";
-
-          const details = document.createElement("div");
-          details.style.display = "none";
-          details.style.marginLeft = "20px";
-          details.style.marginTop = "5px";
-
-          li.addEventListener("click", () => {
-            if (details.style.display === "none") {
-              details.style.display = "block";
-              loadCharacterSkills(name, details);
-            } else {
-              details.style.display = "none";
-            }
-          });
-
-          list.appendChild(li);
-          list.appendChild(details);
-        });
-      } else {
+  
+      if (!characters) {
         list.innerHTML = "<li>No characters found.</li>";
-      }
-    })
-    .catch(err => console.error("Error loading characters:", err));
-}
-
-function loadCharacterSkills(name, detailsContainer) {
-  db.ref(`characters/${name}/skills`).once("value")
-    .then(snapshot => {
-      const skills = snapshot.val();
-      if (!skills) {
-        detailsContainer.innerHTML = "<i>No skills found.</i>";
         return;
       }
-
-      const primaryStats = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
-      const lines = [];
-
-      primaryStats.forEach(stat => {
-        if (skills[stat]) {
-          const statSkills = skills[stat];
-          const selectedSkill = Object.keys(statSkills).find(skillName => statSkills[skillName].effective_value > 0);
-          if (selectedSkill) {
-            lines.push(`${stat}: ${selectedSkill} (Level ${statSkills[selectedSkill].effective_value})`);
+  
+      Object.entries(characters).forEach(([name, data]) => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        li.style.cursor = "pointer";
+  
+        // Expand/collapse skills
+        li.addEventListener("click", () => {
+          const existing = li.querySelector("ul");
+          if (existing) {
+            existing.remove();
           } else {
-            lines.push(`${stat}: Empty`);
+            const skills = data.skills || {};
+            const skillList = document.createElement("ul");
+  
+            const stats = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+            stats.forEach(stat => {
+              const skillGroup = skills[stat]?.skills || {};
+              const found = Object.entries(skillGroup).find(([, info]) => info.effective_value > 0);
+              const chosen = found ? `${found[0]} (Level ${found[1].effective_value})` : "empty";
+  
+              const skillLine = document.createElement("li");
+              skillLine.className = "skill-detail";
+              skillLine.textContent = `${stat}: ${chosen}`;
+              skillList.appendChild(skillLine);
+            });
+  
+            li.appendChild(skillList);
           }
-        } else {
-          lines.push(`${stat}: Empty`);
-        }
+        });
+  
+        list.appendChild(li);
       });
-
-      detailsContainer.innerHTML = lines.map(line => `<div>${line}</div>`).join("");
-    })
-    .catch(err => {
-      console.error("Error loading skills:", err);
-      detailsContainer.innerHTML = "<i>Error loading skills.</i>";
     });
-}
-
-function loadTemplate() {
-  db.ref("template").once("value")
-    .then(snapshot => {
-      const template = snapshot.val();
-      const output = document.getElementById("template-output");
-      output.textContent = JSON.stringify(template, null, 2);
-    })
-    .catch(err => console.error("Error loading template:", err));
-}
-
-window.onload = function() {
-  loadCharacters();
-  loadTemplate();
-};
+  }
+  
+  window.onload = () => {
+    loadTemplate();
+    loadCharacters();
+  };
+  
