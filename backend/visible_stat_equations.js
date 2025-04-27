@@ -2,33 +2,44 @@ const { coreAbbreviations, skillAbbreviations } = require("./abbreviations");
 
 const visibleStatEquations = {
 
-    meleeAttackAccuracy: function (scores, skills) {
+    meleeAttackAccuracy: function (scores, skills, meleeStyle) {
         let accuracy = 0;
+        let primaryStatUsed = "";
 
-        accuracy += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity bonus
+        if (meleeStyle === "Brutish Melee") {
+            accuracy += (scores[coreAbbreviations.S] || 0) * 3; // Strength
+            accuracy += (skills.wpn || 0) * 3; // Weapon Mastery
+            accuracy += (skills.bf || 0) * 3; // Brute Force
+            accuracy += (skills.bwf || 0) * 2; // Bodyweight Force
+            accuracy += (skills.chg || 0) * 2; // Charge
+            accuracy += (skills.gp || 0) * 2; // Grappling
+            accuracy += (skills.tp || 0) * 1; // Tactical Planning
+            primaryStatUsed = "S"; // Strength
+        } else if (meleeStyle === "Finesse Melee") {
+            accuracy += (scores[coreAbbreviations.D] || 0) * 3; // Dexterity
+            accuracy += (skills.bp || 0) * 3; // Blade Precision
+            accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
+            accuracy += (skills.wf || 0) * 3; // Weapon Finesse
+            accuracy += (skills.ra || 0) * 2; // Reflex Training
+            accuracy += (skills.ac || 0) * 2; // Acrobatics
+            accuracy += (skills.ev || 0) * 2; // Evasion
+            accuracy += (skills.qc || 0) * 2; // Quick Draw
+            accuracy += (skills.tp || 0) * 1; // Tactical Planning
+            primaryStatUsed = "D"; // Dexterity
+        }
 
-        accuracy += (skills.bp || 0) * 2; // Blade Precision
-        accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
-        accuracy += (skills.ra || 0) * 1; // Reflex Training
-        accuracy += (skills.ac || 0) * 1; // Acrobatics
-        accuracy += (skills.ev || 0) * 1; // Evasion
-        accuracy += (skills.wf || 0) * 2; // Weapon Finesse
-        accuracy += (skills.qc || 0) * 1; // Quick Draw
-
-        accuracy += (scores[coreAbbreviations.S] || 0) * 1; // Strength bonus
-        accuracy += (skills.wpn || 0) * 3; // Weapon Mastery
-        accuracy += (skills.chg || 0) * 2; // Charge
-
-        accuracy += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence bonus
-        accuracy += (skills.tp || 0) * 2; // Tactical Planning
+        // Intelligence and Wisdom help both styles a little
+        accuracy += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
+        accuracy += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
         accuracy += (skills.sf || 0) * 2; // Strategic Foresight
-
-        accuracy += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom bonus
         accuracy += (skills.sa || 0) * 2; // Situational Awareness
         accuracy += (skills.ins || 0) * 1; // Insight
         accuracy += (skills.ol || 0) * 1; // Observation Logging
 
-        return accuracy;
+        return {
+            totalAccuracy: accuracy,
+            primaryStatUsed: primaryStatUsed
+        };
     },
 
     rangedAttackAccuracy: function (scores, skills, rangedStyle) {
