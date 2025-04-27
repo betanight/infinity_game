@@ -57,7 +57,7 @@ const visibleStatEquations = {
         let accuracy = 0;
 
         if (energyType === "Intelligence") {
-            accuracy += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
+            accuracy += (scores[coreAbbreviations.I] || 0) * 3; // Intelligence
             accuracy += (skills.arc || 0) * 3; // Arcana
             accuracy += (skills.mt || 0) * 3; // Magical Theory
             accuracy += (skills.sf || 0) * 2; // Strategic Foresight
@@ -67,16 +67,17 @@ const visibleStatEquations = {
             accuracy += (skills.ins || 0) * 1; // Insight
 
         } else if (energyType === "Wisdom") {
-            accuracy += (scores[coreAbbreviations.W] || 0) * 2; // Wisdom
+            accuracy += (scores[coreAbbreviations.W] || 0) * 3; // Wisdom
             accuracy += (skills.sa || 0) * 3; // Situational Awareness
             accuracy += (skills.ins || 0) * 2; // Insight
             accuracy += (skills.sf || 0) * 2; // Strategic Foresight
 
             accuracy += (skills.sp || 0) * 2; // Spiritual Perception
-            accuracy += (skills.rm || 0) * 1; // Ritual Mastery
+            accuracy += (skills.rm || 0) * 2; // Ritual Mastery
 
         } else if (energyType === "Spirit") {
             accuracy += (scores[coreAbbreviations.SP] || 0) * 3; // Spirit
+            accuracy += (scores[coreAbbreviations.I] || 0) * 0.5; // Intelligence
             accuracy += (skills.ef || 0) * 3; // Energy Flow
             accuracy += (skills.rm || 0) * 3; // Ritual Mastery
             accuracy += (skills.sc || 0) * 2; // Spirit Communication
@@ -85,7 +86,8 @@ const visibleStatEquations = {
             accuracy += (skills.sa || 0) * 1; // Situational Awareness
 
         } else if (energyType === "Willpower") {
-            accuracy += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
+            accuracy += (scores[coreAbbreviations.WP] || 0) * 3; // Willpower
+            accuracy += (scores[coreAbbreviations.W] || 0) * 0.5; // Wisdom
             accuracy += (skills.sd || 0) * 3; // Sheer Determination
             accuracy += (skills.sf || 0) * 3; // Steadfast Focus
 
