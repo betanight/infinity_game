@@ -2,19 +2,17 @@ const { coreAbbreviations, skillAbbreviations } = require("./abbreviations");
 
 const visibleStatEquations = {
 
-    totalAttackAccuracy: function (scores, skills) {
+    meleeAttackAccuracy: function (scores, skills) {
         let accuracy = 0;
 
         accuracy += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity bonus
+
         accuracy += (skills.bp || 0) * 2; // Blade Precision
-        accuracy += (skills.as2 || 0) * 2; // Aimed Shot
-        accuracy += (skills.pt || 0) * 2; // Precision Throwing
         accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
         accuracy += (skills.ra || 0) * 1; // Reflex Training
         accuracy += (skills.ac || 0) * 1; // Acrobatics
         accuracy += (skills.ev || 0) * 1; // Evasion
         accuracy += (skills.wf || 0) * 2; // Weapon Finesse
-        accuracy += (skills.td || 0) * 2; // Trigger Discipline
         accuracy += (skills.qc || 0) * 1; // Quick Draw
 
         accuracy += (scores[coreAbbreviations.S] || 0) * 1; // Strength bonus
@@ -30,11 +28,30 @@ const visibleStatEquations = {
         accuracy += (skills.ins || 0) * 1; // Insight
         accuracy += (skills.ol || 0) * 1; // Observation Logging
 
-        accuracy += (scores[coreAbbreviations.Ch] || 0) * 1; // Charisma bonus
-        accuracy += (skills.lead || 0) * 1; // Leadership
+        return accuracy;
+    },
+    rangedAttackAccuracy: function (scores, skills) {
+        let accuracy = 0;
+
+        accuracy += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity bonus
+
+        accuracy += (skills.as2 || 0) * 2; // Aimed Shot
+        accuracy += (skills.pt || 0) * 2; // Precision Throwing
+        accuracy += (skills.td || 0) * 2; // Trigger Discipline
+        accuracy += (skills.qc || 0) * 1; // Quick Draw
+
+        accuracy += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence bonus
+        accuracy += (skills.tp || 0) * 2; // Tactical Planning
+        accuracy += (skills.sf || 0) * 2; // Strategic Foresight
+
+        accuracy += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom bonus
+        accuracy += (skills.sa || 0) * 2; // Situational Awareness
+        accuracy += (skills.ol || 0) * 1; // Observation Logging
+        accuracy += (skills.ins || 0) * 1; // Insight (optional)
 
         return accuracy;
     },
+
 
     meleeDamage: function (scores, skills) {
         let damage = (scores[coreAbbreviations.S] || 0) * 2;
