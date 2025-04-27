@@ -40,40 +40,40 @@ const visibleStatEquations = {
         let damage = (scores[coreAbbreviations.S] || 0) * 2;
 
         damage += (skills.wpn || 0) * 3; // Weapon Mastery
-        damage += (skills.bf || 0) * 2; // Brute Force
+        damage += (skills.bf || 0) * 2;  // Brute Force
         damage += (skills.bwf || 0) * 2; // Bodyweight Force
         damage += (skills.chg || 0) * 2; // Charge
-        damage += (skills.gp || 0) * 1; // Grappling
-        damage += (skills.he || 0) * 1; // Heavy Endurance
-        damage += (skills.lf || 0) * 1; // Lifting Form
+        damage += (skills.gp || 0) * 1;  // Grappling
+        damage += (skills.he || 0) * 1;  // Heavy Endurance
+        damage += (skills.lf || 0) * 1;  // Lifting Form
 
-        damage += (skills.bp || 0) * 2; // Blade Precision
-        damage += (skills.vp || 0) * 2; // Vital Point Targeting
-        damage += (skills.wf || 0) * 2; // Weapon Finesse
-        damage += (skills.cd || 0) * 2; // Critical Damage
-        damage += (skills.cc || 0) * 1; // Critical Chance
+        damage += (skills.bp || 0) * 2;  // Blade Precision
+        damage += (skills.vp || 0) * 2;  // Vital Point Targeting
+        damage += (skills.wf || 0) * 2;  // Weapon Finesse
+        damage += (skills.cd || 0) * 2;  // Critical Damage
+        damage += (skills.cc || 0) * 1;  // Critical Chance
 
-        damage += (skills.tp || 0) * 2; // Tactical Planning
-        damage += (skills.sf || 0) * 2; // Strategic Foresight
+        damage += (skills.tp || 0) * 2;  // Tactical Planning
+        damage += (skills.sf || 0) * 2;  // Strategic Foresight
         damage += (skills.inv || 0) * 1; // Investigation
 
-        damage += (skills.sa || 0) * 2; // Situational Awareness
+        damage += (skills.sa || 0) * 2;  // Situational Awareness
         damage += (skills.ins || 0) * 1; // Insight
-        damage += (skills.ol || 0) * 1; // Observation Logging
+        damage += (skills.ol || 0) * 1;  // Observation Logging
 
-        damage += (skills.ic || 0) * 2; // Inspire Courage
+        damage += (skills.ic || 0) * 2;  // Inspire Courage
         damage += (skills.lead || 0) * 1; // Leadership
-        damage += (skills.ps || 0) * 1; // Public Speaking
-        damage += (skills.rr || 0) * 1; // Read the Room
+        damage += (skills.ps || 0) * 1;  // Public Speaking
+        damage += (skills.rr || 0) * 1;  // Read the Room
 
-        damage += (skills.ds || 0) * 2; // Danger Sense
+        damage += (skills.ds || 0) * 2;  // Danger Sense
         damage += (skills.sr5 || 0) * 2; // Spatial Reflexes
-        damage += (skills.hd || 0) * 2; // Hunting Drive
-        damage += (skills.pa || 0) * 1; // Pack Awareness
+        damage += (skills.hd || 0) * 2;  // Hunting Drive
+        damage += (skills.pa || 0) * 1;  // Pack Awareness
 
         damage += (skills.pm2 || 0) * 1; // Presence Manifestation
-        damage += (skills.fa || 0) * 1; // Fear Aura
-        damage += (skills.sg || 0) * 1; // Social Gravity
+        damage += (skills.fa || 0) * 1;  // Fear Aura
+        damage += (skills.sg || 0) * 1;  // Social Gravity
 
         return damage;
     }
