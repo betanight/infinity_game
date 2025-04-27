@@ -28,7 +28,6 @@ const visibleStatEquations = {
             primaryStatUsed = "D"; // Dexterity
         }
 
-        // Intelligence and Wisdom help both styles a little
         accuracy += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
         accuracy += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
         accuracy += (skills.sf || 0) * 2; // Strategic Foresight
