@@ -30,6 +30,7 @@ const visibleStatEquations = {
 
         return accuracy;
     },
+
     rangedAttackAccuracy: function (scores, skills) {
         let accuracy = 0;
 
@@ -52,6 +53,36 @@ const visibleStatEquations = {
         return accuracy;
     },
 
+    energyAttackAccuracy: function (scores, skills) {
+        let accuracy = 0;
+
+        accuracy += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence bonus
+        accuracy += (scores[coreAbbreviations.W] || 0) * 2; // Wisdom bonus
+        accuracy += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit bonus
+        accuracy += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower bonus
+
+        // Intelligence-based magical skills
+        accuracy += (skills.arc || 0) * 2; // Arcana
+        accuracy += (skills.mt || 0) * 2; // Magical Theory
+        accuracy += (skills.sf || 0) * 2; // Strategic Foresight
+        accuracy += (skills.tp || 0) * 2; // Tactical Planning
+        accuracy += (skills.ok || 0) * 2; // Arcana
+
+        // Wisdom-based sensing skills
+        accuracy += (skills.sa || 0) * 2; // Situational Awareness
+        accuracy += (skills.ins || 0) * 1; // Insight
+
+        // Spirit-based control skills
+        accuracy += (skills.ef || 0) * 2; // Energy Flow
+        accuracy += (skills.rm || 0) * 2; // Ritual Mastery
+        accuracy += (skills.sc || 0) * 1; // Spirit Communication
+
+        // Willpower-based focus skills
+        accuracy += (skills.sd || 0) * 2; // Sheer Determination
+        accuracy += (skills.sf || 0) * 2; // Steadfast Focus
+
+        return accuracy;
+    },
 
     meleeDamage: function (scores, skills) {
         let damage = (scores[coreAbbreviations.S] || 0) * 2;
