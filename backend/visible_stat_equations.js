@@ -2,70 +2,80 @@ const { coreAbbreviations, skillAbbreviations } = require("./abbreviations");
 
 const visibleStatEquations = {
 
-    dexterityAccuracy: function (scores, skills) {
-        let accuracy = (scores[coreAbbreviations.D] || 0);
-
-        accuracy += (scores[coreAbbreviations.D] || 0) * 2;
-        accuracy += (skills.bp || 0) * 2;
-        accuracy += (skills.as2 || 0) * 2;
-        accuracy += (skills.pt || 0) * 2;
-        accuracy += (skills.vp || 0) * 2;
-        accuracy += (skills.ra || 0) * 1;
-        accuracy += (skills.ac || 0) * 1;
-        accuracy += (skills.ev || 0) * 1;
-        accuracy += (skills.wf || 0) * 2;
-        accuracy += (skills.td || 0) * 2;
-        accuracy += (skills.qc || 0) * 1;
-
-        return accuracy;
-    },
-
-    strengthAccuracy: function (scores, skills) {
-        let accuracy = (scores[coreAbbreviations.S] || 0);
-
-        accuracy += (skills.wpn || 0) * 3;
-        accuracy += (skills.chg || 0) * 2;
-
-        return accuracy;
-    },
-
-    intelligenceAccuracy: function (scores, skills) {
-        let accuracy = (scores[coreAbbreviations.I] || 0);
-
-        accuracy += (skills.tp || 0) * 2;
-        accuracy += (skills.sf || 0) * 2;
-
-        return accuracy;
-    },
-
-    wisdomAccuracy: function (scores, skills) {
-        let accuracy = (scores[coreAbbreviations.W] || 0);
-
-        accuracy += (skills.sa || 0) * 2;
-        accuracy += (skills.ins || 0) * 1;
-        accuracy += (skills.ol || 0) * 1;
-
-        return accuracy;
-    },
-
-    charismaAccuracy: function (scores, skills) {
-        let accuracy = (scores[coreAbbreviations.Ch] || 0);
-
-        accuracy += (skills.lead || 0) * 1;
-
-        return accuracy;
-    },
-
     totalAttackAccuracy: function (scores, skills) {
-        let total = 0;
+        let accuracy = 0;
 
-        total += visibleStatEquations.dexterityAccuracy(scores, skills);
-        total += visibleStatEquations.strengthAccuracy(scores, skills);
-        total += visibleStatEquations.intelligenceAccuracy(scores, skills);
-        total += visibleStatEquations.wisdomAccuracy(scores, skills);
-        total += visibleStatEquations.charismaAccuracy(scores, skills);
+        accuracy += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity bonus
+        accuracy += (skills.bp || 0) * 2; // Blade Precision
+        accuracy += (skills.as2 || 0) * 2; // Aimed Shot
+        accuracy += (skills.pt || 0) * 2; // Precision Throwing
+        accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
+        accuracy += (skills.ra || 0) * 1; // Reflex Training
+        accuracy += (skills.ac || 0) * 1; // Acrobatics
+        accuracy += (skills.ev || 0) * 1; // Evasion
+        accuracy += (skills.wf || 0) * 2; // Weapon Finesse
+        accuracy += (skills.td || 0) * 2; // Trigger Discipline
+        accuracy += (skills.qc || 0) * 1; // Quick Draw
 
-        return total;
+        accuracy += (scores[coreAbbreviations.S] || 0) * 1; // Strength bonus
+        accuracy += (skills.wpn || 0) * 3; // Weapon Mastery
+        accuracy += (skills.chg || 0) * 2; // Charge
+
+        accuracy += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence bonus
+        accuracy += (skills.tp || 0) * 2; // Tactical Planning
+        accuracy += (skills.sf || 0) * 2; // Strategic Foresight
+
+        accuracy += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom bonus
+        accuracy += (skills.sa || 0) * 2; // Situational Awareness
+        accuracy += (skills.ins || 0) * 1; // Insight
+        accuracy += (skills.ol || 0) * 1; // Observation Logging
+
+        accuracy += (scores[coreAbbreviations.Ch] || 0) * 1; // Charisma bonus
+        accuracy += (skills.lead || 0) * 1; // Leadership
+
+        return accuracy;
+    },
+
+    meleeDamage: function (scores, skills) {
+        let damage = (scores[coreAbbreviations.S] || 0) * 2;
+
+        damage += (skills.wpn || 0) * 3; // Weapon Mastery
+        damage += (skills.bf || 0) * 2; // Brute Force
+        damage += (skills.bwf || 0) * 2; // Bodyweight Force
+        damage += (skills.chg || 0) * 2; // Charge
+        damage += (skills.gp || 0) * 1; // Grappling
+        damage += (skills.he || 0) * 1; // Heavy Endurance
+        damage += (skills.lf || 0) * 1; // Lifting Form
+
+        damage += (skills.bp || 0) * 2; // Blade Precision
+        damage += (skills.vp || 0) * 2; // Vital Point Targeting
+        damage += (skills.wf || 0) * 2; // Weapon Finesse
+        damage += (skills.cd || 0) * 2; // Critical Damage
+        damage += (skills.cc || 0) * 1; // Critical Chance
+
+        damage += (skills.tp || 0) * 2; // Tactical Planning
+        damage += (skills.sf || 0) * 2; // Strategic Foresight
+        damage += (skills.inv || 0) * 1; // Investigation
+
+        damage += (skills.sa || 0) * 2; // Situational Awareness
+        damage += (skills.ins || 0) * 1; // Insight
+        damage += (skills.ol || 0) * 1; // Observation Logging
+
+        damage += (skills.ic || 0) * 2; // Inspire Courage
+        damage += (skills.lead || 0) * 1; // Leadership
+        damage += (skills.ps || 0) * 1; // Public Speaking
+        damage += (skills.rr || 0) * 1; // Read the Room
+
+        damage += (skills.ds || 0) * 2; // Danger Sense
+        damage += (skills.sr5 || 0) * 2; // Spatial Reflexes
+        damage += (skills.hd || 0) * 2; // Hunting Drive
+        damage += (skills.pa || 0) * 1; // Pack Awareness
+
+        damage += (skills.pm2 || 0) * 1; // Presence Manifestation
+        damage += (skills.fa || 0) * 1; // Fear Aura
+        damage += (skills.sg || 0) * 1; // Social Gravity
+
+        return damage;
     }
 
 };
