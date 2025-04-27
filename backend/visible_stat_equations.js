@@ -53,78 +53,87 @@ const visibleStatEquations = {
         return accuracy;
     },
 
-    energyAttackAccuracy: function (scores, skills) {
+    energyAttackAccuracy: function (scores, skills, energyType) {
         let accuracy = 0;
 
-        accuracy += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence bonus
-        accuracy += (scores[coreAbbreviations.W] || 0) * 2; // Wisdom bonus
-        accuracy += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit bonus
-        accuracy += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower bonus
+        if (energyType === "Intelligence") {
+            accuracy += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
+            accuracy += (skills.arc || 0) * 3; // Arcana
+            accuracy += (skills.mt || 0) * 3; // Magical Theory
+            accuracy += (skills.sf || 0) * 2; // Strategic Foresight
+            accuracy += (skills.tp || 0) * 2; // Tactical Planning
+            accuracy += (skills.ok || 0) * 2; // Occult Knowledge
 
-        // Intelligence-based magical skills
-        accuracy += (skills.arc || 0) * 2; // Arcana
-        accuracy += (skills.mt || 0) * 2; // Magical Theory
-        accuracy += (skills.sf || 0) * 2; // Strategic Foresight
-        accuracy += (skills.tp || 0) * 2; // Tactical Planning
-        accuracy += (skills.ok || 0) * 2; // Arcana
+            accuracy += (skills.ins || 0) * 1; // Insight
 
-        // Wisdom-based sensing skills
-        accuracy += (skills.sa || 0) * 2; // Situational Awareness
-        accuracy += (skills.ins || 0) * 1; // Insight
+        } else if (energyType === "Wisdom") {
+            accuracy += (scores[coreAbbreviations.W] || 0) * 2; // Wisdom
+            accuracy += (skills.sa || 0) * 3; // Situational Awareness
+            accuracy += (skills.ins || 0) * 2; // Insight
+            accuracy += (skills.sf || 0) * 2; // Strategic Foresight
 
-        // Spirit-based control skills
-        accuracy += (skills.ef || 0) * 2; // Energy Flow
-        accuracy += (skills.rm || 0) * 2; // Ritual Mastery
-        accuracy += (skills.sc || 0) * 1; // Spirit Communication
+            accuracy += (skills.sp || 0) * 2; // Spiritual Perception
+            accuracy += (skills.rm || 0) * 1; // Ritual Mastery
 
-        // Willpower-based focus skills
-        accuracy += (skills.sd || 0) * 2; // Sheer Determination
-        accuracy += (skills.sf || 0) * 2; // Steadfast Focus
+        } else if (energyType === "Spirit") {
+            accuracy += (scores[coreAbbreviations.SP] || 0) * 3; // Spirit
+            accuracy += (skills.ef || 0) * 3; // Energy Flow
+            accuracy += (skills.rm || 0) * 3; // Ritual Mastery
+            accuracy += (skills.sc || 0) * 2; // Spirit Communication
+
+            accuracy += (skills.sp || 0) * 2; // Spiritual Perception
+            accuracy += (skills.sa || 0) * 1; // Situational Awareness
+
+        } else if (energyType === "Willpower") {
+            accuracy += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
+            accuracy += (skills.sd || 0) * 3; // Sheer Determination
+            accuracy += (skills.sf || 0) * 3; // Steadfast Focus
+
+            accuracy += (skills.sa || 0) * 1; // Situational Awareness
+            accuracy += (skills.arc || 0) * 1; // Arcana
+        }
 
         return accuracy;
     },
 
-    meleeDamage: function (scores, skills) {
-        let damage = (scores[coreAbbreviations.S] || 0) * 2;
+    meleeDamage: function (scores, skills, attackType) {
+        let damage = 0;
 
-        damage += (skills.wpn || 0) * 3; // Weapon Mastery
-        damage += (skills.bf || 0) * 2;  // Brute Force
-        damage += (skills.bwf || 0) * 2; // Bodyweight Force
-        damage += (skills.chg || 0) * 2; // Charge
-        damage += (skills.gp || 0) * 1;  // Grappling
-        damage += (skills.he || 0) * 1;  // Heavy Endurance
-        damage += (skills.lf || 0) * 1;  // Lifting Form
+        if (attackType === "Strength") {
+            damage += (scores[coreAbbreviations.S] || 0) * 2;
+        } else if (attackType === "Dexterity") {
+            damage += (scores[coreAbbreviations.D] || 0) * 2;
+        }
 
-        damage += (skills.bp || 0) * 2;  // Blade Precision
-        damage += (skills.vp || 0) * 2;  // Vital Point Targeting
-        damage += (skills.wf || 0) * 2;  // Weapon Finesse
-        damage += (skills.cd || 0) * 2;  // Critical Damage
-        damage += (skills.cc || 0) * 1;  // Critical Chance
+        damage += (skills.wpn || 0) * 3; // Weapon Mastery (applies to both types)
 
-        damage += (skills.tp || 0) * 2;  // Tactical Planning
-        damage += (skills.sf || 0) * 2;  // Strategic Foresight
-        damage += (skills.inv || 0) * 1; // Investigation
+        if (attackType === "Strength") {
+            damage += ((skills.bf || 0) * (scores[coreAbbreviations.S] || 0)) * 0.5;
+            damage += ((skills.bwf || 0) * (scores[coreAbbreviations.S] || 0)) * 0.4;
+            damage += ((skills.chg || 0) * (scores[coreAbbreviations.S] || 0)) * 0.1;
+            damage += ((skills.gp || 0) * (scores[coreAbbreviations.S] || 0)) * 0.2;
+            damage += ((skills.he || 0) * (scores[coreAbbreviations.S] || 0)) * 0.3;
+            damage += ((skills.lf || 0) * (scores[coreAbbreviations.S] || 0)) * 0.3;
+        } else if (attackType === "Dexterity") {
+            // Weapon Finesse is enhanced for dexterity based attacks
+            damage += ((skills.wf || 0) * (scores[coreAbbreviations.D] || 0)) * 1.5;
+        }
 
-        damage += (skills.sa || 0) * 2;  // Situational Awareness
-        damage += (skills.ins || 0) * 1; // Insight
-        damage += (skills.ol || 0) * 1;  // Observation Logging
-
-        damage += (skills.ic || 0) * 2;  // Inspire Courage
-        damage += (skills.lead || 0) * 1; // Leadership
-        damage += (skills.ps || 0) * 1;  // Public Speaking
-        damage += (skills.rr || 0) * 1;  // Read the Room
-
-        damage += (skills.ds || 0) * 2;  // Danger Sense
-        damage += (skills.sr5 || 0) * 2; // Spatial Reflexes
-        damage += (skills.hd || 0) * 2;  // Hunting Drive
-        damage += (skills.pa || 0) * 1;  // Pack Awareness
-
-        damage += (skills.pm2 || 0) * 1; // Presence Manifestation
-        damage += (skills.fa || 0) * 1;  // Fear Aura
-        damage += (skills.sg || 0) * 1;  // Social Gravity
+        // Intelligence and Wisdom skills apply to both
+        damage += (skills.tp || 0) * 0.5;
+        damage += (skills.sf || 0) * 0.5;
+        damage += (skills.inv || 0) * 0.2;
+        damage += (skills.sa || 0) * 0.01;
+        damage += (skills.ins || 0) * 0.5;
+        damage += (skills.ol || 0) * 0.5;
+        damage += (skills.sr5 || 0) * 0.5;
+        damage += (skills.hd || 0) * 0.3;
+        damage += (skills.pa || 0) * 0.1;
+        damage += (skills.pm2 || 0) * 3;
 
         return damage;
     }
+
 
 };
 
