@@ -212,28 +212,26 @@ const visibleStatEquations = {
             damage += (skills.wpn || 0) * 3; // Weapon Mastery
             damage += (skills.bf || 0) * 5; // Brute Force
             damage += (skills.bwf || 0) * 5; // Bodyweight Force
-            damage += (skills.wt || 0) * 3; // Weight Toss
+            damage += (skills.wt || 0) * 5; // Weight Toss
 
         } else if (rangedStyle === "Finesse Ranged") {
-            damage += (scores[coreAbbreviations.D] || 0) * 1.5; // Dexterity
+            damage += (scores[coreAbbreviations.D] || 0) * 0.2; // Dexterity
 
             if (elementType === "Spirit") {
-                damage += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit
+                damage += (scores[coreAbbreviations.SP] || 0) * 1.5; // Spirit
             } else if (elementType === "Arcane") {
-                damage += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
+                damage += (scores[coreAbbreviations.I] || 0) * 1.5; // Intelligence
             } else if (elementType === "Willpower") {
-                damage += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
+                damage += (scores[coreAbbreviations.WP] || 0) * 1.5; // Willpower
             } else if (elementType === "Presence") {
-                damage += (scores[coreAbbreviations.PR] || 0) * 2; // Presence
+                damage += (scores[coreAbbreviations.PR] || 0) * 1.5; // Presence
             }
 
-            damage += (skills.wf || 0) * 3; // Weapon Finesse
-            damage += (skills.bp || 0) * 3; // Blade Precision
-            damage += (skills.as || 0) * 3; // Aimed Shot
-            damage += (skills.pt || 0) * 3; // Precision Throwing
-
-            damage += (skills.ra || 0) * 2; // Reflex Training
-            damage += (skills.qc || 0) * 2; // Quick Draw
+            damage += (skills.wf || 0) * 1; // Weapon Finesse
+            damage += (skills.bp || 0) * 1; // Blade Precision
+            damage += (skills.as || 0) * 1; // Aimed Shot
+            damage += (skills.pt || 0) * 1; // Precision Throwing
+            damage += (skills.ra || 0) * 1; // Reflex Training
         }
 
         damage += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
