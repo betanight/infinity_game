@@ -128,14 +128,14 @@ const visibleStatEquations = {
     },
 
     rollingFunction: function (totalAccuracy, primaryScore, cc, dexterity, armorThreshold) {
-        const minPercent = primaryScore * 5;
+        const minPercent = primaryScore * 1;
         const minRoll = (minPercent / 100) * totalAccuracy;
         const maxRoll = totalAccuracy;
 
         const roll = Math.random() * (maxRoll - minRoll) + minRoll;
 
-        let baseCriticalChance = 5;
-        let skillBonus = dexterity * 0.20;
+        let baseCriticalChance = 1;
+        let skillBonus = dexterity * 0.5;
         let totalCriticalChance = baseCriticalChance + (cc * skillBonus);
 
         if (totalCriticalChance > 50) totalCriticalChance = 50;
