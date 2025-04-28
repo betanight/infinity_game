@@ -329,6 +329,21 @@ const visibleStatEquations = {
 
         return damage;
     },
+    
+    criticalDamage: function (damage, isCriticalHit) {
+        let criticalMultiplier = 1.1;
+
+        criticalMultiplier += (scores[coreAbbreviations.D] || 0) * 0.1;
+
+        criticalMultiplier += (skills.cd || 0) * 0.33; // Critical Damage
+        criticalMultiplier += (skills.vp || 0) * 0.1; // Vital Point Targeting
+
+        if (isCriticalHit) {
+            return damage * criticalMultiplier;} 
+            else {
+                return damage;
+            }
+    },
 
 };
 
