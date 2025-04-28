@@ -127,30 +127,30 @@ const visibleStatEquations = {
         };
     },
 
-    rollingFunction: function (totalAccuracy, primaryScore, cc, dexterity, armorThreshold) {
+    rollingFunction: function (totalAccuracy, primaryScore, cc, D, armorThreshold) {
         const minPercent = primaryScore * 1;
         const minRoll = (minPercent / 100) * totalAccuracy;
         const maxRoll = totalAccuracy;
 
+        // Generate a roll within the accuracy range (minRoll to maxRoll)
         const roll = Math.random() * (maxRoll - minRoll) + minRoll;
 
-        let baseCriticalChance = 1;
-        let skillBonus = dexterity * 0.5;
-        let totalCriticalChance = baseCriticalChance + (cc * skillBonus);
+        let baseCriticalChance = 1; // Base critical chance is 1%
+        let skillBonus = D * 0.20; // Each skill point increases critical chance by 20% of Dexterity
+        let totalCriticalChance = baseCriticalChance + (cc * skillBonus); // Total critical chance
 
-        if (totalCriticalChance > 50) totalCriticalChance = 50;
+        // Calculate the critical hit margin (top percentage based on totalCriticalChance)
+        let criticalMargin = maxRoll - ((totalCriticalChance / 100) * (maxRoll - minRoll));
 
-        let randomRoll = Math.random() * 100;
+        // Check if the roll exceeds armor threshold for a hit
+        let isHit = roll >= armorThreshold;
 
-        let isCriticalHit = randomRoll <= totalCriticalChance;
-
-        let isAutoHit = false;
-        if (minRoll > armorThreshold) {
-            isAutoHit = true;
-        }
-
-        if (isAutoHit) {
-            isCriticalHit = randomRoll <= totalCriticalChance;
+        // If it's a hit, check for a critical hit based on the critical margin
+        let isCriticalHit = false;
+        if (isHit) {
+            if (roll >= criticalMargin) {
+                isCriticalHit = true; // Critical hit if the roll is >= criticalMargin
+            }
         }
 
         return {
@@ -159,7 +159,7 @@ const visibleStatEquations = {
             maxRoll: Math.floor(maxRoll),
             isCriticalHit: isCriticalHit,
             criticalChance: totalCriticalChance,
-            isAutoHit: isAutoHit
+            isHit: isHit
         };
     },
     
