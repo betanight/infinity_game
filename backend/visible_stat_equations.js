@@ -127,17 +127,39 @@ const visibleStatEquations = {
         };
     },
 
-    rollingFunction: function (totalAccuracy, primaryScore) {
+    rollingFunction: function (totalAccuracy, primaryScore, cc, dexterity, armorThreshold) {
         const minPercent = primaryScore * 5;
         const minRoll = (minPercent / 100) * totalAccuracy;
         const maxRoll = totalAccuracy;
 
         const roll = Math.random() * (maxRoll - minRoll) + minRoll;
 
+        let baseCriticalChance = 5;
+        let skillBonus = dexterity * 0.20;
+        let totalCriticalChance = baseCriticalChance + (cc * skillBonus);
+
+        if (totalCriticalChance > 50) totalCriticalChance = 50;
+
+        let randomRoll = Math.random() * 100;
+
+        let isCriticalHit = randomRoll <= totalCriticalChance;
+
+        let isAutoHit = false;
+        if (minRoll > armorThreshold) {
+            isAutoHit = true;
+        }
+
+        if (isAutoHit) {
+            isCriticalHit = randomRoll <= totalCriticalChance;
+        }
+
         return {
             roll: Math.floor(roll),
             minRoll: Math.floor(minRoll),
-            maxRoll: Math.floor(maxRoll)
+            maxRoll: Math.floor(maxRoll),
+            isCriticalHit: isCriticalHit,
+            criticalChance: totalCriticalChance,
+            isAutoHit: isAutoHit
         };
     },
     
@@ -256,6 +278,54 @@ const visibleStatEquations = {
         damage += (skills.sa || 0) * 2; // Situational Awareness
         damage += (skills.ins || 0) * 1; // Insight
         damage += (skills.ol || 0) * 1; // Observation Logging
+
+        return damage;
+    },
+
+    rawPhysicalDamage: function (scores, skills, elementType) {
+        let damage = 0;
+
+        damage += (scores[coreAbbreviations.S] || 0) * 3; // Strength
+
+        if (elementType === "Spirit") {
+            damage += (scores[coreAbbreviations.SP] || 0) * 1.5; // Spirit
+            damage += (skills.ef || 0) * 2; // Energy Flow
+            damage += (skills.rm || 0) * 2; // Ritual Mastery
+            damage += (skills.sc || 0) * 1; // Spirit Communication
+        } else if (elementType === "Arcane") {
+            damage += (scores[coreAbbreviations.I] || 0) * 1.5; // Intelligence (Arcane)
+            damage += (skills.arc || 0) * 2; // Arcana
+            damage += (skills.mt || 0) * 2; // Magical Theory
+        } else if (elementType === "Willpower") {
+            damage += (scores[coreAbbreviations.WP] || 0) * 1.5; // Willpower
+            damage += (skills.sd || 0) * 2; // Sheer Determination
+            damage += (skills.sf || 0) * 2; // Steadfast Focus
+            damage += (skills.id || 0) * 1; // Iron Discipline
+        } else if (elementType === "Presence") {
+            damage += (scores[coreAbbreviations.PR] || 0) * 1.5; // Presence
+            damage += (skills.da || 0) * 2; // Dominant Aura
+            damage += (skills.pm2 || 0) * 3; // Presence Manifestation
+        }
+
+        damage += (skills.bf || 0) * 3; // Brute Force
+        damage += (skills.bwf || 0) * 4; // Bodyweight Force
+        damage += (skills.ss || 0) * 2; // Shoulder Strength
+        damage += (skills.mc || 0) * 2; // Muscle Control
+        damage += (skills.os || 0) * 2; // Overhead Strength
+        damage += (skills.pl || 0) * 2; // Power Life
+        damage += (skills.gs || 0) * 2; // Grip Strength
+        damage += (skills.fc || 0) * 2; // Fist Conditioning
+        damage += (skills.ig || 0) * 2; // Iron Grip
+        damage += (skills.lb || 0) * 2; // Load Bearing
+        damage += (skills.ls || 0) * 2; // Load Stabilization
+        damage += (skills.mm || 0) * 2; // Momentum Management
+        damage += (skills.ps || 0) * 2; // Postural Strength
+        damage += (skills.ad || 0) * 2; // Ambidexterity
+
+        damage += (skills.tp || 0) * 1; // Tactical Planning
+        damage += (skills.sf || 0) * 2; // Strategic Foresight
+        damage += (skills.sa || 0) * 2; // Situational Awareness
+        damage += (skills.ins || 0) * 1; // Insight
 
         return damage;
     },
