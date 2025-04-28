@@ -141,7 +141,7 @@ const visibleStatEquations = {
         };
     },
     
-    meleeDamage: function (scores, skills, meleeStyle, elementType) {
+    meleeWeaponDamage: function (scores, skills, meleeStyle, elementType) {
         let damage = 0;
 
         if (meleeStyle === "Brutish Melee") {
@@ -160,9 +160,12 @@ const visibleStatEquations = {
             damage += (skills.wpn || 0) * 3; // Weapon Mastery
             damage += (skills.bf || 0) * 5; // Brute Force
             damage += (skills.bwf || 0) * 5; // Bodyweight Force
+            damage += (skills.wt || 0) * 5; // Weight Toss
             damage += (skills.chg || 0) * 2; // Charge
-            damage += (skills.gp || 0) * 2; // Grappling
             damage += (skills.tp || 0) * 1; // Tactical Planning
+            damage += (skills.mm || 0) * 2; // Momentum Management
+            damage += (skills.mc || 0) * 2; // Muscle Control
+            damage += (skills.ss || 0) * 2; // Shoulder Strength
 
         } else if (meleeStyle === "Finesse Melee") {
             damage += (scores[coreAbbreviations.D] || 0) * 0.8; // Dexterity
@@ -181,8 +184,12 @@ const visibleStatEquations = {
             damage += (skills.bp || 0) * 3; // Blade Precision
             damage += (skills.ra || 0) * 2; // Reflex Training
             damage += (skills.tp || 0) * 1; // Tactical Planning
+            damage += (skills.mm || 0) * 1; // Momentum Management
+            damage += (skills.mc || 0) * 1; // Muscle Control
+            damage += (skills.ss || 0) * 1; // Shoulder Strength
         }
 
+        // Global Bonuses (same for both styles)
         damage += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
         damage += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
         damage += (skills.sf || 0) * 2; // Strategic Foresight
@@ -193,29 +200,11 @@ const visibleStatEquations = {
         return damage;
     },
 
-    rangedDamage: function (scores, skills, rangedStyle, elementType) {
+    rangedWeaponDamage: function (scores, skills, rangedStyle, elementType) {
         let damage = 0;
 
         if (rangedStyle === "Brutish Ranged") {
             damage += (scores[coreAbbreviations.S] || 0) * 2.25; // Strength
-
-            if (elementType === "Spirit") {
-                damage += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit
-            } else if (elementType === "Arcane") {
-                damage += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
-            } else if (elementType === "Willpower") {
-                damage += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
-            } else if (elementType === "Presence") {
-                damage += (scores[coreAbbreviations.PR] || 0) * 2; // Presence
-            }
-
-            damage += (skills.wpn || 0) * 3; // Weapon Mastery
-            damage += (skills.bf || 0) * 5; // Brute Force
-            damage += (skills.bwf || 0) * 5; // Bodyweight Force
-            damage += (skills.wt || 0) * 5; // Weight Toss
-
-        } else if (rangedStyle === "Finesse Ranged") {
-            damage += (scores[coreAbbreviations.D] || 0) * 0.2; // Dexterity
 
             if (elementType === "Spirit") {
                 damage += (scores[coreAbbreviations.SP] || 0) * 1.5; // Spirit
@@ -227,16 +216,43 @@ const visibleStatEquations = {
                 damage += (scores[coreAbbreviations.PR] || 0) * 1.5; // Presence
             }
 
-            damage += (skills.wf || 0) * 1; // Weapon Finesse
-            damage += (skills.bp || 0) * 1; // Blade Precision
-            damage += (skills.as || 0) * 1; // Aimed Shot
-            damage += (skills.pt || 0) * 1; // Precision Throwing
-            damage += (skills.ra || 0) * 1; // Reflex Training
+            damage += (skills.wpn || 0) * 3; // Weapon Mastery
+            damage += (skills.bf || 0) * 5; // Brute Force
+            damage += (skills.bwf || 0) * 5; // Bodyweight Force
+            damage += (skills.wt || 0) * 5; // Weight Toss
+            damage += (skills.chg || 0) * 3; // Charge
+
+            // utility strength skills that can slightly benefit throwing objects
+            damage += (skills.ls || 0) * 1.5; // Load Stabilization
+            damage += (skills.mc || 0) * 1.5; // Muscle Control
+            damage += (skills.os || 0) * 1.5; // Overhead Strength
+            damage += (skills.pl || 0) * 1.5; // Power Life
+            damage += (skills.ss || 0) * 1.5; // Shoulder Strength
+
+        } else if (rangedStyle === "Finesse Ranged") {
+            damage += (scores[coreAbbreviations.D] || 0) * 0.6; // Dexterity
+
+            if (elementType === "Spirit") {
+                damage += (scores[coreAbbreviations.SP] || 0) * 1.5; // Spirit
+            } else if (elementType === "Arcane") {
+                damage += (scores[coreAbbreviations.I] || 0) * 1.5; // Intelligence
+            } else if (elementType === "Willpower") {
+                damage += (scores[coreAbbreviations.WP] || 0) * 1.5; // Willpower
+            } else if (elementType === "Presence") {
+                damage += (scores[coreAbbreviations.PR] || 0) * 1.5; // Presence
+            }
+
+            damage += (skills.wf || 0) * 3; // Weapon Finesse
+            damage += (skills.bp || 0) * 3; // Blade Precision
+            damage += (skills.as || 0) * 3; // Aimed Shot
+            damage += (skills.pt || 0) * 3; // Precision Throwing
+            damage += (skills.ra || 0) * 2; // Reflex Training
         }
 
         damage += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
         damage += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
         damage += (skills.sf || 0) * 2; // Strategic Foresight
+        damage += (skills.tp || 0) * 1; // Tactical Planning
         damage += (skills.sa || 0) * 2; // Situational Awareness
         damage += (skills.ins || 0) * 1; // Insight
         damage += (skills.ol || 0) * 1; // Observation Logging
