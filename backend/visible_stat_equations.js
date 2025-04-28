@@ -127,44 +127,124 @@ const visibleStatEquations = {
         };
     },
 
-    meleeDamage: function (scores, skills, attackType) {
+    rollingFunction: function (totalAccuracy, primaryScore) {
+        const minPercent = primaryScore * 5;
+        const minRoll = (minPercent / 100) * totalAccuracy;
+        const maxRoll = totalAccuracy;
+
+        const roll = Math.random() * (maxRoll - minRoll) + minRoll;
+
+        return {
+            roll: Math.floor(roll),
+            minRoll: Math.floor(minRoll),
+            maxRoll: Math.floor(maxRoll)
+        };
+    },
+    
+    meleeDamage: function (scores, skills, meleeStyle, elementType) {
         let damage = 0;
 
-        if (attackType === "Strength") {
-            damage += (scores[coreAbbreviations.S] || 0) * 2;
-        } else if (attackType === "Dexterity") {
-            damage += (scores[coreAbbreviations.D] || 0) * 2;
+        if (meleeStyle === "Brutish Melee") {
+            damage += (scores[coreAbbreviations.S] || 0) * 3; // Strength
+
+            if (elementType === "Spirit") {
+                damage += (scores[coreAbbreviations.SP] || 0) * 3; // Spirit
+            } else if (elementType === "Arcane") {
+                damage += (scores[coreAbbreviations.I] || 0) * 3; // Intelligence
+            } else if (elementType === "Willpower") {
+                damage += (scores[coreAbbreviations.WP] || 0) * 3; // Willpower
+            } else if (elementType === "Presence") {
+                damage += (scores[coreAbbreviations.PR] || 0) * 3; // Presence
+            }
+
+            damage += (skills.wpn || 0) * 3; // Weapon Mastery
+            damage += (skills.bf || 0) * 5; // Brute Force
+            damage += (skills.bwf || 0) * 5; // Bodyweight Force
+            damage += (skills.chg || 0) * 2; // Charge
+            damage += (skills.gp || 0) * 2; // Grappling
+            damage += (skills.tp || 0) * 1; // Tactical Planning
+
+        } else if (meleeStyle === "Finesse Melee") {
+            damage += (scores[coreAbbreviations.D] || 0) * 0.8; // Dexterity
+
+            if (elementType === "Spirit") {
+                damage += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit
+            } else if (elementType === "Arcane") {
+                damage += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
+            } else if (elementType === "Willpower") {
+                damage += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
+            } else if (elementType === "Presence") {
+                damage += (scores[coreAbbreviations.PR] || 0) * 2; // Presence
+            }
+
+            damage += (skills.wf || 0) * 3; // Weapon Finesse
+            damage += (skills.bp || 0) * 3; // Blade Precision
+            damage += (skills.ra || 0) * 2; // Reflex Training
+            damage += (skills.tp || 0) * 1; // Tactical Planning
         }
 
-        damage += (skills.wpn || 0) * 3; // Weapon Mastery (applies to both types)
-
-        if (attackType === "Strength") {
-            damage += ((skills.bf || 0) * (scores[coreAbbreviations.S] || 0)) * 0.5;
-            damage += ((skills.bwf || 0) * (scores[coreAbbreviations.S] || 0)) * 0.4;
-            damage += ((skills.chg || 0) * (scores[coreAbbreviations.S] || 0)) * 0.1;
-            damage += ((skills.gp || 0) * (scores[coreAbbreviations.S] || 0)) * 0.2;
-            damage += ((skills.he || 0) * (scores[coreAbbreviations.S] || 0)) * 0.3;
-            damage += ((skills.lf || 0) * (scores[coreAbbreviations.S] || 0)) * 0.3;
-        } else if (attackType === "Dexterity") {
-            // Weapon Finesse is enhanced for dexterity based attacks
-            damage += ((skills.wf || 0) * (scores[coreAbbreviations.D] || 0)) * 1.5;
-        }
-
-        // Intelligence and Wisdom skills apply to both
-        damage += (skills.tp || 0) * 0.5;
-        damage += (skills.sf || 0) * 0.5;
-        damage += (skills.inv || 0) * 0.2;
-        damage += (skills.sa || 0) * 0.01;
-        damage += (skills.ins || 0) * 0.5;
-        damage += (skills.ol || 0) * 0.5;
-        damage += (skills.sr5 || 0) * 0.5;
-        damage += (skills.hd || 0) * 0.3;
-        damage += (skills.pa || 0) * 0.1;
-        damage += (skills.pm2 || 0) * 3;
+        damage += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
+        damage += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
+        damage += (skills.sf || 0) * 2; // Strategic Foresight
+        damage += (skills.sa || 0) * 2; // Situational Awareness
+        damage += (skills.ins || 0) * 1; // Insight
+        damage += (skills.ol || 0) * 1; // Observation Logging
 
         return damage;
-    }
+    },
 
+    rangedDamage: function (scores, skills, rangedStyle, elementType) {
+        let damage = 0;
+
+        if (rangedStyle === "Brutish Ranged") {
+            damage += (scores[coreAbbreviations.S] || 0) * 2.25; // Strength
+
+            if (elementType === "Spirit") {
+                damage += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit
+            } else if (elementType === "Arcane") {
+                damage += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
+            } else if (elementType === "Willpower") {
+                damage += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
+            } else if (elementType === "Presence") {
+                damage += (scores[coreAbbreviations.PR] || 0) * 2; // Presence
+            }
+
+            damage += (skills.wpn || 0) * 3; // Weapon Mastery
+            damage += (skills.bf || 0) * 5; // Brute Force
+            damage += (skills.bwf || 0) * 5; // Bodyweight Force
+            damage += (skills.wt || 0) * 3; // Weight Toss
+
+        } else if (rangedStyle === "Finesse Ranged") {
+            damage += (scores[coreAbbreviations.D] || 0) * 1.5; // Dexterity
+
+            if (elementType === "Spirit") {
+                damage += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit
+            } else if (elementType === "Arcane") {
+                damage += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
+            } else if (elementType === "Willpower") {
+                damage += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
+            } else if (elementType === "Presence") {
+                damage += (scores[coreAbbreviations.PR] || 0) * 2; // Presence
+            }
+
+            damage += (skills.wf || 0) * 3; // Weapon Finesse
+            damage += (skills.bp || 0) * 3; // Blade Precision
+            damage += (skills.as || 0) * 3; // Aimed Shot
+            damage += (skills.pt || 0) * 3; // Precision Throwing
+
+            damage += (skills.ra || 0) * 2; // Reflex Training
+            damage += (skills.qc || 0) * 2; // Quick Draw
+        }
+
+        damage += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
+        damage += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
+        damage += (skills.sf || 0) * 2; // Strategic Foresight
+        damage += (skills.sa || 0) * 2; // Situational Awareness
+        damage += (skills.ins || 0) * 1; // Insight
+        damage += (skills.ol || 0) * 1; // Observation Logging
+
+        return damage;
+    },
 
 };
 
