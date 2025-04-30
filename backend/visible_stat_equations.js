@@ -446,3 +446,4 @@ if (typeof module !== "undefined") {
 if (typeof window !== "undefined") {
     window.visibleStatEquations = visibleStatEquations;
 }
+console.log("✅ visible_stat_equations.js loaded");
