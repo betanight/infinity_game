@@ -89,6 +89,7 @@ function populateSkillDropdowns(skillsData) {
 
 function attachCreateForm() {
   const form = document.getElementById("create-character-form");
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -98,7 +99,10 @@ function attachCreateForm() {
     const templateRef = db.ref("template");
     const templateSnapshot = await templateRef.once("value");
     const template = templateSnapshot.val();
-    if (!template) return alert("No template found in Firebase.");
+
+    if (!template || !template.primary_scores) {
+      return alert("No valid template found in Firebase.");
+    }
 
     template.meta.character_id = name;
     template.skills = {};
@@ -107,13 +111,15 @@ function attachCreateForm() {
 
     primaryStats.forEach(stat => {
       const select = document.getElementById(`skill-select-${stat}`);
-      const selectedSkill = select.value;
+      const selectedSkill = select?.value?.trim();
 
       if (!selectedSkill) {
         allChosen = false;
+        console.warn(`No skill selected for: ${stat}`);
       } else {
-        template.skills[stat] = {};
-        template.skills[stat][selectedSkill] = 1;
+        template.skills[stat] = {
+          [selectedSkill]: 1
+        };
       }
     });
 
