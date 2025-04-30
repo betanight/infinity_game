@@ -155,9 +155,9 @@ function loadCharacters() {
             totalPoints += val;
           });
         });
-        
+
         const characterLi = document.createElement("li");
-        characterLi.textContent = `${name} (Character level: ${totalPoints})`;
+        characterLi.textContent = `${name} (Character Power: ${totalPoints})`;
         characterLi.style.cursor = "pointer";
 
         const detail = document.createElement("ul");
