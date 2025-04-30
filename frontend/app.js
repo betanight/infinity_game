@@ -51,7 +51,7 @@ function loadTemplate() {
 
       output.innerHTML = html;
 
-      populateSkillDropdowns(skillsData); // Populate form dropdowns
+      populateSkillDropdowns(skillsData);
     })
     .catch(err => {
       output.innerHTML = "<p>Error loading template.</p>";
