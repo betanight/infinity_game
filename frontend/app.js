@@ -1,115 +1,142 @@
-// Firebase initialization
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "infinity-e0f55.firebaseapp.com",
-    databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
-    projectId: "infinity-e0f55",
-    storageBucket: "infinity-e0f55.appspot.com",
-    messagingSenderId: "120929977477",
-    appId: "1:120929977477:web:45dc9989f834f69a9195ec",
-    measurementId: "G-PFFQDN2MHX"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  
-  // Load template for preview
-  function loadTemplate() {
-    const output = document.getElementById("template-output");
-    output.innerHTML = "<p>Loading...</p>";
-  
-    db.ref("template/skills").once("value")
-      .then(snapshot => {
-        const skillsData = snapshot.val();
-        if (!skillsData) {
-          output.innerHTML = "<p>No template data found.</p>";
-          return;
-        }
-  
-        const primaryOrder = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
-        const secondaryOrder = ["Instinct", "Presence", "Spirit", "Willpower"];
-  
-        let html = "";
-  
-        function buildSection(stat) {
-          if (skillsData[stat]) {
-            html += `
-              <details style="margin-bottom: 1rem;">
-                <summary style="font-weight: bold; text-decoration: underline; font-size: 1.2rem; cursor: pointer;">${stat}</summary>
-                <ul style="margin-left: 1rem; margin-top: 0.5rem;">`;
-  
-            const statSkills = skillsData[stat];
-            for (const skill in statSkills) {
-              const desc = statSkills[skill].description || "No description";
-              html += `<li style="margin-bottom: 0.3rem;"><strong>${skill}</strong>: ${desc}</li>`;
-            }
-  
-            html += `</ul>
-              </details>`;
+  apiKey: "YOUR_API_KEY",
+  authDomain: "infinity-e0f55.firebaseapp.com",
+  databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
+  projectId: "infinity-e0f55",
+  storageBucket: "infinity-e0f55.appspot.com",
+  messagingSenderId: "120929977477",
+  appId: "1:120929977477:web:45dc9989f834f69a9195ec",
+  measurementId: "G-PFFQDN2MHX"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+function loadTemplate() {
+  const output = document.getElementById("template-output");
+  output.innerHTML = "<p>Loading...</p>";
+
+  db.ref("template/skills").once("value")
+    .then(snapshot => {
+      const skillsData = snapshot.val();
+      if (!skillsData) {
+        output.innerHTML = "<p>No template data found.</p>";
+        return;
+      }
+
+      const primaryOrder = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+      const secondaryOrder = ["Instinct", "Presence", "Spirit", "Willpower"];
+
+      let html = "";
+      function buildSection(stat) {
+        if (skillsData[stat]) {
+          html += `
+            <details style="margin-bottom: 1rem;">
+              <summary style="font-weight: bold; text-decoration: underline; font-size: 1.2rem; cursor: pointer;">${stat}</summary>
+              <ul style="margin-left: 1rem; margin-top: 0.5rem;">`;
+
+          const statSkills = skillsData[stat];
+          for (const skill in statSkills) {
+            const desc = statSkills[skill].description || "No description";
+            html += `<li style="margin-bottom: 0.3rem;"><strong>${skill}</strong>: ${desc}</li>`;
           }
+
+          html += `</ul></details>`;
         }
-  
-        primaryOrder.forEach(stat => buildSection(stat));
-        secondaryOrder.forEach(stat => buildSection(stat));
-  
-        output.innerHTML = html;
-      })
-      .catch(err => {
-        output.innerHTML = "<p>Error loading template.</p>";
-        console.error("Error loading template:", err);
-      });
-  }    
-  
-  // Load characters into the sidebar
-  function loadCharacters() {
-    const list = document.getElementById("character-list");
-    list.innerHTML = "<li>Loading...</li>";
-  
-    db.ref("characters").once("value")
-      .then(snapshot => {
-        const characters = snapshot.val();
-        list.innerHTML = "";
-  
-        if (!characters) {
-          list.innerHTML = "<li>No characters found.</li>";
-          return;
-        }
-  
-        Object.entries(characters).forEach(([name, data]) => {
-          const characterLi = document.createElement("li");
-          characterLi.textContent = name;
-          characterLi.style.cursor = "pointer";
-  
-          const detail = document.createElement("ul");
-          detail.style.display = "none";
-          detail.style.marginTop = "0.5rem";
-  
-          const skills = data.skills || {};
-          Object.entries(skills).forEach(([stat, skillMap]) => {
-            if (!skillMap) return;
-            const entries = Object.entries(skillMap).filter(([, val]) => val > 0);
-            if (entries.length === 0) return;
-  
-            const statLi = document.createElement("li");
-            const formatted = entries.map(([skill, val]) => `${skill} (level ${val})`);
-            statLi.textContent = `${stat}: ${formatted.join(", ")}`;
-            detail.appendChild(statLi);
-          });
-  
-          characterLi.onclick = () => {
-            detail.style.display = detail.style.display === "none" ? "block" : "none";
-          };
-  
-          list.appendChild(characterLi);
-          if (detail.children.length > 0) list.appendChild(detail);
+      }
+
+      primaryOrder.forEach(stat => buildSection(stat));
+      secondaryOrder.forEach(stat => buildSection(stat));
+
+      output.innerHTML = html;
+    })
+    .catch(err => {
+      output.innerHTML = "<p>Error loading template.</p>";
+      console.error("Error loading template:", err);
+    });
+}
+
+function loadCharacters() {
+  const list = document.getElementById("character-list");
+  list.innerHTML = "<li>Loading...</li>";
+
+  db.ref("characters").once("value")
+    .then(snapshot => {
+      const characters = snapshot.val();
+      list.innerHTML = "";
+
+      if (!characters) {
+        list.innerHTML = "<li>No characters found.</li>";
+        return;
+      }
+
+      Object.entries(characters).forEach(([name, data]) => {
+        const characterLi = document.createElement("li");
+        characterLi.textContent = name;
+        characterLi.style.cursor = "pointer";
+
+        const detail = document.createElement("ul");
+        detail.style.display = "none";
+        detail.style.marginTop = "0.5rem";
+
+        const scores = data.primary_scores || {};
+        const secScores = data.secondary_scores || {};
+        const skills = data.skills || {};
+
+        const allStats = { ...scores, ...secScores };
+        Object.entries(allStats).forEach(([stat, value]) => {
+          const statLi = document.createElement("li");
+          statLi.innerHTML = `<strong>${stat}</strong>: ${value}`;
+          detail.appendChild(statLi);
         });
-      })
-      .catch(err => {
-        list.innerHTML = `<li>Error loading characters: ${err.message}</li>`;
+
+        Object.entries(skills).forEach(([stat, skillMap]) => {
+          if (!skillMap) return;
+          const entries = Object.entries(skillMap).filter(([, val]) => val > 0);
+          if (entries.length === 0) return;
+
+          const statLi = document.createElement("li");
+          const formatted = entries.map(([skill, val]) => `${skill} (level ${val})`);
+          statLi.innerHTML = `<em>${stat}</em>: ${formatted.join(", ")}`;
+          detail.appendChild(statLi);
+        });
+
+        characterLi.onclick = () => {
+          detail.style.display = detail.style.display === "none" ? "block" : "none";
+        };
+
+        list.appendChild(characterLi);
+        if (detail.children.length > 0) list.appendChild(detail);
       });
-  }
-  
-  window.onload = () => {
-    loadTemplate();
+    })
+    .catch(err => {
+      list.innerHTML = `<li>Error loading characters: ${err.message}</li>`;
+    });
+}
+
+function attachCreateForm() {
+  const form = document.getElementById("create-character-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("new-character-name").value.trim();
+    if (!name) return alert("Please enter a character name.");
+
+    const templateRef = db.ref("template");
+    const templateSnapshot = await templateRef.once("value");
+    const template = templateSnapshot.val();
+    if (!template) return alert("No template found in Firebase.");
+
+    template.meta.character_id = name;
+    await db.ref(`characters/${name.toLowerCase()}`).set(template);
+
+    alert(`Character '${name}' created!`);
+    form.reset();
     loadCharacters();
-  };
-  
+  });
+}
+
+window.onload = () => {
+  loadTemplate();
+  loadCharacters();
+  attachCreateForm();
+};
