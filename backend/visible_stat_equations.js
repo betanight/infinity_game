@@ -1,5 +1,4 @@
 const { coreAbbreviations, skillAbbreviations } = require("./abbreviations");
-window.visibleStatEquations = visibleStatEquations;
 
 const visibleStatEquations = {
 
@@ -438,5 +437,12 @@ const visibleStatEquations = {
     }
 
 };
+// For Node.js/CommonJS
+if (typeof module !== "undefined") {
+    module.exports = visibleStatEquations;
+}
 
-module.exports = visibleStatEquations;
+// For Browser
+if (typeof window !== "undefined") {
+    window.visibleStatEquations = visibleStatEquations;
+}
