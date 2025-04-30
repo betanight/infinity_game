@@ -66,3 +66,25 @@ This streamlined format allows for quick GM reference without clutter.
 ---
 
 ## 📁 Folder Structure
+
+backend/
+  └── Contains abbreviation mappings and visible stat functions
+      used in calculating accuracy, damage, and other formulas.
+
+character/
+  └── Backup scripts for creating, deleting, and displaying characters.
+      Kept for reference but no longer used in main workflow.
+
+firebase/
+  └── push_template.js / pull_template.js — tools to modify or log the static skill template.
+      firebaseKey.json — authentication credentials for Firebase access.
+
+frontend/
+  └── index.html / app.js — main dashboard UI and logic for skill selection and character display.
+
+images/
+  └── Screenshots used for README documentation and visual references.
+
+system_database/skills/
+  └── Original Python-based skill tables for each stat.
+      These will eventually be ported to JavaScript to unify the system.
