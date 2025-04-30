@@ -73,10 +73,18 @@ function loadTemplate() {
 function populateSkillDropdowns(skillsData) {
   primaryStats.forEach(stat => {
     const select = document.getElementById(`skill-select-${stat}`);
+    if (!select) {
+      console.warn(`Dropdown for ${stat} not found in DOM.`);
+      return;
+    }
+
     select.innerHTML = `<option value="">-- Choose a ${stat} skill --</option>`;
 
     const skillList = skillsData[stat];
-    if (!skillList) return;
+    if (!skillList) {
+      console.warn(`No skill list found for ${stat} in template.`);
+      return;
+    }
 
     for (const skill in skillList) {
       const option = document.createElement("option");
