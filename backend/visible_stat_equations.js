@@ -1,4 +1,5 @@
 const { coreAbbreviations, skillAbbreviations } = require("./abbreviations");
+window.visibleStatEquations = visibleStatEquations;
 
 const visibleStatEquations = {
 
