@@ -91,8 +91,6 @@ function populateSkillDropdowns(skillsData) {
       option.value = skill;
       option.textContent = skill;
       select.appendChild(option);
-
-      console.log(`Populating ${stat}`, skillsData[stat]); // test
     }
   });
 }
