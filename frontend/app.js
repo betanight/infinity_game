@@ -67,27 +67,17 @@ function loadTemplate() {
     })
     .catch(err => {
       output.innerHTML = "<p>Error loading template or skills.</p>";
-      console.error("Error loading template:", err);
     });
 }
-
 
 function populateSkillDropdowns(skillsData) {
   primaryStats.forEach(stat => {
     const select = document.getElementById(`skill-select-${stat}`);
-    if (!select) {
-      console.warn(`⚠️ Dropdown for ${stat} not found in DOM.`);
-      return;
-    }
-
     const skillList = skillsData[stat];
-    if (!skillList) {
-      console.warn(`⚠️ No skills found for stat: ${stat}`);
-      return;
-    }
+
+    if (!select || !skillList) return;
 
     select.innerHTML = `<option value="">-- Choose a ${stat} skill --</option>`;
-
     for (const skill in skillList) {
       const option = document.createElement("option");
       option.value = skill;
@@ -96,7 +86,6 @@ function populateSkillDropdowns(skillsData) {
     }
   });
 }
-
 
 function attachCreateForm() {
   const form = document.getElementById("create-character-form");
@@ -126,7 +115,6 @@ function attachCreateForm() {
 
       if (!selectedSkill) {
         allChosen = false;
-        console.warn(`No skill selected for: ${stat}`);
       } else {
         template.skills[stat] = {
           [selectedSkill]: 1
@@ -204,6 +192,5 @@ function loadCharacters() {
 
 window.onload = () => {
   loadTemplate();
-  loadCharacters();
   attachCreateForm();
 };
