@@ -3,32 +3,32 @@ const { coreAbbreviations, skillAbbreviations } = require("./abbreviations");
 const visibleStatEquations = {
 
     meleeAttackAccuracy: function (scores, skills, meleeStyle) {
-        let accuracy = 0;
+        let accuracy = 7;
         let primaryStatUsed = "";
 
         if (meleeStyle === "Brutish Melee") {
-            accuracy += (scores[coreAbbreviations.S] || 0) * 3; // Strength
-            accuracy += (skills.wpn || 0) * 3; // Weapon Mastery
-            accuracy += (skills.bf || 0) * 3; // Brute Force
-            accuracy += (skills.bwf || 0) * 2; // Bodyweight Force
+            accuracy += (scores[coreAbbreviations.S] || 0) * 4; // Strength
+            accuracy += (skills.wpn || 0) * 5; // Weapon Mastery
+            accuracy += (skills.bf || 0) * 4; // Brute Force
+            accuracy += (skills.bwf || 0) * 3; // Bodyweight Force
             accuracy += (skills.chg || 0) * 2; // Charge
             accuracy += (skills.gp || 0) * 2; // Grappling
-            accuracy += (skills.tp || 0) * 1; // Tactical Planning
+            accuracy += (skills.tp || 0) * 3; // Tactical Planning
             primaryStatUsed = "S"; // Strength
         } else if (meleeStyle === "Finesse Melee") {
-            accuracy += (scores[coreAbbreviations.D] || 0) * 3; // Dexterity
-            accuracy += (skills.bp || 0) * 3; // Blade Precision
-            accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
+            accuracy += (scores[coreAbbreviations.D] || 0) * 5; // Dexterity
+            accuracy += (skills.bp || 0) * 4; // Blade Precision
+            accuracy += (skills.vp || 0) * 4; // Vital Point Targeting
             accuracy += (skills.wf || 0) * 3; // Weapon Finesse
-            accuracy += (skills.ra || 0) * 2; // Reflex Training
-            accuracy += (skills.ac || 0) * 2; // Acrobatics
+            accuracy += (skills.ra || 0) * 3; // Reflex Training
+            accuracy += (skills.ac || 0) * 3; // Acrobatics
             accuracy += (skills.ev || 0) * 2; // Evasion
             accuracy += (skills.qc || 0) * 2; // Quick Draw
-            accuracy += (skills.tp || 0) * 1; // Tactical Planning
+            accuracy += (skills.tp || 0) * 2; // Tactical Planning
             primaryStatUsed = "D"; // Dexterity
         }
 
-        accuracy += (scores[coreAbbreviations.I] || 0) * 1; // Intelligence
+        accuracy += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
         accuracy += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
         accuracy += (skills.sf || 0) * 2; // Strategic Foresight
         accuracy += (skills.sa || 0) * 2; // Situational Awareness
@@ -42,36 +42,37 @@ const visibleStatEquations = {
     },
 
     rangedAttackAccuracy: function (scores, skills, rangedStyle) {
-        let accuracy = 0;
+        let accuracy = 5;
         let primaryStatUsed = "";
 
         if (rangedStyle === "Brutish Throw") {
-            accuracy += (scores[coreAbbreviations.S] || 0) * 3; // Strength
-            accuracy += (scores[coreAbbreviations.D] || 0) * 1; // Dexterity
-            accuracy += (skills.pt || 0) * 3; // Precision Throwing
-            accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
-            accuracy += (skills.tp || 0) * 2; // Tactical Planning
+            accuracy += (scores[coreAbbreviations.S] || 0) * 4; // Strength
+            accuracy += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity
+            accuracy += (skills.pt || 0) * 5; // Precision Throwing
+            accuracy += (skills.vp || 0) * 3; // Vital Point Targeting
+            accuracy += (skills.tp || 0) * 3; // Tactical Planning
             accuracy += (skills.wpn || 0) * 2; // Weapon Mastery
             primaryStatUsed = "S"; // Strength
         } else if (rangedStyle === "Light Weapon" || rangedStyle === "Bow Type") {
             accuracy += (scores[coreAbbreviations.D] || 0) * 4; // Dexterity
-            accuracy += (skills.as2 || 0) * 3; // Aimed Shot
+            accuracy += (scores[coreAbbreviations.W] || 0) * 2; // Wisdom
+            accuracy += (skills.as2 || 0) * 5; // Aimed Shot
             accuracy += (skills.qc || 0) * 2; // Quick Draw
-            accuracy += (skills.pt || 0) * 3; // Precision Throwing
+            accuracy += (skills.pt || 0) * 4; // Precision Throwing
             accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
             accuracy += (skills.td || 0) * 2; // Trigger Discipline
             accuracy += (skills.wpn || 0) * 2; // Weapon Mastery
             primaryStatUsed = "D"; // Dexterity
         } else if (rangedStyle === "Firearm") {
-            accuracy += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
-            accuracy += (scores[coreAbbreviations.W] || 0) * 1; // Wisdom
-            accuracy += (scores[coreAbbreviations.D] || 0) * 1; // Dexterity
-            accuracy += (skills.td || 0) * 3; // Trigger Discipline
-            accuracy += (skills.as2 || 0) * 2; // Aimed Shot
-            accuracy += (skills.tp || 0) * 2; // Tactical Planning
-            accuracy += (skills.sf || 0) * 2; // Strategic Foresight
-            accuracy += (skills.sa || 0) * 1; // Situational Awareness
-            accuracy += (skills.ins || 0) * 1; // Insight
+            accuracy += (scores[coreAbbreviations.I] || 0) * 3; // Intelligence
+            accuracy += (scores[coreAbbreviations.W] || 0) * 2; // Wisdom
+            accuracy += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity
+            accuracy += (skills.td || 0) * 5; // Trigger Discipline
+            accuracy += (skills.as2 || 0) * 6; // Aimed Shot
+            accuracy += (skills.tp || 0) * 4; // Tactical Planning
+            accuracy += (skills.sf || 0) * 3; // Strategic Foresight
+            accuracy += (skills.sa || 0) * 2; // Situational Awareness
+            accuracy += (skills.ins || 0) * 2; // Insight
             primaryStatUsed = "I"; // Intelligence
         }
 
@@ -82,42 +83,42 @@ const visibleStatEquations = {
     },
 
     energyAttackAccuracy: function (scores, skills, energyType) {
-        let accuracy = 0;
+        let accuracy = 6;
         let primaryStatUsed = "";
 
         if (energyType === "Intelligence") {
-            accuracy += (scores[coreAbbreviations.I] || 0) * 3;
-            accuracy += (skills.arc || 0) * 3;
-            accuracy += (skills.mt || 0) * 3;
-            accuracy += (skills.sf || 0) * 2;
-            accuracy += (skills.tp || 0) * 2;
-            accuracy += (skills.ok || 0) * 2;
-            accuracy += (skills.ins || 0) * 1;
+            accuracy += (scores[coreAbbreviations.I] || 0) * 4; // Intelligence
+            accuracy += (skills.arc || 0) * 3; // Arcana
+            accuracy += (skills.mt || 0) * 3; // Magical Theory
+            accuracy += (skills.sf || 0) * 2; // Strategic Foresight
+            accuracy += (skills.tp || 0) * 2; // Tactical Planning
+            accuracy += (skills.ok || 0) * 2; // Occult Knowledge
+            accuracy += (skills.ins || 0) * 1; // Insight
             primaryStatUsed = "I"; // Intelligence
         } else if (energyType === "Wisdom") {
-            accuracy += (scores[coreAbbreviations.W] || 0) * 3;
-            accuracy += (skills.sa || 0) * 3;
-            accuracy += (skills.ins || 0) * 2;
-            accuracy += (skills.sf || 0) * 2;
-            accuracy += (skills.sp || 0) * 2;
-            accuracy += (skills.rm || 0) * 2;
+            accuracy += (scores[coreAbbreviations.W] || 0) * 4; // Wisdom
+            accuracy += (skills.sa || 0) * 3; // Situational Awareness
+            accuracy += (skills.ins || 0) * 2; // Insight
+            accuracy += (skills.sf || 0) * 2; // Strategic Foresight
+            accuracy += (skills.sp || 0) * 2; // Spiritual Pulse
+            accuracy += (skills.rm || 0) * 2; // Ritual Mastery
             primaryStatUsed = "W"; // Wisdom
         } else if (energyType === "Spirit") {
-            accuracy += (scores[coreAbbreviations.SP] || 0) * 3;
-            accuracy += (scores[coreAbbreviations.I] || 0) * 0.5;
-            accuracy += (skills.ef || 0) * 3;
-            accuracy += (skills.rm || 0) * 3;
-            accuracy += (skills.sc || 0) * 2;
-            accuracy += (skills.sp || 0) * 2;
-            accuracy += (skills.sa || 0) * 1;
+            accuracy += (scores[coreAbbreviations.SP] || 0) * 4; // Spirit
+            accuracy += (scores[coreAbbreviations.I] || 0) * 0.5; // Intelligence
+            accuracy += (skills.ef || 0) * 3; // Energy Flow
+            accuracy += (skills.rm || 0) * 3; // Ritual Mastery
+            accuracy += (skills.sc || 0) * 2; // Spirit Communication
+            accuracy += (skills.sp || 0) * 2; // Spiritual Pulse
+            accuracy += (skills.sa || 0) * 1; // Situational Awareness
             primaryStatUsed = "SP"; // Spirit
         } else if (energyType === "Willpower") {
-            accuracy += (scores[coreAbbreviations.WP] || 0) * 3;
-            accuracy += (scores[coreAbbreviations.W] || 0) * 0.5;
-            accuracy += (skills.sd || 0) * 3;
-            accuracy += (skills.sf || 0) * 3;
-            accuracy += (skills.sa || 0) * 1;
-            accuracy += (skills.arc || 0) * 1;
+            accuracy += (scores[coreAbbreviations.WP] || 0) * 4; // Willpower
+            accuracy += (scores[coreAbbreviations.W] || 0) * 0.5; // Wisdom
+            accuracy += (skills.sd || 0) * 3; // Sheer Determination
+            accuracy += (skills.sf || 0) * 3; // Strategic Foresight
+            accuracy += (skills.sa || 0) * 1; // Situational Awareness
+            accuracy += (skills.arc || 0) * 1; // Arcana
             primaryStatUsed = "WP"; // Willpower
         }
 
@@ -343,6 +344,76 @@ const visibleStatEquations = {
             else {
                 return damage;
             }
+    },
+
+    characterHealth: function (currentHealth, scores, skills) {
+        let maxHealth = 0;
+
+        maxHealth += (scores[coreAbbreviations.C] || 0) * 10;
+
+        maxHealth += (skills.bc || 0) * 2;   // Blood Circulation
+        maxHealth += (skills.cs || 0) * 3;   // Core Strength
+        maxHealth += (skills.end || 0) * 4;  // Endurance
+        maxHealth += (skills.fs || 0) * 5; // Fat Storage
+        maxHealth += (skills.lon || 0) * 3;  // Longevity
+        maxHealth += (skills.nh || 0) * 2;   // Natural Healing
+        maxHealth += (skills.pt2 || 0) * 4;  // Pain Tolerance
+        maxHealth += (skills.pp || 0) * 5;   // Physical Perseverance
+        maxHealth += (skills.togh || 0) * 7; // Toughness
+        maxHealth += (skills.vit || 0) * 10; // Vitality
+
+        const damageTaken = maxHealth - currentHealth;
+        const healthPercent = Math.max(0, currentHealth / maxHealth); // from 0 to 1
+
+        return {
+            maxHealth,
+            damageTaken,
+            healthPercent: Math.round(healthPercent * 100)
+        };
+    },
+    
+    characterArmor: function (scores, skills, armorType) {
+        let armor = 0;
+
+        armor += (scores[coreAbbreviations.C] || 0) * 1;
+
+        armor += (skills.cs || 0) * 2;    // Core Strength
+        armor += (skills.pp || 0) * 1;    // Physical Perseverance
+        armor += (skills.he || 0) * 2;    // Heavy Endurance
+        armor += (skills.togh || 0) * 3;  // Toughness
+        armor += (skills.ir || 0) * 4;    // Impact Resistance
+        armor += (skills.ad || 0) * 1;    // Adaptability
+        armor += (skills.blr || 0) * 1;   // Bludgeoning Resistance
+        armor += (skills.pier || 0) * 1;  // Piercing Resistance
+        armor += (skills.slr || 0) * 1;   // Slashing Resistance
+
+        if (armorType === "Unarmored" || armorType === "Light") {
+            armor += (scores[coreAbbreviations.D] || 0) * 3; // Dexterity
+
+            armor += (skills.ev || 0) * 5;  // Evasion
+            armor += (skills.ra || 0) * 3;  // Reflex Training
+            armor += (skills.ac || 0) * 3;  // Acrobatics
+            armor += (skills.bl || 0) * 2;  // Balance
+            armor += (skills.ms || 0) * 1;  // Missile Snaring
+            armor += (skills.amb || 0) * 1; // Ambidexterity
+            armor += (skills.qc || 0) * 1;  // Quick Draw
+            armor += (skills.wf || 0) * 1;  // Weapon Finesse
+        }
+
+        if (armorType === "Heavy") {
+            armor += (scores[coreAbbreviations.S] || 0) * 3; // Strength
+
+            armor += (skills.pl || 0) * 3;  // Power Lift
+            armor += (skills.mc || 0) * 2;  // Muscle Control
+            armor += (skills.mm || 0) * 2;  // Momentum Management
+            armor += (skills.ps || 0) * 2;  // Postural Strength
+            armor += (skills.sts || 0) * 3; // Stone Stance
+            armor += (skills.as || 0) * 2;  // Anchor Stance
+            armor += (skills.ig || 0) * 1;  // Iron Grip
+            armor += (skills.wpn || 0) * 1; // Weapon Mastery
+        }
+
+        return armor;
     },
 
 };
