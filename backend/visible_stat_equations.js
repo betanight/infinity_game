@@ -1,5 +1,3 @@
-const { coreAbbreviations, skillAbbreviations } = require("./abbreviations");
-
 const visibleStatEquations = {
 
     meleeAttackAccuracy: function (scores, skills, meleeStyle) {

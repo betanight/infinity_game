@@ -238,6 +238,6 @@ const coreAbbreviations = {
     da: "Dominant Aura",
     er: "Emotional Resilience"
   };
-  
-  module.exports = { coreAbbreviations, skillAbbreviations };
-  
+    
+window.coreAbbreviations = { ... };
+window.skillAbbreviations = { ... };
