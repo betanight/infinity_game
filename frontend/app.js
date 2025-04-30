@@ -90,23 +90,23 @@ function attachCreateForm() {
     if (!template) return alert("No template found in Firebase.");
 
     template.meta.character_id = name;
-
-    // Initialize selected skills
     template.skills = {};
 
-    let skipped = false;
+    let allChosen = true;
+
     primaryStats.forEach(stat => {
       const select = document.getElementById(`skill-select-${stat}`);
       const selectedSkill = select.value;
-      if (!selectedSkill) skipped = true;
 
-      template.skills[stat] = {};
-      if (selectedSkill) {
+      if (!selectedSkill) {
+        allChosen = false;
+      } else {
+        template.skills[stat] = {};
         template.skills[stat][selectedSkill] = 1;
       }
     });
 
-    if (skipped) return alert("Please choose a skill for every primary stat.");
+    if (!allChosen) return alert("Please choose a skill for every primary stat.");
 
     await db.ref(`characters/${name.toLowerCase()}`).set(template);
 
