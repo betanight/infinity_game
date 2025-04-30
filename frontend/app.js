@@ -12,17 +12,28 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const primaryStats = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+let primaryStats = [];
 
 function loadTemplate() {
   const output = document.getElementById("template-output");
   output.innerHTML = "<p>Loading...</p>";
 
-  db.ref("template/skills").once("value")
+  db.ref("template").once("value")
+    .then(templateSnapshot => {
+      const template = templateSnapshot.val();
+      if (!template || !template.primary_scores) {
+        output.innerHTML = "<p>Template missing or malformed.</p>";
+        return;
+      }
+
+      primaryStats = Object.keys(template.primary_scores);
+
+      return db.ref("template/skills").once("value");
+    })
     .then(snapshot => {
       const skillsData = snapshot.val();
       if (!skillsData) {
-        output.innerHTML = "<p>No template data found.</p>";
+        output.innerHTML = "<p>No skill data found in template.</p>";
         return;
       }
 
@@ -54,7 +65,7 @@ function loadTemplate() {
       populateSkillDropdowns(skillsData);
     })
     .catch(err => {
-      output.innerHTML = "<p>Error loading template.</p>";
+      output.innerHTML = "<p>Error loading template or skills.</p>";
       console.error("Error loading template:", err);
     });
 }
