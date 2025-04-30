@@ -416,6 +416,26 @@ const visibleStatEquations = {
         return armor;
     },
 
+    characterMovement: function (scores, skills) {
+        let speed = 30;
+
+        speed += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity
+
+        speed += (scores[coreAbbreviations.C] || 0) * 1; // Constitution
+
+        speed += (skills.ac || 0) * 2; // Acrobatics
+        speed += (skills.bl || 0) * 2; // Balance
+        speed += (skills.ev || 0) * 1; // Evasion
+        speed += (skills.ra || 0) * 1; // Reflex Training
+
+        speed += (skills.pp || 0) * 2;  // Physical Perseverance
+
+        // Round down to nearest multiple of 5
+        speed = Math.floor(speed / 5) * 5;
+
+        return speed;
+    }
+
 };
 
 module.exports = visibleStatEquations;
