@@ -20,7 +20,7 @@ This makes the system easier to scale, faster to query, and much more efficient 
 
 ### 🔧 Create Characters
 
-Characters can be created by choosing one skill from each of the six primary ability scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. Each selected skill is initialized at level 1.
+Characters can be created by choosing one skill from each of the six primary ability scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. Each selected skill is initialized at level 0s.
 
 ![Create Character](images/create_character.png)
 
