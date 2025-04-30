@@ -12,6 +12,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+const primaryStats = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+
 function loadTemplate() {
   const output = document.getElementById("template-output");
   output.innerHTML = "<p>Loading...</p>";
@@ -24,10 +26,9 @@ function loadTemplate() {
         return;
       }
 
-      const primaryOrder = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
       const secondaryOrder = ["Instinct", "Presence", "Spirit", "Willpower"];
-
       let html = "";
+
       function buildSection(stat) {
         if (skillsData[stat]) {
           html += `
@@ -45,15 +46,74 @@ function loadTemplate() {
         }
       }
 
-      primaryOrder.forEach(stat => buildSection(stat));
+      primaryStats.forEach(stat => buildSection(stat));
       secondaryOrder.forEach(stat => buildSection(stat));
 
       output.innerHTML = html;
+
+      populateSkillDropdowns(skillsData); // Populate form dropdowns
     })
     .catch(err => {
       output.innerHTML = "<p>Error loading template.</p>";
       console.error("Error loading template:", err);
     });
+}
+
+function populateSkillDropdowns(skillsData) {
+  primaryStats.forEach(stat => {
+    const select = document.getElementById(`skill-select-${stat}`);
+    select.innerHTML = `<option value="">-- Choose a ${stat} skill --</option>`;
+
+    const skillList = skillsData[stat];
+    if (!skillList) return;
+
+    for (const skill in skillList) {
+      const option = document.createElement("option");
+      option.value = skill;
+      option.textContent = skill;
+      select.appendChild(option);
+    }
+  });
+}
+
+function attachCreateForm() {
+  const form = document.getElementById("create-character-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("new-character-name").value.trim();
+    if (!name) return alert("Please enter a character name.");
+
+    const templateRef = db.ref("template");
+    const templateSnapshot = await templateRef.once("value");
+    const template = templateSnapshot.val();
+    if (!template) return alert("No template found in Firebase.");
+
+    template.meta.character_id = name;
+
+    // Initialize selected skills
+    template.skills = {};
+
+    let skipped = false;
+    primaryStats.forEach(stat => {
+      const select = document.getElementById(`skill-select-${stat}`);
+      const selectedSkill = select.value;
+      if (!selectedSkill) skipped = true;
+
+      template.skills[stat] = {};
+      if (selectedSkill) {
+        template.skills[stat][selectedSkill] = 1;
+      }
+    });
+
+    if (skipped) return alert("Please choose a skill for every primary stat.");
+
+    await db.ref(`characters/${name.toLowerCase()}`).set(template);
+
+    alert(`Character '${name}' created!`);
+    form.reset();
+    loadCharacters();
+  });
 }
 
 function loadCharacters() {
@@ -112,27 +172,6 @@ function loadCharacters() {
     .catch(err => {
       list.innerHTML = `<li>Error loading characters: ${err.message}</li>`;
     });
-}
-
-function attachCreateForm() {
-  const form = document.getElementById("create-character-form");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = document.getElementById("new-character-name").value.trim();
-    if (!name) return alert("Please enter a character name.");
-
-    const templateRef = db.ref("template");
-    const templateSnapshot = await templateRef.once("value");
-    const template = templateSnapshot.val();
-    if (!template) return alert("No template found in Firebase.");
-
-    template.meta.character_id = name;
-    await db.ref(`characters/${name.toLowerCase()}`).set(template);
-
-    alert(`Character '${name}' created!`);
-    form.reset();
-    loadCharacters();
-  });
 }
 
 window.onload = () => {
