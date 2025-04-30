@@ -147,34 +147,34 @@ function loadCharacters() {
       }
 
       Object.entries(characters).forEach(([name, data]) => {
+        const skills = data.skills || {};
+
+        let totalPoints = 0;
+        Object.values(skills).forEach(skillGroup => {
+          Object.values(skillGroup).forEach(val => {
+            totalPoints += val;
+          });
+        });
+
         const characterLi = document.createElement("li");
-        characterLi.textContent = name;
+        characterLi.textContent = `${name} (Character level: ${totalPoints})`;
         characterLi.style.cursor = "pointer";
 
         const detail = document.createElement("ul");
         detail.style.display = "none";
         detail.style.marginTop = "0.5rem";
 
-        const scores = data.primary_scores || {};
-        const secScores = data.secondary_scores || {};
-        const skills = data.skills || {};
-
-        const allStats = { ...scores, ...secScores };
-        Object.entries(allStats).forEach(([stat, value]) => {
-          const statLi = document.createElement("li");
-          statLi.innerHTML = `<strong>${stat}</strong>: ${value}`;
-          detail.appendChild(statLi);
-        });
-
         Object.entries(skills).forEach(([stat, skillMap]) => {
           if (!skillMap) return;
+
           const entries = Object.entries(skillMap).filter(([, val]) => val > 0);
           if (entries.length === 0) return;
 
-          const statLi = document.createElement("li");
-          const formatted = entries.map(([skill, val]) => `${skill} (level ${val})`);
-          statLi.innerHTML = `<em>${stat}</em>: ${formatted.join(", ")}`;
-          detail.appendChild(statLi);
+          entries.forEach(([skill, val]) => {
+            const skillLi = document.createElement("li");
+            skillLi.innerHTML = `<em>${stat}</em>: ${skill} (level ${val})`;
+            detail.appendChild(skillLi);
+          });
         });
 
         characterLi.onclick = () => {
