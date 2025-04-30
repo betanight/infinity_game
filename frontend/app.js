@@ -13,6 +13,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let primaryStats = [];
+let skillsData = {};
 
 function loadTemplate() {
   const output = document.getElementById("template-output");
@@ -27,11 +28,10 @@ function loadTemplate() {
       }
 
       primaryStats = Object.keys(template.primary_scores);
-
       return db.ref("template/skills").once("value");
     })
     .then(snapshot => {
-      const skillsData = snapshot.val();
+      skillsData = snapshot.val();
       if (!skillsData) {
         output.innerHTML = "<p>No skill data found in template.</p>";
         return;
@@ -63,6 +63,7 @@ function loadTemplate() {
       output.innerHTML = html;
 
       populateSkillDropdowns(skillsData);
+      loadCharacters();
     })
     .catch(err => {
       output.innerHTML = "<p>Error loading template or skills.</p>";
@@ -70,21 +71,22 @@ function loadTemplate() {
     });
 }
 
+
 function populateSkillDropdowns(skillsData) {
   primaryStats.forEach(stat => {
     const select = document.getElementById(`skill-select-${stat}`);
     if (!select) {
-      console.warn(`Dropdown for ${stat} not found in DOM.`);
+      console.warn(`⚠️ Dropdown for ${stat} not found in DOM.`);
+      return;
+    }
+
+    const skillList = skillsData[stat];
+    if (!skillList) {
+      console.warn(`⚠️ No skills found for stat: ${stat}`);
       return;
     }
 
     select.innerHTML = `<option value="">-- Choose a ${stat} skill --</option>`;
-
-    const skillList = skillsData[stat];
-    if (!skillList) {
-      console.warn(`No skill list found for ${stat} in template.`);
-      return;
-    }
 
     for (const skill in skillList) {
       const option = document.createElement("option");
@@ -94,6 +96,7 @@ function populateSkillDropdowns(skillsData) {
     }
   });
 }
+
 
 function attachCreateForm() {
   const form = document.getElementById("create-character-form");
