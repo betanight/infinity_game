@@ -518,11 +518,10 @@ function loadCharacters() {
             detailSection.appendChild(statLi);
           });
 
-          statsDetails.appendChild(detailSection);
+          detail.appendChild(detailSection); // Directly append to character detail
         });
 
         detail.appendChild(skillsDetails);
-        detail.appendChild(statsDetails);
 
         characterLi.onclick = () => {
           detail.style.display =
