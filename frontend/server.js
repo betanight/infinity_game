@@ -5,7 +5,6 @@ const connectLiveReload = require('connect-livereload');
 const app = express();
 const port = 3000;
 
-// Create a livereload server
 const liveReloadServer = livereload.createServer();
 liveReloadServer.watch(path.join(__dirname, '**/*'));
 
