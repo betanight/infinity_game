@@ -1,3 +1,5 @@
+import visibleStatEquations from './scripts/visible_stat_equations.js';
+
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "infinity-e0f55.firebaseapp.com",

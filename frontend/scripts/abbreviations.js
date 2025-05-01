@@ -1,4 +1,4 @@
-const coreAbbreviations = {
+export const coreAbbreviations = {
     S: "Strength",
     D: "Dexterity",
     C: "Constitution",
@@ -11,7 +11,7 @@ const coreAbbreviations = {
     P: "Presence"
   };
   
-  const skillAbbreviations = {
+export const skillAbbreviations = {
     // Strength skills
     as: "Anchor Stance",
     gs: "Grip Strength",
@@ -238,6 +238,3 @@ const coreAbbreviations = {
     da: "Dominant Aura",
     er: "Emotional Resilience"
   };
-    
-window.coreAbbreviations = { ... };
-window.skillAbbreviations = { ... };

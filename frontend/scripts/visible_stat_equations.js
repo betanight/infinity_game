@@ -1,6 +1,7 @@
-const visibleStatEquations = {
+import {coreAbbreviations} from  "./abbreviations.js";
 
-    meleeAttackAccuracy: function (scores, skills, meleeStyle) {
+export default class VisibleStatEquations {
+    static meleeAttackAccuracy(scores, skills, meleeStyle) {
         let accuracy = 7;
         let primaryStatUsed = "";
 
@@ -37,9 +38,9 @@ const visibleStatEquations = {
             totalAccuracy: accuracy,
             primaryStatUsed: primaryStatUsed
         };
-    },
+    }
 
-    rangedAttackAccuracy: function (scores, skills, rangedStyle) {
+    static rangedAttackAccuracy(scores, skills, rangedStyle) {
         let accuracy = 5;
         let primaryStatUsed = "";
 
@@ -78,9 +79,9 @@ const visibleStatEquations = {
             totalAccuracy: accuracy,
             primaryStatUsed: primaryStatUsed
         };
-    },
+    }
 
-    energyAttackAccuracy: function (scores, skills, energyType) {
+    static energyAttackAccuracy(scores, skills, energyType) {
         let accuracy = 6;
         let primaryStatUsed = "";
 
@@ -124,9 +125,9 @@ const visibleStatEquations = {
             totalAccuracy: accuracy,
             primaryStatUsed: primaryStatUsed
         };
-    },
+    }
 
-    rollingFunction: function (totalAccuracy, primaryScore, cc, D, armorThreshold) {
+    static rollingFunction(totalAccuracy, primaryScore, cc, D, armorThreshold) {
         const minPercent = primaryScore * 1;
         const minRoll = (minPercent / 100) * totalAccuracy;
         const maxRoll = totalAccuracy;
@@ -160,9 +161,9 @@ const visibleStatEquations = {
             criticalChance: totalCriticalChance,
             isHit: isHit
         };
-    },
+    }
     
-    meleeWeaponDamage: function (scores, skills, meleeStyle, elementType) {
+    static meleeWeaponDamage(scores, skills, meleeStyle, elementType) {
         let damage = 0;
 
         if (meleeStyle === "Brutish Melee") {
@@ -219,9 +220,9 @@ const visibleStatEquations = {
         damage += (skills.ol || 0) * 1; // Observation Logging
 
         return damage;
-    },
+    }
 
-    rangedWeaponDamage: function (scores, skills, rangedStyle, elementType) {
+    static rangedWeaponDamage(scores, skills, rangedStyle, elementType) {
         let damage = 0;
 
         if (rangedStyle === "Brutish Ranged") {
@@ -279,9 +280,9 @@ const visibleStatEquations = {
         damage += (skills.ol || 0) * 1; // Observation Logging
 
         return damage;
-    },
+    }
 
-    rawPhysicalDamage: function (scores, skills, elementType) {
+    static rawPhysicalDamage(scores, skills, elementType) {
         let damage = 0;
 
         damage += (scores[coreAbbreviations.S] || 0) * 3; // Strength
@@ -327,9 +328,9 @@ const visibleStatEquations = {
         damage += (skills.ins || 0) * 1; // Insight
 
         return damage;
-    },
+    }
     
-    criticalDamage: function (damage, isCriticalHit) {
+    static criticalDamage(damage, isCriticalHit) {
         let criticalMultiplier = 1.1;
 
         criticalMultiplier += (scores[coreAbbreviations.D] || 0) * 0.1;
@@ -342,9 +343,9 @@ const visibleStatEquations = {
             else {
                 return damage;
             }
-    },
+    }
 
-    characterHealth: function (currentHealth, scores, skills) {
+    static characterHealth(currentHealth, scores, skills) {
         let maxHealth = 0;
 
         maxHealth += (scores[coreAbbreviations.C] || 0) * 10;
@@ -368,9 +369,9 @@ const visibleStatEquations = {
             damageTaken,
             healthPercent: Math.round(healthPercent * 100)
         };
-    },
+    }
     
-    characterArmor: function (scores, skills, armorType) {
+    static characterArmor(scores, skills, armorType) {
         let armor = 0;
 
         armor += (scores[coreAbbreviations.C] || 0) * 1;
@@ -412,9 +413,9 @@ const visibleStatEquations = {
         }
 
         return armor;
-    },
+    }
 
-    characterMovement: function (scores, skills) {
+    static characterMovement(scores, skills) {
         let speed = 30;
 
         speed += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity
@@ -434,14 +435,4 @@ const visibleStatEquations = {
         return speed;
     }
 
-};
-// For Node.js/CommonJS
-if (typeof module !== "undefined") {
-    module.exports = visibleStatEquations;
 }
-
-// For Browser
-if (typeof window !== "undefined") {
-    window.visibleStatEquations = visibleStatEquations;
-}
-console.log("✅ visible_stat_equations.js loaded");

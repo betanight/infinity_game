@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Infinity Game Dashboard</title>
@@ -7,8 +8,7 @@
   <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  <script defer src="../backend/visible_stat_equations.js"></script>
-  <script defer src="app.js"></script>
+  <script type="module" src="app.js"></script>
   <style>
     body {
       margin: 0;
@@ -16,6 +16,7 @@
       background-color: #1e1e1e;
       color: #ffffff;
     }
+
     header {
       background-color: #2c2c2c;
       padding: 1rem 2rem;
@@ -23,11 +24,13 @@
       font-weight: bold;
       border-bottom: 2px solid #444;
     }
+
     main {
       display: flex;
       padding: 2rem;
       gap: 2rem;
     }
+
     section {
       flex: 1;
       background-color: #373535;
@@ -35,19 +38,23 @@
       border-radius: 8px;
       overflow-y: auto;
     }
+
     h2 {
       border-bottom: 1px solid #464545;
       padding-bottom: 0.5rem;
       margin-bottom: 1rem;
     }
+
     ul {
       list-style: none;
       padding: 0;
     }
+
     li {
       padding: 0.5rem 0;
       border-bottom: 1px solid #f68282;
     }
+
     pre {
       background-color: #580f0f;
       padding: 1rem;
@@ -56,10 +63,16 @@
     }
   </style>
   <style>
-    ul { padding-left: 1rem; }
-    li { margin-bottom: 0.25rem; }
-  </style>  
+    ul {
+      padding-left: 1rem;
+    }
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+  </style>
 </head>
+
 <body>
   <header>Infinity Game Dashboard</header>
   <main>
@@ -67,27 +80,26 @@
       <h2>Create Character</h2>
       <form id="create-character-form">
         <input type="text" id="new-character-name" placeholder="Character Name" required><br><br>
-    
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
           <label for="skill-select-Strength">Strength Skill:</label>
           <select id="skill-select-Strength"></select>
-    
+
           <label for="skill-select-Dexterity">Dexterity Skill:</label>
           <select id="skill-select-Dexterity"></select>
-    
+
           <label for="skill-select-Constitution">Constitution Skill:</label>
           <select id="skill-select-Constitution"></select>
-    
+
           <label for="skill-select-Intelligence">Intelligence Skill:</label>
           <select id="skill-select-Intelligence"></select>
-    
+
           <label for="skill-select-Wisdom">Wisdom Skill:</label>
           <select id="skill-select-Wisdom"></select>
-    
+
           <label for="skill-select-Charisma">Charisma Skill:</label>
           <select id="skill-select-Charisma"></select>
         </div>
-    
+
         <br><button type="submit">Create</button>
       </form>
     </section>
@@ -103,4 +115,5 @@
     </section>
   </main>
 </body>
+
 </html>
