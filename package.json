@@ -1,0 +1,8 @@
+{
+    "name": "infinity-game",
+    "version": "1.0.0",
+    "description": "Infinity Game",
+    "scripts": {
+        "dev": "cd frontend && npm run dev"
+    }
+}
