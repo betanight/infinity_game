@@ -43,7 +43,7 @@ Each character displays:
 
 This streamlined format allows for quick GM reference without clutter.
 
-![Character Sheet](images/jason_improved.png)
+![Character Sheet](images/jason_full.png)
 
 ---
 
