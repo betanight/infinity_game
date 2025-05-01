@@ -1,0 +1,18 @@
+{
+    "name": "infinity-game-frontend",
+    "version": "1.0.0",
+    "description": "Infinity Game Frontend",
+    "main": "app.js",
+    "scripts": {
+        "dev": "nodemon --watch . --ext js,html,css --exec 'node server.js'",
+        "start": "node server.js"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.3",
+        "livereload": "^0.9.3",
+        "connect-livereload": "^0.6.1"
+    },
+    "dependencies": {
+        "express": "^4.18.2"
+    }
+}

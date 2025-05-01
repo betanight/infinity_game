@@ -86,3 +86,33 @@ This streamlined format allows for quick GM reference without clutter.
 - `system_database/skills/`  
   Original Python-based skill tables for each stat. These will eventually be migrated to JavaScript to unify the stack.
 
+## Development Setup
+
+### Prerequisites
+- Node.js (v14 or higher)
+- npm (comes with Node.js)
+
+### Installation
+
+1. Install dependencies:
+```bash
+cd frontend
+npm install
+```
+
+2. Start the development server:
+```bash
+npm run dev
+```
+
+The development server will:
+- Start on http://localhost:3000
+- Automatically reload when you make changes to .js, .html, or .css files
+- Automatically refresh your browser when changes are detected
+
+### Development Features
+- Live reload for instant feedback
+- Hot module replacement
+- Static file serving
+- ES Module support
+
