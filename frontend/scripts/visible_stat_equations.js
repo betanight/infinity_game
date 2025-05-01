@@ -1,4 +1,4 @@
-import {coreAbbreviations} from  "./abbreviations.js";
+const visibleStatEquations = {
 
 export default class VisibleStatEquations {
     static meleeAttackAccuracy(scores, skills, meleeStyle) {
