@@ -128,8 +128,7 @@ export default class VisibleStatEquations {
     }
 
     static rollingFunction(totalAccuracy, primaryScore, cc, D, armorThreshold) {
-        const minPercent = primaryScore * 1;
-        const minRoll = (minPercent / 100) * totalAccuracy;
+        const minRoll = Math.max(1, Math.floor(Math.sqrt(totalAccuracy)));
         const maxRoll = totalAccuracy;
 
         // Generate a roll within the accuracy range (minRoll to maxRoll)
@@ -162,6 +161,47 @@ export default class VisibleStatEquations {
             isHit: isHit
         };
     }
+    
+    static rawMeleeAccuracy(scores, skills) {
+    let accuracy = 5;
+
+    const strength = scores[coreAbbreviations.S] || 0;
+    const dexterity = scores[coreAbbreviations.D] || 0;
+
+    if (dexterity > strength) {
+        // Dexterity-focused accuracy (finesse strikes)
+        accuracy += dexterity * 4;
+        accuracy += (skills.ac || 0) * 2;   // Acrobatics
+        accuracy += (skills.vp || 0) * 3;   // Vital Point Targeting
+        accuracy += (skills.ra || 0) * 2;   // Reflex Training
+        accuracy += (skills.amb || 0) * 2;  // Ambidexterity
+        accuracy += (skills.sh || 0) * 1;   // Sleight of Hand
+        accuracy += (skills.bl || 0) * 1;   // Balance
+        accuracy += (skills.qc || 0) * 1;   // Quick Draw
+    } else {
+        // Strength-focused accuracy (brute strikes)
+        accuracy += strength * 4;
+        accuracy += (skills.bf || 0) * 4;   // Brute Force
+        accuracy += (skills.bwf || 0) * 3;  // Bodyweight Force
+        accuracy += (skills.gp || 0) * 2;   // Grappling
+        accuracy += (skills.chg || 0) * 2;  // Charge
+        accuracy += (skills.fc || 0) * 2;   // Fist Conditioning
+        accuracy += (skills.ig || 0) * 2;   // Iron Grip
+        accuracy += (skills.ss || 0) * 1;   // Shoulder Strength
+        accuracy += (skills.mc || 0) * 1;   // Muscle Control
+    }
+
+    // Global accuracy helpers (universal)
+    accuracy += (scores[coreAbbreviations.I] || 0) * 1;
+    accuracy += (scores[coreAbbreviations.W] || 0) * 1;
+    accuracy += (skills.sf || 0) * 2;  // Strategic Foresight
+    accuracy += (skills.tp || 0) * 1;  // Tactical Planning
+    accuracy += (skills.sa || 0) * 1;  // Situational Awareness
+    accuracy += (skills.ins || 0) * 1; // Insight
+    accuracy += (skills.ol || 0) * 1;  // Observation Logging
+
+    return accuracy;
+}
     
     static meleeWeaponDamage(scores, skills, meleeStyle, elementType) {
         let damage = 0;
