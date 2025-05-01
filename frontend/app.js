@@ -184,7 +184,7 @@ function loadCharacters() {
             skillsDetails.appendChild(skillLi);
           });
         });
-
+        
         const statsDetails = document.createElement("details");
         const statsSummary = document.createElement("summary");
         statsSummary.textContent = "Stats";
@@ -206,16 +206,14 @@ function loadCharacters() {
           {
             label: "Core Stats",
             items: [
-              ["Health", visibleStatEquations.characterHealth(null, primary, flatSkills)],
+              (() => {
+                const healthStats = visibleStatEquations.characterHealth(undefined, primary, flatSkills);
+                return ["Health", healthStats.maxHealth];
+              })(),
               ["Movement Speed", visibleStatEquations.characterMovement(primary, flatSkills)],
               ["Armor", visibleStatEquations.characterArmor(primary, flatSkills, armorType)]
             ]
-          },
-          {
-            label: "Raw Damage",
-            items: [
-              ["Raw Physical Damage", visibleStatEquations.rawPhysicalDamage(primary, flatSkills, null)]
-            ]
+
           },
           {
             label: "Melee",
