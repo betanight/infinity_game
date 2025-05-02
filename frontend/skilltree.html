@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Skill Tree</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #0d0d0d;
+      font-family: sans-serif;
+      color: white;
+    }
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      border: 2px solid #555;
+      padding: 20px;
+      z-index: 10;
+      display: none;
+      border-radius: 8px;
+      max-width: 400px;
+    }
+    #popup h3 {
+      margin-top: 0;
+    }
+    #popup button {
+      margin-top: 10px;
+      background-color: #444;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #popup button:hover {
+      background-color: #666;
+    }
+    #popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      z-index: 5;
+    }
+    #tooltip {
+      position: absolute;
+      background-color: #333;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      pointer-events: none;
+      display: none;
+      z-index: 15;
+    }
+    #skill-counter {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 2px solid #666;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="tooltip"></div>
+  <div id="popup-overlay"></div>
+  <div id="popup">
+    <h3 id="popup-title"></h3>
+    <p id="popup-description"></p>
+    <button id="add-point">Add Skill Point</button>
+    <button id="close-popup">Close</button>
+  </div>
+  <div id="skill-counter">0 / 0</div>
+  <script type="module" src="./scripts/skilltree.js"></script>
+</body>
+</html>
