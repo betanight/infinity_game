@@ -22,7 +22,7 @@ export function getBranchCoordinates(centerX, centerY, baseAngle, count, distanc
   return coords;
 }
 
-export function drawSkillNodes(ctx, statNodes, skillsByStat, characterData, skillNodeRadius, skillNodeMap, centerX, centerY)
+export function drawSkillNodes(ctx, statNodes, skillsByStat, characterData, skillNodeRadius, skillNodeMap, centerX, centerY) {
   for (const stat in skillsByStat) {
     const statCenter = statNodes[stat];
     if (!statCenter) continue;
@@ -56,7 +56,7 @@ export function drawSkillNodes(ctx, statNodes, skillsByStat, characterData, skil
       skillNodeMap.push({ x, y, r: skillNodeRadius, stat, skill });
     });
   }
-
+}
 export function getHoveredSkill(mouseX, mouseY, skillNodeMap) {
   for (const node of skillNodeMap) {
     const dx = mouseX - node.x;
