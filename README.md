@@ -47,6 +47,19 @@ This streamlined format allows for quick GM reference without clutter.
 
 ---
 
+### 🔮 Skill Tree Visualization
+
+Each character’s skill tree is represented in a radial format, where each primary and secondary stat is displayed with skill nodes scattered within their respective slices. The skills within each slice are randomly distributed based on their assigned stat, ensuring they are spaced out evenly for visual clarity. 
+
+The selected skills are highlighted in **blue**, and their point values are displayed inside their respective nodes, which helps the GM track the character's progress. Here's an example of **Jason’s skill tree**, showing the selected **Constitution** skill `"Blood Circulation"` with a **1 point** allocation:
+
+![Skill Tree](images/skilltree.png)
+
+In this view:
+- The **blue nodes** represent skills that Jason has allocated points to.
+- The **green nodes** represent skills that Jason hasn't yet selected.
+- The **counter inside the circle** tracks the total skill points Jason has allocated, allowing the GM to quickly reference the character’s current progress in skill growth.
+
 ## 🛠 Technologies Used
 
 - **Firebase Realtime Database** for centralized data
