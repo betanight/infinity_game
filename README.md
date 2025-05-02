@@ -57,7 +57,8 @@ The selected skills are highlighted in **blue**, and their point values are disp
 
 In this view:
 - The **blue nodes** represent skills that Jason has allocated points to.
-- The **green nodes** represent skills that Jason hasn't yet selected.
+- The **green nodes** represent secondary ability scores that Jason has yet to understand.
+- The **white nodes** represent skills that Jason has yet to choose.
 - The **counter inside the circle** tracks the total skill points Jason has allocated, allowing the GM to quickly reference the character’s current progress in skill growth.
 
 ## 🛠 Technologies Used
