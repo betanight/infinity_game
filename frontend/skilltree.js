@@ -1,7 +1,20 @@
 import {
   drawSkillNodes,
-  getHoveredSkill
+  getHoveredSkill,
 } from "./scripts/skilltree_functions.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "infinity-e0f55.firebaseapp.com",
+  databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
+  projectId: "infinity-e0f55",
+  storageBucket: "infinity-e0f55.appspot.com",
+  messagingSenderId: "120929977477",
+  appId: "1:120929977477:web:45dc9989f834f69a9195ec",
+  measurementId: "G-PFFQDN2MHX"
+};
+
+firebase.initializeApp(firebaseConfig);
 
 window.onload = () => {
   const canvas = document.getElementById("skill-canvas");
@@ -13,8 +26,8 @@ window.onload = () => {
   const tooltip = document.getElementById("tooltip");
   const counter = document.getElementById("skill-counter");
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  // canvas.width = window.innerWidth;
+  // canvas.height = window.innerHeight;
 
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
@@ -29,68 +42,87 @@ window.onload = () => {
   let used = 0;
   let total = 0;
 
-  const statOrder = [
-    "Strength", "Dexterity", "Constitution",
-    "Intelligence", "Wisdom", "Charisma",
-    "Willpower", "Spirit", "Instinct", "Presence"
-  ];
-
-  const topStats = statOrder.slice(0, 6);
-  const bottomStats = statOrder.slice(6, 10);
+  const primaryStats = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+  const secondaryStats = ["Willpower", "Spirit", "Instinct", "Presence"];
 
   function layoutStatNodes() {
-    const angleStepTop = Math.PI / (topStats.length - 1);
-    const angleStepBottom = Math.PI / (bottomStats.length - 1);
+  statNodes = {};
 
-    topStats.forEach((stat, i) => {
-      const angle = Math.PI - (i * angleStepTop);
-      statNodes[stat] = {
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-        angle
-      };
-    });
+  const orderedStats = [
+    "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom",
+    "Charisma", "Willpower", "Spirit", "Instinct", "Presence"
+  ];
 
-    bottomStats.forEach((stat, i) => {
-      const angle = Math.PI + (i * angleStepBottom);
-      statNodes[stat] = {
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-        angle
-      };
-    });
-  }
+  orderedStats.forEach((stat, i) => {
+    const angleDeg = 180 + (i * 36);
+    const angleRad = (angleDeg % 360) * Math.PI / 180;
+    statNodes[stat] = {
+      x: centerX + radius * Math.cos(angleRad),
+      y: centerY + radius * Math.sin(angleRad),
+      angle: angleRad
+    };
+  });
+}
 
   function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = "24px Arial";
+  for (let i = 0; i < 10; i++) {
+    const angle = ((i + 0.5) * (2 * Math.PI)) / 10;
+    const x = centerX + radius * 2.6 * Math.cos(angle);
+    const y = centerY + radius * 2.6 * Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = "#444";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  for (const stat in statNodes) {
+    const node = statNodes[stat];
+
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+    ctx.fillStyle = primaryStats.includes(stat) ? "#3e8ed0" : "#47a447";
+    ctx.fill();
+
     ctx.fillStyle = "white";
+    ctx.font = "12px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(`${used} / ${total}`, centerX, centerY);
+    ctx.fillText(stat, node.x, node.y - 28);
 
-    for (const stat in statNodes) {
-      const node = statNodes[stat];
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
-      ctx.fillStyle = topStats.includes(stat) ? "#3e8ed0" : "#47a447";
-      ctx.fill();
-
-      ctx.fillStyle = "white";
-      ctx.font = "12px Arial";
-      ctx.fillText(stat, node.x, node.y + 4);
-
-      const skillGroup = characterData.skills?.[stat];
-      if (skillGroup) {
-        const skillPoints = Object.values(skillGroup).reduce((sum, val) => sum + val, 0);
-        ctx.font = "bold 14px Arial";
-        ctx.fillText(skillPoints, node.x, node.y - 25);
-      }
+    const skillGroup = characterData.skills?.[stat];
+    let skillPoints = 0;
+    if (skillGroup) {
+      skillPoints = Object.values(skillGroup).reduce((sum, val) => sum + val, 0);
     }
 
-    skillNodeMap = [];
-    drawSkillNodes(ctx, statNodes, skillsByStat, skillNodeRadius, skillNodeMap);
+    ctx.font = "bold 14px Arial";
+    ctx.fillStyle = primaryStats.includes(stat) ? "white" : "#888";
+    ctx.fillText(skillPoints, node.x, node.y + 5);
   }
+
+  const boxWidth = 60;
+  const boxHeight = 30;
+
+  ctx.beginPath();
+  ctx.roundRect(centerX - boxWidth / 2, centerY - boxHeight / 2, boxWidth, boxHeight, 6);
+  ctx.fillStyle = "#111";
+  ctx.fill();
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.font = "bold 16px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText(`${used} / ${total}`, centerX, centerY + 5);
+
+  skillNodeMap = [];
+  drawSkillNodes(ctx, statNodes, skillsByStat, skillNodeRadius, skillNodeMap);
+}
 
   function showPopup(skillObj) {
     const stat = skillObj.stat;
@@ -106,23 +138,21 @@ window.onload = () => {
   }
 
   function updateCounter() {
-    used = 0;
-    total = 0;
+  used = 0;
+  total = 0;
 
-    if (characterData.skills) {
-      for (const stat in characterData.skills) {
-        for (const val of Object.values(characterData.skills[stat])) {
-          used += val;
-        }
+  if (characterData.skills) {
+    for (const stat in characterData.skills) {
+      for (const val of Object.values(characterData.skills[stat])) {
+        used += val;
       }
     }
-
-    if (characterData.primary_scores) {
-      total = Object.values(characterData.primary_scores).reduce((a, b) => a + b, 0);
-    }
-
-    counter.textContent = `${used} / ${total}`;
   }
+
+  if (characterData.primary_scores) {
+    total = Object.values(characterData.primary_scores).reduce((a, b) => a + b, 0);
+  }
+}
 
   canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();

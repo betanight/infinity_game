@@ -23,32 +23,25 @@ export function getBranchCoordinates(centerX, centerY, baseAngle, count, distanc
 }
 
 export function drawSkillNodes(ctx, statNodes, skillsByStat, skillNodeRadius, skillNodeMap) {
-  for (const stat in statNodes) {
-    const center = statNodes[stat];
-    const skills = Object.keys(skillsByStat[stat] || {});
-    const coords = getBranchCoordinates(center.x, center.y, center.angle, skills.length, 100);
+  for (const stat in skillsByStat) {
+    const statCenter = statNodes[stat];
+    if (!statCenter) continue;
 
-    coords.forEach((coord, idx) => {
-      const skillName = skills[idx];
-      if (!skillName) return;
+    const skillNames = Object.keys(skillsByStat[stat]);
+    const scatteredPositions = getScatteredSkillPositions(
+      statCenter.angle,
+      skillNames.length
+    );
 
-      skillNodeMap.push({
-        stat,
-        skill: skillName,
-        x: coord.x,
-        y: coord.y,
-        r: skillNodeRadius
-      });
+    skillNames.forEach((skill, i) => {
+      const { x, y } = scatteredPositions[i];
 
       ctx.beginPath();
-      ctx.arc(coord.x, coord.y, skillNodeRadius, 0, Math.PI * 2);
-      ctx.fillStyle = "#999";
+      ctx.arc(x, y, skillNodeRadius, 0, Math.PI * 2);
+      ctx.fillStyle = "lightgray";
       ctx.fill();
 
-      ctx.font = "10px Arial";
-      ctx.fillStyle = "#fff";
-      ctx.textAlign = "center";
-      ctx.fillText(skillName, coord.x, coord.y - skillNodeRadius - 2);
+      skillNodeMap.push({ x, y, stat, skill });
     });
   }
 }
@@ -57,10 +50,48 @@ export function getHoveredSkill(mouseX, mouseY, skillNodeMap) {
   for (const node of skillNodeMap) {
     const dx = mouseX - node.x;
     const dy = mouseY - node.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist <= node.r) {
+    if (Math.sqrt(dx * dx + dy * dy) <= node.r) {
       return node;
     }
   }
   return null;
+}
+
+export function getScatteredSkillPositions(statAngle, skillCount, innerRadius = 150, outerRadius = 400) {
+  const positions = [];
+  const sliceWidth = (Math.PI * 2) / 10;
+  const startAngle = statAngle - sliceWidth / 2;
+  const endAngle = statAngle + sliceWidth / 2;
+  const minDistance = 40;
+
+  for (let i = 0; i < skillCount; i++) {
+    let tries = 0;
+    let placed = false;
+
+    while (!placed && tries < 100) {
+      const angle = startAngle + Math.random() * (endAngle - startAngle);
+      const radius = innerRadius + Math.random() * (outerRadius - innerRadius);
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+
+      let valid = true;
+      for (const pos of positions) {
+        const dx = x - pos.x;
+        const dy = y - pos.y;
+        if (Math.sqrt(dx * dx + dy * dy) < minDistance) {
+          valid = false;
+          break;
+        }
+      }
+
+      if (valid) {
+        positions.push({ x, y, angle });
+        placed = true;
+      }
+
+      tries++;
+    }
+  }
+
+  return positions;
 }
