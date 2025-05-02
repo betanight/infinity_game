@@ -173,7 +173,7 @@ function loadCharacters() {
 
         const skillsDetails = document.createElement("details");
         const skillsSummary = document.createElement("summary");
-        skillsSummary.textContent = "Skills";
+        skillsSummary.innerHTML = `<a href="skilltree.html?character=${name}" style="color: inherit; text-decoration: underline;">Skills</a>`;
         skillsDetails.appendChild(skillsSummary);
 
         Object.entries(skills).forEach(([stat, skillMap]) => {
