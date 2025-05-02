@@ -1,166 +1,190 @@
-// Firebase-integrated skill tree with popup interactions
+import {
+  drawSkillNodes,
+  getHoveredSkill
+} from "./scripts/skilltree_functions.js";
 
-import "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js";
-import "https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js";
+window.onload = () => {
+  const canvas = document.getElementById("skill-canvas");
+  const ctx = canvas.getContext("2d");
+  const popup = document.getElementById("popup");
+  const popupText = document.getElementById("popup-text");
+  const addPointBtn = document.getElementById("add-point");
+  const closePopupBtn = document.getElementById("close-popup");
+  const tooltip = document.getElementById("tooltip");
+  const counter = document.getElementById("skill-counter");
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "infinity-e0f55.firebaseapp.com",
-  databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
-  projectId: "infinity-e0f55",
-  storageBucket: "infinity-e0f55.appspot.com",
-  messagingSenderId: "120929977477",
-  appId: "1:120929977477:web:45dc9989f834f69a9195ec",
-  measurementId: "G-PFFQDN2MHX"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const tooltip = document.getElementById("tooltip");
-const popup = document.getElementById("popup");
-const popupOverlay = document.getElementById("popup-overlay");
-const popupTitle = document.getElementById("popup-title");
-const popupDescription = document.getElementById("popup-description");
-const addPointBtn = document.getElementById("add-point");
-const closePopupBtn = document.getElementById("close-popup");
-const skillCounter = document.getElementById("skill-counter");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  draw();
-});
 
-const primaryStats = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
-const secondaryStats = ["Willpower", "Spirit", "Instinct", "Presence"];
-const allStats = [...primaryStats, ...secondaryStats];
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 250;
+  const skillNodeRadius = 10;
 
-const centerX = () => canvas.width / 2;
-const centerY = () => canvas.height / 2;
-const circleRadius = 250;
-const nodeRadius = 18;
-
-const nodes = [];
-let skillsByStat = {};
-let characterSkills = {};
-
-function layoutNodes() {
-  nodes.length = 0;
-  const total = allStats.length;
-  for (let i = 0; i < total; i++) {
-    const angle = (2 * Math.PI * i) / total - Math.PI / 2;
-    const x = centerX() + circleRadius * Math.cos(angle);
-    const y = centerY() + circleRadius * Math.sin(angle);
-    nodes.push({ name: allStats[i], x, y, type: i < 6 ? "primary" : "secondary" });
-  }
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  layoutNodes();
-
-  for (const node of nodes) {
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, nodeRadius, 0, 2 * Math.PI);
-    ctx.fillStyle = node.type === "primary" ? "#68f" : "#6f8";
-    ctx.fill();
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    ctx.fillStyle = "white";
-    ctx.font = "12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(node.name, node.x, node.y - nodeRadius - 8);
-
-    // Stat-level skill usage counter
-    const statSkills = characterSkills[node.name] || {};
-    const count = Object.values(statSkills).reduce((a, b) => a + b, 0);
-    if (count > 0) {
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 13px sans-serif";
-      ctx.fillText(count, node.x, node.y + 4);
-    }
-  }
-
-  console.log("Rendered nodes:", nodes.map(n => n.name));
-}
-
-draw();
-
-canvas.addEventListener("mousemove", (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  tooltip.style.display = "none";
-});
-
-canvas.addEventListener("click", (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-
-  for (const node of nodes) {
-    const dx = mx - node.x;
-    const dy = my - node.y;
-    if (dx * dx + dy * dy <= nodeRadius * nodeRadius) {
-      if (skillsByStat[node.name]) openPopup(node);
-      break;
-    }
-  }
-});
-
-function openPopup(node) {
-  popupTitle.textContent = node.name;
-  const skills = skillsByStat[node.name];
-  if (skills) {
-    popupDescription.innerHTML = `<div style="max-height: 300px; overflow-y: auto;">` +
-      Object.entries(skills)
-        .map(([skill, data]) => `<strong>${skill}</strong>: ${data.description}`)
-        .join("<br><br>") + "</div>";
-  } else {
-    popupDescription.textContent = "No skills found for this stat.";
-  }
-  popupOverlay.style.display = "block";
-  popup.style.display = "block";
-}
-
-closePopupBtn.onclick = () => {
-  popup.style.display = "none";
-  popupOverlay.style.display = "none";
-};
-
-function getCharacterName() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("character")?.toLowerCase();
-}
-
-async function loadSkillsFromFirebase() {
-  const snapshot = await firebase.database().ref("template/skills").once("value");
-  skillsByStat = snapshot.val() || {};
-  await loadCharacterSkills();
-  draw();
-}
-
-async function loadCharacterSkills() {
-  const charName = getCharacterName();
-  if (!charName) return;
-  const snap = await firebase.database().ref(`characters/${charName}/skills`).once("value");
-  characterSkills = snap.val() || {};
-
+  let skillNodeMap = [];
+  let statNodes = {};
+  let characterName = "";
+  let characterData = {};
+  let skillsByStat = {};
   let used = 0;
-  Object.values(characterSkills).forEach(group => {
-    Object.values(group).forEach(v => used += v);
+  let total = 0;
+
+  const statOrder = [
+    "Strength", "Dexterity", "Constitution",
+    "Intelligence", "Wisdom", "Charisma",
+    "Willpower", "Spirit", "Instinct", "Presence"
+  ];
+
+  const topStats = statOrder.slice(0, 6);
+  const bottomStats = statOrder.slice(6, 10);
+
+  function layoutStatNodes() {
+    const angleStepTop = Math.PI / (topStats.length - 1);
+    const angleStepBottom = Math.PI / (bottomStats.length - 1);
+
+    topStats.forEach((stat, i) => {
+      const angle = Math.PI - (i * angleStepTop);
+      statNodes[stat] = {
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+        angle
+      };
+    });
+
+    bottomStats.forEach((stat, i) => {
+      const angle = Math.PI + (i * angleStepBottom);
+      statNodes[stat] = {
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+        angle
+      };
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = "24px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(`${used} / ${total}`, centerX, centerY);
+
+    for (const stat in statNodes) {
+      const node = statNodes[stat];
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = topStats.includes(stat) ? "#3e8ed0" : "#47a447";
+      ctx.fill();
+
+      ctx.fillStyle = "white";
+      ctx.font = "12px Arial";
+      ctx.fillText(stat, node.x, node.y + 4);
+
+      const skillGroup = characterData.skills?.[stat];
+      if (skillGroup) {
+        const skillPoints = Object.values(skillGroup).reduce((sum, val) => sum + val, 0);
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(skillPoints, node.x, node.y - 25);
+      }
+    }
+
+    skillNodeMap = [];
+    drawSkillNodes(ctx, statNodes, skillsByStat, skillNodeRadius, skillNodeMap);
+  }
+
+  function showPopup(skillObj) {
+    const stat = skillObj.stat;
+    const skill = skillObj.skill;
+    const desc = skillsByStat[stat]?.[skill]?.description || "No description.";
+
+    popupText.textContent = `${skill}: ${desc}`;
+    popup.style.display = "block";
+  }
+
+  function hidePopup() {
+    popup.style.display = "none";
+  }
+
+  function updateCounter() {
+    used = 0;
+    total = 0;
+
+    if (characterData.skills) {
+      for (const stat in characterData.skills) {
+        for (const val of Object.values(characterData.skills[stat])) {
+          used += val;
+        }
+      }
+    }
+
+    if (characterData.primary_scores) {
+      total = Object.values(characterData.primary_scores).reduce((a, b) => a + b, 0);
+    }
+
+    counter.textContent = `${used} / ${total}`;
+  }
+
+  canvas.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const hovered = getHoveredSkill(x, y, skillNodeMap);
+
+    if (hovered) {
+      tooltip.style.display = "block";
+      tooltip.style.left = `${x + 15}px`;
+      tooltip.style.top = `${y + 15}px`;
+      tooltip.textContent = hovered.skill;
+      canvas.style.cursor = "pointer";
+    } else {
+      tooltip.style.display = "none";
+      canvas.style.cursor = "default";
+    }
   });
 
-  const total = used;
-  skillCounter.textContent = `${used} / ${total}`;
-}
+  canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-loadSkillsFromFirebase();
+    const hovered = getHoveredSkill(x, y, skillNodeMap);
+    if (hovered) {
+      showPopup(hovered);
+    }
+  });
+
+  closePopupBtn.onclick = hidePopup;
+
+  function getCharacterNameFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("character");
+  }
+
+  function fetchData() {
+    characterName = getCharacterNameFromURL();
+    if (!characterName) return;
+
+    const db = firebase.database();
+    const charRef = db.ref(`characters/${characterName.toLowerCase()}`);
+    const skillRef = db.ref("template/skills");
+
+    Promise.all([charRef.once("value"), skillRef.once("value")])
+      .then(([charSnap, skillSnap]) => {
+        characterData = charSnap.val() || {};
+        skillsByStat = skillSnap.val() || {};
+        updateCounter();
+        layoutStatNodes();
+        draw();
+      });
+  }
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    layoutStatNodes();
+    draw();
+  });
+
+  fetchData();
+};
