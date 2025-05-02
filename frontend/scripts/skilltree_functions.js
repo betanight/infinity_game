@@ -56,7 +56,6 @@ export function drawSkillNodes(ctx, statNodes, skillsByStat, characterData, skil
       skillNodeMap.push({ x, y, r: skillNodeRadius, stat, skill });
     });
   }
-}
 
 export function getHoveredSkill(mouseX, mouseY, skillNodeMap) {
   for (const node of skillNodeMap) {
