@@ -26,9 +26,6 @@ window.onload = () => {
   const tooltip = document.getElementById("tooltip");
   const counter = document.getElementById("skill-counter");
 
-  // canvas.width = window.innerWidth;
-  // canvas.height = window.innerHeight;
-
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
   const radius = 250;
@@ -69,8 +66,8 @@ window.onload = () => {
 
   for (let i = 0; i < 10; i++) {
     const angle = ((i + 0.5) * (2 * Math.PI)) / 10;
-    const x = centerX + radius * 2.6 * Math.cos(angle);
-    const y = centerY + radius * 2.6 * Math.sin(angle);
+    const x = centerX + 2000 * Math.cos(angle);
+    const y = centerY + 2000 * Math.sin(angle);
 
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
@@ -121,7 +118,7 @@ window.onload = () => {
   ctx.fillText(`${used} / ${total}`, centerX, centerY + 5);
 
   skillNodeMap = [];
-  drawSkillNodes(ctx, statNodes, skillsByStat, skillNodeRadius, skillNodeMap);
+  drawSkillNodes(ctx, statNodes, skillsByStat, characterData, skillNodeRadius, skillNodeMap, centerX, centerY);
 }
 
   function showPopup(skillObj) {
@@ -200,13 +197,14 @@ window.onload = () => {
     const skillRef = db.ref("template/skills");
 
     Promise.all([charRef.once("value"), skillRef.once("value")])
-      .then(([charSnap, skillSnap]) => {
-        characterData = charSnap.val() || {};
-        skillsByStat = skillSnap.val() || {};
-        updateCounter();
-        layoutStatNodes();
-        draw();
-      });
+  .then(([charSnap, skillSnap]) => {
+    characterData = charSnap.val() || {};
+    skillsByStat = skillSnap.val() || {};
+    updateCounter();
+    layoutStatNodes();
+    draw(); // ← only call draw after all data is loaded
+  });
+
   }
 
   window.addEventListener("resize", () => {
