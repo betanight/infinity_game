@@ -4,5 +4,8 @@
     "description": "Infinity Game",
     "scripts": {
         "dev": "cd frontend && npm run dev"
+    },
+    "dependencies": {
+        "treeviz": "^3.0.1"
     }
 }
