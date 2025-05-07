@@ -6,6 +6,8 @@ html, body {
 svg {
   width: 100vw;
   height: 100vh;
+  display: block;
+  margin: auto;
 }
 text {
   fill: white;
