@@ -1,23 +1,47 @@
 (async () => {
-  // fetch data and render
-  const resp = await fetch(
-    "https://raw.githubusercontent.com/erikbrinkman/d3-dag/main/examples/grafo.json"
-  );
-  const data = await resp.json();
-  const dag = d3.dagStratify()(data);
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "infinity-e0f55.firebaseapp.com",
+    databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
+    projectId: "infinity-e0f55",
+    storageBucket: "infinity-e0f55.appspot.com",
+    messagingSenderId: "120929977477",
+    appId: "1:120929977477:web:45dc9989f834f69a9195ec",
+    measurementId: "G-PFFQDN2MHX"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const snapshot = await db.ref("template/skills").once("value");
+  const skillData = snapshot.val();
+
+  const nodes = [];
+  for (const stat in skillData) {
+    nodes.push({ id: stat, parentIds: [], title: stat });
+    const skillGroup = skillData[stat];
+    for (const skill in skillGroup) {
+      nodes.push({
+        id: `${stat}-${skill}`,
+        parentIds: [stat],
+        title: skill
+      });
+    }
+  }
+
+  const dag = d3dag.dagStratify()(nodes);
   const nodeRadius = 20;
-  const layout = d3
-    .sugiyama() // base layout
-    .decross(d3.decrossOpt()) // minimize number of crossings
-    .nodeSize((node) => [(node ? 3.6 : 0.25) * nodeRadius, 3 * nodeRadius]); // set node size instead of constraining to fit
+
+  const layout = d3dag.sugiyama()
+    .decross(d3dag.decrossTwoLayer())
+    .nodeSize(() => [2 * Math.PI / dag.size(), 100])
+    .coord(d3dag.coordRadial());
+
   const { width, height } = layout(dag);
 
-  // --------------------------------
-  // This code only handles rendering
-  // --------------------------------
   const svgSelection = d3.select("svg");
-  svgSelection.attr("viewBox", [0, 0, width, height].join(" "));
-  const defs = svgSelection.append("defs"); // For gradients
+  svgSelection.attr("viewBox", [-width / 2, -height / 2, width, height].join(" "));
+  const defs = svgSelection.append("defs");
 
   const steps = dag.size();
   const interp = d3.interpolateRainbow;
@@ -26,67 +50,49 @@
     colorMap.set(node.data.id, interp(i / steps));
   }
 
-  // How to draw edges
-  const line = d3
-    .line()
+  const line = d3.lineRadial()
     .curve(d3.curveCatmullRom)
-    .x((d) => d.x)
-    .y((d) => d.y);
+    .angle(d => d.x)
+    .radius(d => d.y);
 
-  // Plot edges
-  svgSelection
-    .append("g")
+  svgSelection.append("g")
     .selectAll("path")
     .data(dag.links())
     .enter()
     .append("path")
     .attr("d", ({ points }) => line(points))
     .attr("fill", "none")
-    .attr("stroke-width", 3)
+    .attr("stroke-width", 2)
     .attr("stroke", ({ source, target }) => {
-      // encodeURIComponents for spaces, hope id doesn't have a `--` in it
       const gradId = encodeURIComponent(`${source.data.id}--${target.data.id}`);
-      const grad = defs
-        .append("linearGradient")
+      const grad = defs.append("linearGradient")
         .attr("id", gradId)
         .attr("gradientUnits", "userSpaceOnUse")
         .attr("x1", source.x)
         .attr("x2", target.x)
         .attr("y1", source.y)
         .attr("y2", target.y);
-      grad
-        .append("stop")
-        .attr("offset", "0%")
-        .attr("stop-color", colorMap.get(source.data.id));
-      grad
-        .append("stop")
-        .attr("offset", "100%")
-        .attr("stop-color", colorMap.get(target.data.id));
+      grad.append("stop").attr("offset", "0%").attr("stop-color", colorMap.get(source.data.id));
+      grad.append("stop").attr("offset", "100%").attr("stop-color", colorMap.get(target.data.id));
       return `url(#${gradId})`;
     });
 
-  // Select nodes
-  const nodes = svgSelection
-    .append("g")
+  const nodesGroup = svgSelection.append("g")
     .selectAll("g")
     .data(dag.descendants())
     .enter()
     .append("g")
-    .attr("transform", ({ x, y }) => `translate(${x}, ${y})`);
+    .attr("transform", d => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0)`);
 
-  // Plot node circles
-  nodes
-    .append("circle")
+  nodesGroup.append("circle")
     .attr("r", nodeRadius)
-    .attr("fill", (n) => colorMap.get(n.data.id));
+    .attr("fill", d => colorMap.get(d.data.id));
 
-  // Add text to nodes
-  nodes
-    .append("text")
-    .text((d) => d.data.id)
-    .attr("font-weight", "bold")
-    .attr("font-family", "sans-serif")
+  nodesGroup.append("text")
+    .text(d => d.data.title)
+    .attr("dy", "0.35em")
+    .attr("x", 0)
     .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
+    .attr("transform", d => (d.x > Math.PI ? "rotate(180)" : null))
     .attr("fill", "white");
 })();
