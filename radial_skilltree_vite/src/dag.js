@@ -1,22 +1,27 @@
+import * as d3 from 'd3';
+import * as d3dag from 'd3-dag';
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, get } from 'firebase/database';
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "infinity-e0f55.firebaseapp.com",
+  databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
+  projectId: "infinity-e0f55",
+  storageBucket: "infinity-e0f55.appspot.com",
+  messagingSenderId: "120929977477",
+  appId: "1:120929977477:web:45dc9989f834f69a9195ec",
+  measurementId: "G-PFFQDN2MHX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 (async () => {
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "infinity-e0f55.firebaseapp.com",
-    databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
-    projectId: "infinity-e0f55",
-    storageBucket: "infinity-e0f55.appspot.com",
-    messagingSenderId: "120929977477",
-    appId: "1:120929977477:web:45dc9989f834f69a9195ec",
-    measurementId: "G-PFFQDN2MHX"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  const snapshot = await db.ref("template/skills").once("value");
+  const snapshot = await get(ref(db, 'template/skills'));
   const skillData = snapshot.val();
-
   const nodes = [];
+
   for (const stat in skillData) {
     nodes.push({ id: stat, parentIds: [], title: stat });
     const skillGroup = skillData[stat];
@@ -38,10 +43,9 @@
     .coord(d3dag.coordRadial());
 
   const { width, height } = layout(dag);
-
-  const svgSelection = d3.select("svg");
-  svgSelection.attr("viewBox", [-width / 2, -height / 2, width, height].join(" "));
-  const defs = svgSelection.append("defs");
+  const svg = d3.select("svg")
+    .attr("viewBox", [-width / 2, -height / 2, width, height].join(" "));
+  const defs = svg.append("defs");
 
   const steps = dag.size();
   const interp = d3.interpolateRainbow;
@@ -55,7 +59,7 @@
     .angle(d => d.x)
     .radius(d => d.y);
 
-  svgSelection.append("g")
+  svg.append("g")
     .selectAll("path")
     .data(dag.links())
     .enter()
@@ -77,7 +81,7 @@
       return `url(#${gradId})`;
     });
 
-  const nodesGroup = svgSelection.append("g")
+  const nodesGroup = svg.append("g")
     .selectAll("g")
     .data(dag.descendants())
     .enter()
