@@ -1,10 +1,12 @@
-import * as d3 from "d3";
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm";
 
 export async function renderSkillTree(characterData) {
   const response = await fetch(
-    "https://infinity-e0f55-default-rtdb.firebaseio.com/template/skills.json"
+    "https://infinity-e0f55-default-rtdb.firebaseio.com/template.json"
   );
-  const skillData = await response.json();
+  const template = await response.json();
+  const skillData = template.skills;
+  console.log("Fetched skillData:", skillData);
 
   const statList = [
     "Constitution",
@@ -102,7 +104,10 @@ export async function renderSkillTree(characterData) {
     .attr("y1", (d) => nodes.find((n) => n.id === d.source).y)
     .attr("x2", (d) => nodes.find((n) => n.id === d.target).x)
     .attr("y2", (d) => nodes.find((n) => n.id === d.target).y)
-    .attr("stroke", (d) => color(d.source))
+    .attr("stroke", (d) => {
+      const targetNode = nodes.find((n) => n.id === d.target);
+      return targetNode.value > 0 ? color(d.source) : "#666";
+    })
     .attr("stroke-width", 1);
 
   const nodeGroup = container
@@ -116,7 +121,10 @@ export async function renderSkillTree(characterData) {
   nodeGroup
     .append("circle")
     .attr("r", (d) => (d.isStat ? 20 : 5.5))
-    .attr("fill", (d) => (d.value > 0 ? "#3e8ed0" : color(d.stat || d.id)))
+    .attr("fill", (d) => {
+      if (d.isStat) return color(d.id); // Stat nodes keep color
+      return d.value > 0 ? color(d.stat) : "#666"; // Skill nodes
+    })
     .on("mouseover", function (event, d) {
       if (!d.isStat) {
         const tooltip = d3
@@ -173,4 +181,43 @@ export async function renderSkillTree(characterData) {
     const ty = height / 2 - avgY * scale;
     svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   }, 100);
+
+  // Calculate total skill points
+  let totalPoints = 0;
+  Object.values(characterData.skills || {}).forEach((skillGroup) => {
+    Object.values(skillGroup).forEach((val) => {
+      totalPoints += val;
+    });
+  });
+
+  // Display name and points at center
+  container
+    .append("text")
+    .attr("x", width / 2)
+    .attr("y", height / 2 - 20)
+    .attr("text-anchor", "middle")
+    .attr("fill", "white")
+    .attr("font-size", "24px")
+    .attr("font-weight", "bold")
+    .text(characterData.meta?.character_id || "Unnamed Character");
+
+  container
+    .append("rect")
+    .attr("x", width / 2 - 30)
+    .attr("y", height / 2 + 10)
+    .attr("width", 60)
+    .attr("height", 30)
+    .attr("fill", "#222")
+    .attr("stroke", "white")
+    .attr("rx", 5)
+    .attr("ry", 5);
+
+  container
+    .append("text")
+    .attr("x", width / 2)
+    .attr("y", height / 2 + 30)
+    .attr("text-anchor", "middle")
+    .attr("fill", "white")
+    .attr("font-size", "16px")
+    .text(`${totalPoints}/6`);
 }

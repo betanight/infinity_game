@@ -1,6 +1,10 @@
-import "./dag.js";
-import { getDatabase, ref, child, get } from "firebase/database";
-import { initializeApp } from "firebase/app";
+import { renderSkillTree } from "./dag.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  get,
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 import { firebaseConfig } from "./firebaseConfig.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -13,10 +17,10 @@ async function loadCharacter(name) {
   const snapshot = await get(ref(db, `characters/${name.toLowerCase()}`));
   if (snapshot.exists()) {
     const characterData = snapshot.val();
-    console.log("Loaded character:", characterData);
-    // ⚡️ Now pass it to your skill tree rendering logic
+    console.log("✅ Loaded character:", characterData);
+    renderSkillTree(characterData);
   } else {
-    console.error("Character not found");
+    console.error("❌ Character not found");
   }
 }
 

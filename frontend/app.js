@@ -1,5 +1,5 @@
 import visibleStatEquations from "./scripts/visible_stat_equations.js";
-import { firebaseConfig } from "./firebaseConfig.js";
+import { firebaseConfig } from "./skilltree/src/firebaseConfig.js";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -163,7 +163,9 @@ function loadCharacters() {
 
         const skillsDetails = document.createElement("details");
         const skillsSummary = document.createElement("summary");
-        skillsSummary.innerHTML = `<a href="skilltree.html?character=${name}" style="color: inherit; text-decoration: underline;">Skills</a>`;
+        skillsSummary.innerHTML = `<a href="/skilltree/index.html?char=${encodeURIComponent(
+          name
+        )}" style="color: inherit; text-decoration: underline;">Skills</a>`;
         skillsDetails.appendChild(skillsSummary);
 
         Object.entries(skills).forEach(([stat, skillMap]) => {
@@ -508,15 +510,14 @@ function loadCharacters() {
             detailSection.appendChild(statLi);
           });
 
-          detail.appendChild(detailSection); // Directly append to character detail
+          detail.appendChild(detailSection);
         });
 
         detail.appendChild(skillsDetails);
 
-        skillsSummary.onclick = () => {
-          window.location.href = `frontend/skilltree/index.html?char=${encodeURIComponent(
-            name
-          )}`;
+        characterLi.onclick = () => {
+          detail.style.display =
+            detail.style.display === "none" ? "block" : "none";
         };
 
         list.appendChild(characterLi);
