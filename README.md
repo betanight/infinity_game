@@ -38,7 +38,7 @@ The complete list of available skills is pulled from the static skill template s
 
 This is Jason's personal skill tree. You can see he selected **Ambidexterity**, a Dexterity skill that improves melee accuracy and provides an armor bonus. Only skills that the character has invested in are shown in full color — all others remain gray until selected.
 
-![Jason Tree](images/jasonTree.png)
+![Jason Tree](images/zoomedTree.png)
 
 ---
 
