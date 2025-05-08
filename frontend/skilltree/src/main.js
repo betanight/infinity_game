@@ -1,7 +1,7 @@
 import "./dag.js";
 import { getDatabase, ref, child, get } from "firebase/database";
 import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "../../scripts/firebaseConfig.js";
+import { firebaseConfig } from "./firebaseConfig.js";
 
 const params = new URLSearchParams(window.location.search);
 const characterName = params.get("char");
