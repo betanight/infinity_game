@@ -1,125 +1,97 @@
 # Infinity Game Dashboard
 
-The Infinity Game Dashboard is a custom character manager designed for tabletop RPG campaigns with deep skill-based progression. This interface allows a Game Master to create characters, assign them starting skills, and track their growth over time — all connected to a central Firebase backend.
+The Infinity Game Dashboard is a modular character manager and stat visualizer built for deep skill-based RPG campaigns. It supports character creation, stat progression, and a dynamic radial skill tree that visually reflects chosen abilities in real time.
 
 ---
 
 ## 📌 Current System Design
 
-Originally, each character was intended to have their own individual Firebase database. However, through iteration we realized this approach introduced unnecessary complexity and overhead. We have now transitioned to a **single shared database**, where:
+Characters are stored in a centralized Firebase Realtime Database:
 
-- All characters are stored under one path (`characters/{name}`)
-- Each character has their own skill allocations and stat values
-- The dashboard pulls everything from this centralized structure
+- All characters are saved under `characters/{name}`
+- Each character tracks their primary/secondary stat values and individual skill levels
+- A shared skill template is used to determine what skills exist and how they affect calculations
 
-This makes the system easier to scale, faster to query, and much more efficient to maintain.
-
----
-
-## 💡 Dashboard Features
-
-### 🔧 Create Characters
-
-Characters can be created by choosing one skill from each of the six primary ability scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. Each selected skill is initialized at level 0.
-
-![Create Character](images/create_character.png)
+This centralized setup ensures fast querying, simple scaling, and a unified system for both character management and visualization.
 
 ---
 
-### 📖 Skill Descriptions
+## 💡 Feature Overview
 
-The skill template is automatically pulled from Firebase and shown in a scrollable, collapsible format. Each stat displays its available skills and their descriptions.
+### 1. 🎭 Character Creation
 
-![Skill Descriptions](images/skill_descriptions.png)
+Characters are created by selecting one skill from each of the six primary stats: Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma. These choices immediately affect their derived stats such as damage, armor, movement speed, and accuracy — calculated using formula functions in the backend.
 
----
-
-### 🧙 Character Overview
-
-Each character displays:
-- Their name
-- The total number of skill points they've allocated (in parentheses)
-- A collapsible list of the skills they've selected and their current levels
-
-This streamlined format allows for quick GM reference without clutter.
-
-![Character Sheet](images/jason_full.png)
+![Character Creation](images/mainTemplate.png)
 
 ---
 
-### 🔮 Skill Tree Visualization
+### 2. 📚 Skill Template
 
-Each character’s skill tree is represented in a radial format, where each primary and secondary stat is displayed with skill nodes scattered within their respective slices. The skills within each stat set are set in a static position. When a character is loaded in, numbers will appear within the nodes showcasing how much value has been put into each individual skill.
+The complete list of available skills is pulled from the static skill template stored in Firebase. Each stat section is collapsible and includes rich descriptions of what each skill does — including combat effects, passive bonuses, or defensive utility.
 
-![Skill Tree](images/better_skilltree.png)
+![Skill Descriptions](images/skillDescriptions.png)
 
+---
+
+### 3. 🧙 Jason's Tree View
+
+This is Jason's personal skill tree. You can see he selected **Ambidexterity**, a Dexterity skill that improves melee accuracy and provides an armor bonus. Only skills that the character has invested in are shown in full color — all others remain gray until selected.
+
+![Jason Tree](images/jasonTree.png)
+
+---
+
+### 4. 🌐 Full Skill Tree View
+
+This is the complete, zoomed-out view of the skill tree. Each stat occupies a radial slice of the circle, and every available skill is pre-rendered in place. Stats are color-coded, but only selected skills receive their stat’s color — all others remain dimmed for clarity.
+
+![Full Skill Tree](images/fullJasonTree.png)
+
+---
 
 ## 🛠 Technologies Used
 
-- **Firebase Realtime Database** for centralized data
-- **Vanilla JavaScript** for frontend logic
-- **HTML/CSS** for structure and layout
-- Lightweight design for fast load and portability
+- **Firebase Realtime Database** – Central data store for all characters and templates
+- **D3.js** – SVG-based visualization for the radial skill tree
+- **Vanilla JS + HTML/CSS** – No framework overhead
+- **Vite** – Fast frontend bundler with native ESM and live reload
 
 ---
 
 ## 🚧 Future Plans
 
-- Add skill upgrading functionality per stat point
-- Visualize skill trees by core stat
-- Add support for race/class-specific skills
-- Printable/exportable character sheets
+- Add interactive skill leveling in the tree view (per stat point)
+- Filter or highlight skills by tag or effect (e.g. damage, armor, accuracy)
+- Race/class-specific skillsets
+- Exportable character sheets
+- Admin-only edit mode for skill assignment
 
 ---
 
 ## 📁 Folder Structure
 
-- `backend/`  
-  Contains abbreviation mappings and visible stat functions used to calculate accuracy, damage, and other formulas.
+- `frontend/`
+  - `index.html` – Character creation and overview
+  - `app.js` – Core logic for character management
+  - `scripts/` – Skill equations and Firebase config
+  - `skilltree/` – Visual tree display powered by D3
+    - `index.html`, `main.js`, `dag.js`, `style.css`
+- `firebase/` – Tools for pushing/pulling the skill template
+- `images/` – README screenshots
+- `system_database/` – Legacy Python skill table generators (to be converted)
 
-- `character/`  
-  Backup scripts for creating, deleting, and displaying characters. No longer part of the main workflow but kept for reference.
+---
 
-- `firebase/`  
-  Includes `push_template.js` and `pull_template.js` — tools to log or update the static skill template.  
-  Also includes `firebaseKey.json` for Firebase authentication credentials.
-
-- `frontend/`  
-  Contains `index.html` and `app.js`, which power the main dashboard interface and logic for character creation and display.
-
-- `images/`  
-  Screenshots used for README documentation and interface previews.
-
-- `system_database/skills/`  
-  Original Python-based skill tables for each stat. These will eventually be migrated to JavaScript to unify the stack.
-
-## Development Setup
+## 🔧 Local Development
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- npm (comes with Node.js)
+- Node.js (v14+)
+- npm
 
-### Installation
+### Setup
 
-1. Install dependencies:
 ```bash
 cd frontend
 npm install
-```
-
-2. Start the development server:
-```bash
 npm run dev
-```
-
-The development server will:
-- Start on http://localhost:3000
-- Automatically reload when you make changes to .js, .html, or .css files
-- Automatically refresh your browser when changes are detected
-
-### Development Features
-- Live reload for instant feedback
-- Hot module replacement
-- Static file serving
-- ES Module support
-
