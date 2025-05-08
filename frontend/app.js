@@ -1,15 +1,5 @@
 import visibleStatEquations from "./scripts/visible_stat_equations.js";
-
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "infinity-e0f55.firebaseapp.com",
-  databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
-  projectId: "infinity-e0f55",
-  storageBucket: "infinity-e0f55.appspot.com",
-  messagingSenderId: "120929977477",
-  appId: "1:120929977477:web:45dc9989f834f69a9195ec",
-  measurementId: "G-PFFQDN2MHX",
-};
+import { firebaseConfig } from "./firebaseConfig.js";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -523,9 +513,10 @@ function loadCharacters() {
 
         detail.appendChild(skillsDetails);
 
-        characterLi.onclick = () => {
-          detail.style.display =
-            detail.style.display === "none" ? "block" : "none";
+        skillsSummary.onclick = () => {
+          window.location.href = `frontend/skilltree/index.html?char=${encodeURIComponent(
+            name
+          )}`;
         };
 
         list.appendChild(characterLi);

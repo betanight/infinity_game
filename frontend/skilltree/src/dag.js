@@ -1,29 +1,23 @@
-import * as d3 from 'd3';
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, get } from 'firebase/database';
+import * as d3 from "d3";
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "infinity-e0f55.firebaseapp.com",
-  databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
-  projectId: "infinity-e0f55",
-  storageBucket: "infinity-e0f55.appspot.com",
-  messagingSenderId: "120929977477",
-  appId: "1:120929977477:web:45dc9989f834f69a9195ec",
-  measurementId: "G-PFFQDN2MHX"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-(async () => {
-  const snapshot = await get(ref(db, 'template/skills'));
-  const skillData = snapshot.val();
+export async function renderSkillTree(characterData) {
+  const response = await fetch(
+    "https://infinity-e0f55-default-rtdb.firebaseio.com/template/skills.json"
+  );
+  const skillData = await response.json();
 
   const statList = [
-    "Constitution", "Willpower", "Spirit", "Presence", "Dexterity",
-    "Strength", "Instinct", "Intelligence", "Wisdom"
+    "Constitution",
+    "Willpower",
+    "Spirit",
+    "Presence",
+    "Dexterity",
+    "Strength",
+    "Instinct",
+    "Intelligence",
+    "Wisdom",
   ];
+
   const nodes = [];
   const links = [];
 
@@ -32,23 +26,25 @@ const db = getDatabase(app);
     const skills = Object.keys(skillData[stat]);
     for (let j = 0; j < skills.length; j++) {
       const skill = skills[j];
-      const nodeId = `${stat}-${skill}`;
+      const value = characterData.skills?.[stat]?.[skill] || 0;
       nodes.push({
-        id: nodeId,
+        id: `${stat}-${skill}`,
         title: skill,
         stat: stat,
-        description: skillData[stat][skill]?.description || '',
+        description: skillData[stat][skill]?.description || "",
         isStat: false,
+        value,
         index: j,
-        count: skills.length
+        count: skills.length,
       });
-      links.push({ source: stat, target: nodeId });
+      links.push({ source: stat, target: `${stat}-${skill}` });
     }
   });
 
   const width = 2500;
   const height = 2500;
-  const svg = d3.select("svg")
+  const svg = d3
+    .select("svg")
     .attr("viewBox", [0, 0, width, height].join(" "))
     .style("background", "#111");
 
@@ -67,14 +63,16 @@ const db = getDatabase(app);
   statList.forEach((stat, i) => {
     const angle = i * angleStep;
     statAngleMap[stat] = angle;
-    const node = nodes.find(n => n.id === stat);
+    const node = nodes.find((n) => n.id === stat);
     node.angle = angle;
     node.radius = statRadius;
     node.x = width / 2 + Math.cos(angle) * statRadius;
     node.y = height / 2 + Math.sin(angle) * statRadius;
   });
 
-  const skillCounts = statList.map(stat => Object.keys(skillData[stat]).length);
+  const skillCounts = statList.map(
+    (stat) => Object.keys(skillData[stat]).length
+  );
   const maxSkills = Math.max(...skillCounts);
   const minSkills = Math.min(...skillCounts);
 
@@ -94,31 +92,36 @@ const db = getDatabase(app);
     }
   });
 
-  container.append("g")
+  container
+    .append("g")
     .selectAll("line")
     .data(links)
     .enter()
     .append("line")
-    .attr("x1", d => nodes.find(n => n.id === d.source).x)
-    .attr("y1", d => nodes.find(n => n.id === d.source).y)
-    .attr("x2", d => nodes.find(n => n.id === d.target).x)
-    .attr("y2", d => nodes.find(n => n.id === d.target).y)
-    .attr("stroke", d => color(d.source))
+    .attr("x1", (d) => nodes.find((n) => n.id === d.source).x)
+    .attr("y1", (d) => nodes.find((n) => n.id === d.source).y)
+    .attr("x2", (d) => nodes.find((n) => n.id === d.target).x)
+    .attr("y2", (d) => nodes.find((n) => n.id === d.target).y)
+    .attr("stroke", (d) => color(d.source))
     .attr("stroke-width", 1);
 
-  const nodeGroup = container.append("g")
+  const nodeGroup = container
+    .append("g")
     .selectAll("g")
     .data(nodes)
     .enter()
     .append("g")
-    .attr("transform", d => `translate(${d.x},${d.y})`);
+    .attr("transform", (d) => `translate(${d.x},${d.y})`);
 
-  nodeGroup.append("circle")
-    .attr("r", d => d.isStat ? 20 : 5.5)
-    .attr("fill", d => color(d.stat || d.id))
+  nodeGroup
+    .append("circle")
+    .attr("r", (d) => (d.isStat ? 20 : 5.5))
+    .attr("fill", (d) => (d.value > 0 ? "#3e8ed0" : color(d.stat || d.id)))
     .on("mouseover", function (event, d) {
       if (!d.isStat) {
-        const tooltip = d3.select("body").append("div")
+        const tooltip = d3
+          .select("body")
+          .append("div")
           .attr("class", "tooltip")
           .style("position", "absolute")
           .style("background", "#222")
@@ -128,8 +131,9 @@ const db = getDatabase(app);
           .style("pointer-events", "none")
           .style("font-size", "13px")
           .html(`<strong>${d.title}</strong><br>${d.description}`);
-        tooltip.style("left", `${event.pageX + 12}px`)
-               .style("top", `${event.pageY + 12}px`);
+        tooltip
+          .style("left", `${event.pageX + 12}px`)
+          .style("top", `${event.pageY + 12}px`);
       }
     })
     .on("mousemove", function (event) {
@@ -141,8 +145,9 @@ const db = getDatabase(app);
       d3.select(".tooltip").remove();
     });
 
-  nodeGroup.append("text")
-    .text(d => d.isStat ? d.title : "")
+  nodeGroup
+    .append("text")
+    .text((d) => (d.isStat ? d.title : ""))
     .attr("dy", "-1.7em")
     .attr("text-anchor", "middle")
     .attr("fill", "white")
@@ -150,7 +155,8 @@ const db = getDatabase(app);
     .attr("font-size", "16px")
     .attr("transform", "rotate(0)");
 
-  const zoom = d3.zoom()
+  const zoom = d3
+    .zoom()
     .scaleExtent([0.1, 3])
     .on("zoom", (event) => {
       container.attr("transform", event.transform);
@@ -160,11 +166,11 @@ const db = getDatabase(app);
 
   const scale = 1.7;
   setTimeout(() => {
-      const statNodes = nodes.filter(n => n.isStat);
-      const avgX = d3.mean(statNodes, d => d.x);
-      const avgY = d3.mean(statNodes, d => d.y);
-      const tx = (width / 2) - avgX * scale;
-      const ty = (height / 2) - avgY * scale;
+    const statNodes = nodes.filter((n) => n.isStat);
+    const avgX = d3.mean(statNodes, (d) => d.x);
+    const avgY = d3.mean(statNodes, (d) => d.y);
+    const tx = width / 2 - avgX * scale;
+    const ty = height / 2 - avgY * scale;
     svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   }, 100);
-})();
+}
