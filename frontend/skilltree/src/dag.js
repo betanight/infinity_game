@@ -12,6 +12,7 @@ export async function renderSkillTree(characterData) {
     "Constitution",
     "Willpower",
     "Spirit",
+    "Charisma",
     "Presence",
     "Dexterity",
     "Strength",

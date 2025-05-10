@@ -69,6 +69,16 @@ This is the complete, zoomed-out view of the skill tree. Each stat occupies a ra
 
 ---
 
+## Vision for the Future
+
+Here we can see the same skill tree as before just zoomed out. This is how I plan each stats ability skill tree to look, like a galaxy of options.
+
+![Vision](images/futureVision.png)
+
+This is just one of many so far. 
+
+---
+
 ## 📁 Folder Structure
 
 - `frontend/`
