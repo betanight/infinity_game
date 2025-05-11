@@ -10,7 +10,7 @@ export function defineFireSkills(db) {
     effect: ({ level, arcane }) => FireEquations.cinderbolt(level, arcane),
   });
 
-  insertSkill(db, "Ignition Spark", {
+  insertSkill(db, "Fire", "Ignition Spark", {
     description:
       "Ignites dry surfaces or kindling with increasing efficiency and range as skill level improves.",
     tier: 1,
@@ -19,7 +19,7 @@ export function defineFireSkills(db) {
     effect: ({ level }) => FireEquations.ignitionSpark(level),
   });
 
-  insertSkill(db, "Searing Touch", {
+  insertSkill(db, "Fire", "Searing Touch", {
     description:
       "Imbue your hands with burning power that enhances unarmed strikes and scales with your skill level.",
     tier: 1,
@@ -28,7 +28,7 @@ export function defineFireSkills(db) {
     effect: ({ level }) => FireEquations.searingTouch(level),
   });
 
-  insertSkill(db, "Blazing Step", {
+  insertSkill(db, "Fire", "Blazing Step", {
     description:
       "Ignite your path to dash forward, dealing trail damage and increasing movement with higher skill level.",
     tier: 1,
@@ -38,7 +38,7 @@ export function defineFireSkills(db) {
       FireEquations.blazingStep(level, fireSkills),
   });
 
-  insertSkill(db, "Heat Vision", {
+  insertSkill(db, "Fire", "Heat Vision", {
     description:
       "Detect body heat through walls or darkness, improving detection range and precision as skill level increases.",
     tier: 1,
@@ -47,7 +47,7 @@ export function defineFireSkills(db) {
     effect: ({ level }) => FireEquations.heatVision(level),
   });
 
-  insertSkill(db, "Fire Arc", {
+  insertSkill(db, "Fire", "Fire Arc", {
     description:
       "Unleash a wide cone of flame, with damage and reach that scale with skill level.",
     tier: 1,
@@ -56,7 +56,7 @@ export function defineFireSkills(db) {
     effect: ({ level }) => FireEquations.fireArc(level),
   });
 
-  insertSkill(db, "Flame Ward", {
+  insertSkill(db, "Fire", "Flame Ward", {
     description:
       "Wreathe yourself in fire that retaliates against attackers, intensifying with higher skill levels.",
     tier: 1,
