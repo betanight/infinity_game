@@ -1,3 +1,9 @@
+import { FireEquations } from "./fire-functions";
+import { FrostEquations } from "./frost-functions";
+import { LightningEquations } from "./lightning-functions";
+import { WaterEquations } from "./water-functions";
+import { PoisonEquations } from "./poison-functions";
+
 export const WindEquations = {
   // Elemental Infusion Logic: Automatically applies the highest unlocked effect to the Wind spell
   elementInfusion(level, windSpell, otherElementLevels) {
@@ -10,6 +16,7 @@ export const WindEquations = {
     if (otherElementLevels.frost >= 10) availableElements.push("frost");
     if (otherElementLevels.lightning >= 10) availableElements.push("lightning");
     if (otherElementLevels.water >= 10) availableElements.push("water");
+    if (otherElementLevels.poison >= 10) availableElements.push("poison");
 
     // If no element is available for infusion, do nothing
     if (availableElements.length === 0) return;
@@ -39,6 +46,11 @@ export const WindEquations = {
           effectLevel,
           highestSpellLevel
         ); // Apply Water effect
+        break;
+
+      case "poison":
+        windSpell.infectedEffect =
+          PoisonEquations.getInfectedEffect(effectLevel); // Apply Poison infect effect
         break;
 
       default:
