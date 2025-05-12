@@ -1,4 +1,4 @@
-import { WindEquations } from "../../../equations/tier-1/wind-functions.js";
+import { WindEquations } from "../../equations/tier-1/wind-functions.js";
 
 export function defineWindSkills(db) {
   insertSkill(db, "Wind", "Gale Cutter", {

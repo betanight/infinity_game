@@ -1,4 +1,4 @@
-import { WoodEquations } from "../../../equations/tier-1/wood-functions.js";
+import { WoodEquations } from "../../equations/tier-1/wood-functions.js";
 
 export function defineWoodSkills(db) {
   insertSkill(db, "Wood", "Grasping Vines", {
