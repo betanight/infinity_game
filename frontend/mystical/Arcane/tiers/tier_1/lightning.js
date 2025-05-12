@@ -1,4 +1,5 @@
 import { LightningEquations } from "../../equations/tier-1/lightning-functions.js";
+import { insertSkill } from "../../../scripts/skilltree_functions.js";
 
 export function defineLightningSkills(db) {
   insertSkill(

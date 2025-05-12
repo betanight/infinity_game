@@ -1,6 +1,7 @@
-import { ColdEquations } from "../../equations/tier-1/frost-functions.js";
+import { FrostEquations } from "../../equations/tier-1/frost-functions.js";
+import { insertSkill } from "../../../scripts/skilltree_functions.js";
 
-export function defineColdSkills(db) {
+export function defineFrostSkills(db) {
   insertSkill(
     db,
     "Frost",
@@ -11,7 +12,7 @@ export function defineColdSkills(db) {
       tier: 1,
       effective_value: 0,
       tags: ["projectile", "frost", "debuff", "piercing"],
-      effect: ({ level, arcane }) => ColdEquations.frostShard(level, arcane),
+      effect: ({ level, arcane }) => FrostEquations.frostShard(level, arcane),
     },
     "Tier 1"
   );
@@ -26,7 +27,7 @@ export function defineColdSkills(db) {
       tier: 1,
       effective_value: 0,
       tags: ["defense", "frost", "resistance"],
-      effect: ({ level }) => ColdEquations.chillSkin(level),
+      effect: ({ level }) => FrostEquations.chillSkin(level),
     },
     "Tier 1"
   );
@@ -41,7 +42,7 @@ export function defineColdSkills(db) {
       tier: 1,
       effective_value: 0,
       tags: ["movement", "frost", "terrain"],
-      effect: ({ level }) => ColdEquations.frozenFooting(level),
+      effect: ({ level }) => FrostEquations.frozenFooting(level),
     },
     "Tier 1"
   );
@@ -56,7 +57,7 @@ export function defineColdSkills(db) {
       tier: 1,
       effective_value: 0,
       tags: ["focus", "frost", "buff"],
-      effect: ({ level }) => ColdEquations.icyVeins(level),
+      effect: ({ level }) => FrostEquations.icyVeins(level),
     },
     "Tier 1"
   );
@@ -71,8 +72,8 @@ export function defineColdSkills(db) {
       tier: 1,
       effective_value: 0,
       tags: ["aura", "frost", "area", "damage-over-time", "cold"],
-      effect: ({ level, coldSkills }) =>
-        ColdEquations.frostbiteAura(level, coldSkills),
+      effect: ({ level, frostSkills }) =>
+        FrostEquations.frostbiteAura(level, frostSkills),
     },
     "Tier 1"
   );
