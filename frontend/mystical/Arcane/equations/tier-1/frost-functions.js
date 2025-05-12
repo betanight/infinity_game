@@ -1,4 +1,4 @@
-export const ColdEquations = {
+export const FrostEquations = {
   getFrostbiteEffect(level, frostSkillTotal = 0) {
     if (level < 10) return null;
 
@@ -24,7 +24,7 @@ export const ColdEquations = {
     const piercingBase = 2 + level;
     const piercingDamage = Math.round(piercingBase);
 
-    const frostbite = ColdEquations.getFrostbiteEffect(level, frostSkillTotal);
+    const frostbite = FrostEquations.getFrostbiteEffect(level, frostSkillTotal);
 
     return {
       frostDamage,
@@ -66,7 +66,7 @@ export const ColdEquations = {
 
   frostbiteAura(level, coldSkillTotal = 0) {
     // Aura logic will be implemented later
-    const frostbite = ColdEquations.getFrostbiteEffect(level, coldSkillTotal);
+    const frostbite = FrostEquations.getFrostbiteEffect(level, coldSkillTotal);
 
     return {
       auraDamage: Math.round(level + coldSkillTotal * 0.4),
