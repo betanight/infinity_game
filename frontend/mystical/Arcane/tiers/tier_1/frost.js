@@ -1,5 +1,5 @@
 import { FrostEquations } from "../../equations/tier-1/frost-functions.js";
-import { insertSkill } from "../../../scripts/skilltree_functions.js";
+import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 
 export function defineFrostSkills(db) {
   insertSkill(
