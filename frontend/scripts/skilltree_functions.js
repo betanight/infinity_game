@@ -15,7 +15,7 @@ export function insertSkill(
     category = null;
     name = categoryOrName;
     data = nameOrData;
-    tier = maybeDataOrTier || "Tier 1";
+    tier = maybeDataOrTier || "Monk";
   } else {
     // insertSkill(db, "Arcane", "Fire", "Cinderbolt", { ... }, "Tier 1")
     scorePath = score;
