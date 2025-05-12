@@ -1,8 +1,8 @@
-import { FireEquations } from "./fire-functions";
-import { FrostEquations } from "./frost-functions";
-import { LightningEquations } from "./lightning-functions";
-import { WaterEquations } from "./water-functions";
-import { PoisonEquations } from "./poison-functions";
+import { FireEquations } from "./fire-functions.js";
+import { FrostEquations } from "./frost-functions.js";
+import { LightningEquations } from "./lightning-functions.js";
+import { WaterEquations } from "./water-functions.js";
+import { PoisonEquations } from "./poison-functions.js";
 
 export const WindEquations = {
   // Elemental Infusion Logic: Automatically applies the highest unlocked effect to the Wind spell

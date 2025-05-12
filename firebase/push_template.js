@@ -1,5 +1,7 @@
 const { db } = require("./firebase"); // ✅ pulls db from firebase.js
-const { defineAllTier1Skills } = require("./tiers/tier_1/index.js"); // Arcane
+const {
+  defineAllTier1Skills,
+} = require("../frontend/mystical/Arcane/tiers/tier_1/tier_1_index.js");
 
 const fullTemplate = {
   meta: {
