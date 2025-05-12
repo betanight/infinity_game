@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function defineFrostSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Frost",
     "Frost Shard",
     {
@@ -19,6 +20,7 @@ export function defineFrostSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Frost",
     "Chill Skin",
     {
@@ -34,6 +36,7 @@ export function defineFrostSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Frost",
     "Frozen Footing",
     {
@@ -49,6 +52,7 @@ export function defineFrostSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Frost",
     "Icy Veins",
     {
@@ -64,6 +68,7 @@ export function defineFrostSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Frost",
     "Frostbite Aura",
     {
@@ -80,6 +85,7 @@ export function defineFrostSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Frost",
     "Snowstep",
     {

@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function defineFireSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Fire",
     "Cinderbolt",
     {
@@ -19,6 +20,7 @@ export function defineFireSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Fire",
     "Ignition Spark",
     {
@@ -34,6 +36,7 @@ export function defineFireSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Fire",
     "Searing Touch",
     {
@@ -49,6 +52,7 @@ export function defineFireSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Fire",
     "Blazing Step",
     {
@@ -65,6 +69,7 @@ export function defineFireSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Fire",
     "Heat Vision",
     {
@@ -80,6 +85,7 @@ export function defineFireSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Fire",
     "Fire Arc",
     {
@@ -95,6 +101,7 @@ export function defineFireSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Fire",
     "Flame Ward",
     {

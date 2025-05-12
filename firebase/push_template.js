@@ -2,6 +2,9 @@ const { db } = require("./firebase"); // ✅ pulls db from firebase.js
 const {
   defineAllTier1Skills,
 } = require("../frontend/mystical/Arcane/tiers/tier_1/tier_1_index.js");
+const {
+  defineMonkSkills,
+} = require("../frontend/mystical/Willpower/supernatural/monk.js");
 
 const fullTemplate = {
   meta: {
@@ -931,6 +934,7 @@ db.ref("template")
   .set(fullTemplate)
   .then(() => {
     console.log("✅ Template uploaded to Firebase.");
-    defineAllTier1Skills(db);
+    defineAllTier1Skills(db); // arcane
+    defineMonkSkills(db); // willpower
   })
   .catch((error) => console.error("❌ Failed to upload:", error));

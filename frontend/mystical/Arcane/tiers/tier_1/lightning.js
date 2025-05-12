@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function defineLightningSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Lightning",
     "Arc Surge",
     {
@@ -19,6 +20,7 @@ export function defineLightningSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Lightning",
     "Static Field",
     {
@@ -34,6 +36,7 @@ export function defineLightningSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Lightning",
     "Charged Step",
     {
@@ -50,6 +53,7 @@ export function defineLightningSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Lightning",
     "Lightning Rod",
     {
@@ -66,6 +70,7 @@ export function defineLightningSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Lightning",
     "Chain Zap",
     {
@@ -81,6 +86,7 @@ export function defineLightningSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Lightning",
     "Pulse Vision",
     {
@@ -96,6 +102,7 @@ export function defineLightningSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Lightning",
     "Nerve Disruptor",
     {

@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function defineWindSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Gale Cutter",
     {
@@ -20,6 +21,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Tailwind Step",
     {
@@ -35,6 +37,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Buffer Zone",
     {
@@ -50,6 +53,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Cyclone Burst",
     {
@@ -66,6 +70,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Windsnare",
     {
@@ -81,6 +86,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Skyhook Lash",
     {
@@ -96,6 +102,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Whisper Sense",
     {
@@ -111,6 +118,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Gust",
     {
@@ -126,6 +134,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Reactive Boost",
     {
@@ -141,6 +150,7 @@ export function defineWindSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wind",
     "Gale Lift",
     {

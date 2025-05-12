@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function defineEarthSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Earth",
     "Stone Bolt",
     {
@@ -19,6 +20,7 @@ export function defineEarthSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Earth",
     "Dust Cloak",
     {
@@ -34,6 +36,7 @@ export function defineEarthSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Earth",
     "Earthen Grasp",
     {
@@ -50,6 +53,7 @@ export function defineEarthSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Earth",
     "Tremor Step",
     {
@@ -66,6 +70,7 @@ export function defineEarthSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Earth",
     "Stone Skin",
     {
@@ -81,6 +86,7 @@ export function defineEarthSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Earth",
     "Buried Sense",
     {
@@ -96,6 +102,7 @@ export function defineEarthSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Earth",
     "Clay Bindings",
     {

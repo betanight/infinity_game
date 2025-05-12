@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function defineWaterSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Surge Jet",
     {
@@ -19,6 +20,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Hydro Slip",
     {
@@ -34,6 +36,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Tideguard",
     {
@@ -49,6 +52,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Pressure Bloom",
     {
@@ -65,6 +69,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Aqueous Bind",
     {
@@ -80,6 +85,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Geyser Shot",
     {
@@ -95,6 +101,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Current Sense",
     {
@@ -110,6 +117,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Tide Limbs",
     {
@@ -125,6 +133,7 @@ export function defineWaterSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Water",
     "Undertow Grasp",
     {

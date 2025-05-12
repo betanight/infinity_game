@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function definePoisonSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Venom Dart",
     {
@@ -19,6 +20,7 @@ export function definePoisonSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Toxic Bloom",
     {
@@ -34,6 +36,7 @@ export function definePoisonSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Serpent Step",
     {
@@ -49,6 +52,7 @@ export function definePoisonSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Coiling Trap",
     {
@@ -64,6 +68,7 @@ export function definePoisonSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Viral Bite",
     {
@@ -79,6 +84,7 @@ export function definePoisonSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Toxin Sense",
     {
@@ -94,6 +100,7 @@ export function definePoisonSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Paralytic Spores",
     {
@@ -109,6 +116,7 @@ export function definePoisonSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Poison",
     "Drowsing Needle",
     {

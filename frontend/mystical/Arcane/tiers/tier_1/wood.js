@@ -4,6 +4,7 @@ import { insertSkill } from "../../../../scripts/skilltree_functions.js";
 export function defineWoodSkills(db) {
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Grasping Vines",
     {
@@ -19,6 +20,7 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Living Armor",
     {
@@ -34,6 +36,7 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Seedshot",
     {
@@ -49,6 +52,7 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Verdant Burst",
     {
@@ -64,6 +68,7 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Spine Trap",
     {
@@ -79,8 +84,9 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
-    "Nature’s Pulse",
+    "Natures Pulse",
     {
       description:
         "Feel the pulse of life beneath your feet. Reveals hidden plant-based hazards, traps, and weak ground.",
@@ -94,6 +100,7 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Thorn Net",
     {
@@ -109,6 +116,7 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Photosynthetic Bloom",
     {
@@ -125,6 +133,7 @@ export function defineWoodSkills(db) {
 
   insertSkill(
     db,
+    "Arcane",
     "Wood",
     "Overgrowth Ring",
     {
