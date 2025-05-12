@@ -1,4 +1,4 @@
-import { EarthEquations } from "../../../equations/earth-functions.js";
+import { EarthEquations } from "../../../equations/tier-1/earth-functions.js";
 
 export function defineEarthSkills(db) {
   insertSkill(db, "Earth", "Stone Bolt", {

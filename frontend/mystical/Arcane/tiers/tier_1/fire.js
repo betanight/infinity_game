@@ -1,4 +1,4 @@
-import { FireEquations } from "../../../equations/fire-functions.js";
+import { FireEquations } from "../../../equations/tier-1/fire-functions.js";
 
 export function defineFireSkills(db) {
   insertSkill(db, "Fire", "Cinderbolt", {

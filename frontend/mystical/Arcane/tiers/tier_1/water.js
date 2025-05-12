@@ -1,4 +1,4 @@
-import { WaterEquations } from "../../../equations/water-functions.js";
+import { WaterEquations } from "../../../equations/tier-1/water-functions.js";
 
 export function defineWaterSkills(db) {
   insertSkill(db, "Water", "Surge Jet", {

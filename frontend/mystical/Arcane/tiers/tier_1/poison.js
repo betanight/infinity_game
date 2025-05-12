@@ -1,4 +1,4 @@
-import { PoisonEquations } from "../../../equations/poison-functions.js";
+import { PoisonEquations } from "../../../equations/tier-1/poison-functions.js";
 
 export function definePoisonSkills(db) {
   insertSkill(db, "Poison", "Venom Dart", {

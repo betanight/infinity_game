@@ -1,4 +1,4 @@
-import { ColdEquations } from "../../../equations/frost-functions.js";
+import { ColdEquations } from "../../../equations/tier-1/frost-functions.js";
 
 export function defineColdSkills(db) {
   insertSkill(db, "Frost", "Frost Shard", {

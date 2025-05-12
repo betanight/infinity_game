@@ -1,4 +1,4 @@
-import { LightningEquations } from "../../../equations/lightning-functions.js";
+import { LightningEquations } from "../../../equations/tier-1/lightning-functions.js";
 
 export function defineLightningSkills(db) {
   insertSkill(db, "Lightning", "Arc Surge", {
