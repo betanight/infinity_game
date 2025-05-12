@@ -1,4 +1,5 @@
 const { db } = require("./firebase"); // ✅ pulls db from firebase.js
+const { defineAllTier1Skills } = require("./tiers/tier_1/index.js"); // Arcane
 
 const fullTemplate = {
   meta: {
@@ -16,7 +17,7 @@ const fullTemplate = {
   secondary_scores: {
     Willpower: 0,
     Spirit: 0,
-    Instinct: 0,
+    Arcane: 0,
     Presence: 0,
   },
   skills: {
@@ -1079,78 +1080,7 @@ const fullTemplate = {
       },
     },
 
-    Instinct: {
-      "Danger Sense": {
-        description:
-          "React instinctively to ambushes, traps, or unseen threats.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Heightened Hearing": {
-        description: "Detect distant or subtle sounds that others miss.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Heightened Sight": {
-        description: "See farther, clearer, and more accurately than most.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Heightened Smell": {
-        description:
-          "Sense scents and pheromones to track or identify sources.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Heightened Taste": {
-        description:
-          "Discern details in flavor for alchemical or culinary uses.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Heightened Touch": {
-        description:
-          "Detect vibrations, texture, or pressure changes with precision.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Sixth Sense": {
-        description: "Feel the presence of hidden entities or future danger.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Tracking Instinct": {
-        description:
-          "Follow the path of creatures or people without obvious signs.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Pack Awareness": {
-        description: "Act as part of a group with coordinated instinct.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Spatial Reflexes": {
-        description: "Dodge and weave through complex environments or attacks.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Terrain Intuition": {
-        description: "Move efficiently over unfamiliar or natural landscapes.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Scent Memory": {
-        description: "Remember and identify individuals or places by smell.",
-        boost: [],
-        effective_value: 0,
-      },
-      "Hunting Drive": {
-        description: "Pursue and corner targets with relentless focus.",
-        boost: [],
-        effective_value: 0,
-      },
-    },
+    Arcane: {}, // defineAllTier1Skills function does this
 
     Presence: {
       "Aura Projection": {
@@ -1223,5 +1153,8 @@ const fullTemplate = {
 
 db.ref("template")
   .set(fullTemplate)
-  .then(() => console.log("✅ Template uploaded to Firebase."))
+  .then(() => {
+    console.log("✅ Template uploaded to Firebase.");
+    defineAllTier1Skills(db);
+  })
   .catch((error) => console.error("❌ Failed to upload:", error));
