@@ -496,7 +496,36 @@ export default class VisibleStatEquations {
     stealth += (skills.dd || 0) * 2; // Disguise Demeanor
     stealth += (skills.perf || 0) * 2; // Performance
     stealth += (skills.rr || 0) * 2; // Read the Room
+    stealth += (skills.log || 0) * 2; // Logic
 
     return stealth;
+  }
+
+  static characterEvasion(scores, skills) {
+    // AOE Armor Class
+    let evasion = 10;
+
+    evasion += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity
+
+    evasion += (skills.ev || 0) * 6; // Evasion
+    evasion += (skills.amb || 0) * 2; // Ambidexterity
+    evasion += (skills.ms || 0) * 2; // Missile Snaring
+    evasion += (skills.ea || 0) * 4; // Escape Artist
+    evasion += (skills.ra || 0) * 3; // Reflex Training
+
+    evasion += (skills.mc || 0) * 3; // Muscle Control
+    evasion += (skills.mm || 0) * 3; // Momentum Management
+
+    evasion += (skills.ca || 0) * 1; // Cognitive Ability
+    evasion += (skills.log || 0) * 2; // Logic
+
+    evasion += (skills.sf || 0) * 1; // Strategic Foresigh
+    evasion += (skills.tp || 0) * 1; // Tactical Planning
+
+    evasion += (skills.pr || 0) * 2; // Pattern Recognitiion
+    evasion += (skills.pj || 0) * 2; // Practical Judgement
+    evasion += (skills.sa || 0) * 2; // Situational Awareness
+
+    evasion += (skills.perf || 0) * 2; // Performance
   }
 }
