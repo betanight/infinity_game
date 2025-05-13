@@ -81,52 +81,6 @@ export default class VisibleStatEquations {
     };
   }
 
-  static energyAttackAccuracy(scores, skills, energyType) {
-    let accuracy = 6;
-    let primaryStatUsed = "";
-
-    if (energyType === "Intelligence") {
-      accuracy += (scores[coreAbbreviations.I] || 0) * 4; // Intelligence
-      accuracy += (skills.arc || 0) * 3; // Arcana
-      accuracy += (skills.mt || 0) * 3; // Magical Theory
-      accuracy += (skills.sf || 0) * 2; // Strategic Foresight
-      accuracy += (skills.tp || 0) * 2; // Tactical Planning
-      accuracy += (skills.ok || 0) * 2; // Occult Knowledge
-      accuracy += (skills.ins || 0) * 1; // Insight
-      primaryStatUsed = "I"; // Intelligence
-    } else if (energyType === "Wisdom") {
-      accuracy += (scores[coreAbbreviations.W] || 0) * 4; // Wisdom
-      accuracy += (skills.sa || 0) * 3; // Situational Awareness
-      accuracy += (skills.ins || 0) * 2; // Insight
-      accuracy += (skills.sf || 0) * 2; // Strategic Foresight
-      accuracy += (skills.sp || 0) * 2; // Spiritual Pulse
-      accuracy += (skills.rm || 0) * 2; // Ritual Mastery
-      primaryStatUsed = "W"; // Wisdom
-    } else if (energyType === "Spirit") {
-      accuracy += (scores[coreAbbreviations.SP] || 0) * 4; // Spirit
-      accuracy += (scores[coreAbbreviations.I] || 0) * 0.5; // Intelligence
-      accuracy += (skills.ef || 0) * 3; // Energy Flow
-      accuracy += (skills.rm || 0) * 3; // Ritual Mastery
-      accuracy += (skills.sc || 0) * 2; // Spirit Communication
-      accuracy += (skills.sp || 0) * 2; // Spiritual Pulse
-      accuracy += (skills.sa || 0) * 1; // Situational Awareness
-      primaryStatUsed = "SP"; // Spirit
-    } else if (energyType === "Willpower") {
-      accuracy += (scores[coreAbbreviations.WP] || 0) * 4; // Willpower
-      accuracy += (scores[coreAbbreviations.W] || 0) * 0.5; // Wisdom
-      accuracy += (skills.sd || 0) * 3; // Sheer Determination
-      accuracy += (skills.sf || 0) * 3; // Strategic Foresight
-      accuracy += (skills.sa || 0) * 1; // Situational Awareness
-      accuracy += (skills.arc || 0) * 1; // Arcana
-      primaryStatUsed = "WP"; // Willpower
-    }
-
-    return {
-      totalAccuracy: accuracy,
-      primaryStatUsed: primaryStatUsed,
-    };
-  }
-
   static rollingFunction(totalAccuracy, primaryScore, cc, D, armorThreshold) {
     const minRoll = Math.max(1, Math.floor(Math.sqrt(totalAccuracy)));
     const maxRoll = totalAccuracy;
@@ -213,11 +167,11 @@ export default class VisibleStatEquations {
       if (elementType === "Spirit") {
         damage += (scores[coreAbbreviations.SP] || 0) * 3; // Spirit
       } else if (elementType === "Arcane") {
-        damage += (scores[coreAbbreviations.I] || 0) * 3; // Intelligence
+        damage += (scores[coreAbbreviations.A] || 0) * 3; // Arcane
       } else if (elementType === "Willpower") {
         damage += (scores[coreAbbreviations.WP] || 0) * 3; // Willpower
       } else if (elementType === "Presence") {
-        damage += (scores[coreAbbreviations.PR] || 0) * 3; // Presence
+        damage += (scores[coreAbbreviations.PR] || 0) * 4; // Presence
       }
 
       damage += (skills.wpn || 0) * 3; // Weapon Mastery
@@ -233,11 +187,11 @@ export default class VisibleStatEquations {
       damage += (scores[coreAbbreviations.D] || 0) * 0.8; // Dexterity
 
       if (elementType === "Spirit") {
-        damage += (scores[coreAbbreviations.SP] || 0) * 2; // Spirit
+        damage += (scores[coreAbbreviations.SP] || 0) * 3; // Spirit
       } else if (elementType === "Arcane") {
-        damage += (scores[coreAbbreviations.I] || 0) * 2; // Intelligence
+        damage += (scores[coreAbbreviations.A] || 0) * 2; // Arcane
       } else if (elementType === "Willpower") {
-        damage += (scores[coreAbbreviations.WP] || 0) * 2; // Willpower
+        damage += (scores[coreAbbreviations.WP] || 0) * 3; // Willpower
       } else if (elementType === "Presence") {
         damage += (scores[coreAbbreviations.PR] || 0) * 2; // Presence
       }
@@ -271,7 +225,7 @@ export default class VisibleStatEquations {
       if (elementType === "Spirit") {
         damage += (scores[coreAbbreviations.SP] || 0) * 1.5; // Spirit
       } else if (elementType === "Arcane") {
-        damage += (scores[coreAbbreviations.I] || 0) * 1.5; // Intelligence
+        damage += (scores[coreAbbreviations.A] || 0) * 1.5; // Arcane
       } else if (elementType === "Willpower") {
         damage += (scores[coreAbbreviations.WP] || 0) * 1.5; // Willpower
       } else if (elementType === "Presence") {
@@ -296,7 +250,7 @@ export default class VisibleStatEquations {
       if (elementType === "Spirit") {
         damage += (scores[coreAbbreviations.SP] || 0) * 1.5; // Spirit
       } else if (elementType === "Arcane") {
-        damage += (scores[coreAbbreviations.I] || 0) * 1.5; // Intelligence
+        damage += (scores[coreAbbreviations.A] || 0) * 1.5; // Arcane
       } else if (elementType === "Willpower") {
         damage += (scores[coreAbbreviations.WP] || 0) * 1.5; // Willpower
       } else if (elementType === "Presence") {
@@ -332,7 +286,7 @@ export default class VisibleStatEquations {
       damage += (skills.rm || 0) * 2; // Ritual Mastery
       damage += (skills.sc || 0) * 1; // Spirit Communication
     } else if (elementType === "Arcane") {
-      damage += (scores[coreAbbreviations.I] || 0) * 1.5; // Intelligence (Arcane)
+      damage += (scores[coreAbbreviations.A] || 0) * 1.5; // Arcane
       damage += (skills.arc || 0) * 2; // Arcana
       damage += (skills.mt || 0) * 2; // Magical Theory
     } else if (elementType === "Willpower") {
