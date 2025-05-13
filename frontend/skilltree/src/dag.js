@@ -6,8 +6,6 @@ export async function renderSkillTree(characterData) {
   );
   const template = await response.json();
   const skillData = template.skills;
-  console.log("Fetched skillData:", skillData);
-
   const statList = [
     "Constitution",
     "Willpower",
@@ -21,11 +19,15 @@ export async function renderSkillTree(characterData) {
     "Wisdom",
   ];
 
+  const mysticalStats = ["Arcane", "Willpower", "Spirit", "Presence"];
   const nodes = [];
   const links = [];
 
   statList.forEach((stat) => {
     nodes.push({ id: stat, isStat: true, title: stat });
+
+    if (mysticalStats.includes(stat)) return; // Skip subnodes for mystical stats
+
     const skills = Object.keys(skillData[stat]);
     for (let j = 0; j < skills.length; j++) {
       const skill = skills[j];
@@ -53,11 +55,9 @@ export async function renderSkillTree(characterData) {
 
   const container = svg.append("g").attr("class", "zoom-container");
   const color = d3.scaleOrdinal(d3.schemeTableau10);
-
   const statRadius = 250;
   const skillRadiusStart = 240;
   const skillSpacing = 30;
-
   const statAngleMap = {};
   const maxFanWidth = Math.PI / 4.5;
   const minFanWidth = Math.PI / 5;
@@ -73,8 +73,8 @@ export async function renderSkillTree(characterData) {
     node.y = height / 2 + Math.sin(angle) * statRadius;
   });
 
-  const skillCounts = statList.map(
-    (stat) => Object.keys(skillData[stat]).length
+  const skillCounts = statList.map((stat) =>
+    mysticalStats.includes(stat) ? 0 : Object.keys(skillData[stat]).length
   );
   const maxSkills = Math.max(...skillCounts);
   const minSkills = Math.min(...skillCounts);
@@ -123,8 +123,8 @@ export async function renderSkillTree(characterData) {
     .append("circle")
     .attr("r", (d) => (d.isStat ? 20 : 5.5))
     .attr("fill", (d) => {
-      if (d.isStat) return color(d.id); // Stat nodes keep color
-      return d.value > 0 ? color(d.stat) : "#666"; // Skill nodes
+      if (d.isStat) return color(d.id);
+      return d.value > 0 ? color(d.stat) : "#666";
     })
     .on("mouseover", function (event, d) {
       if (!d.isStat) {
@@ -152,6 +152,14 @@ export async function renderSkillTree(characterData) {
     })
     .on("mouseout", function () {
       d3.select(".tooltip").remove();
+    })
+    .on("click", (event, d) => {
+      if (d.isStat && mysticalStats.includes(d.id)) {
+        const charId = characterData.meta?.character_id;
+        const path =
+          `/mystical/${d.id}/` + d.id.toLowerCase() + `.html?char=${charId}`;
+        window.location.href = path;
+      }
     });
 
   nodeGroup
@@ -161,8 +169,7 @@ export async function renderSkillTree(characterData) {
     .attr("text-anchor", "middle")
     .attr("fill", "white")
     .attr("font-weight", "bold")
-    .attr("font-size", "16px")
-    .attr("transform", "rotate(0)");
+    .attr("font-size", "16px");
 
   const zoom = d3
     .zoom()
@@ -183,7 +190,6 @@ export async function renderSkillTree(characterData) {
     svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   }, 100);
 
-  // Calculate total skill points
   let totalPoints = 0;
   Object.values(characterData.skills || {}).forEach((skillGroup) => {
     Object.values(skillGroup).forEach((val) => {
@@ -191,7 +197,6 @@ export async function renderSkillTree(characterData) {
     });
   });
 
-  // Display name and points at center
   container
     .append("text")
     .attr("x", width / 2)

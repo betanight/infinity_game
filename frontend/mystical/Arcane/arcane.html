@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Arcane Skill Tree</title>
+
+    <!-- Firebase App + Database -->
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+    <!-- Custom JS for this tree -->
+    <script type="module" src="./arcane.js"></script>
+
+    <style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(#0a001a, #000000);
+    overflow: hidden;
+    height: 100%;
+  }
+
+  svg {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    margin: auto;
+  }
+
+  .tooltip {
+    position: absolute;
+    background: rgba(30, 0, 60, 0.95);
+    color: #ffffff;
+    padding: 8px 12px;
+    border: 1px solid #9a4dff;
+    border-radius: 8px;
+    pointer-events: none;
+    font-size: 14px;
+    box-shadow: 0 0 8px #9a4dff88;
+    z-index: 10;
+  }
+
+  text {
+    fill: #ffffff;
+    text-anchor: middle;
+    font-family: "Verdana", sans-serif;
+  }
+</style>
+
+  </head>
+  <body>
+    <svg></svg>
+  </body>
+</html>

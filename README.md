@@ -77,29 +77,15 @@ Here we can see the same skill tree as before just zoomed out. This is how I env
 
 ---
 
-## 📁 Folder Structure
+## Mystical Skill Tree
 
-- `frontend/`
-  - `index.html` – Character creation and overview
-  - `app.js` – Core logic for character management
-  - `scripts/` – Skill equations and Firebase config
-  - `skilltree/` – Visual tree display powered by D3
-    - `index.html`, `main.js`, `dag.js`, `style.css`
-- `firebase/` – Tools for pushing/pulling the skill template
-- `images/` – README screenshots
-- `system_database/` – Legacy Python skill table generators (to be converted)
+Below are Jason’s current mystical arts trees. As you can see, they appear dull — that’s because none of these skill trees have been unlocked yet. These branches must be discovered through gameplay or granted as a privilege by the Dungeon Master or admin.
+
+![Arcane](images/arcaneTree.png)
+![Presence](images/presenceTree.png)
+![Spirit](images/spiritTree.png)
+![Willpower](images/willpowerTree.png)
+
+Arcane is already much more diverse than the others — and what you’re seeing is only `Tier 1`! Each mystical stat will eventually expand to include `4` full tiers, either as expanding rings or entirely new trees branching outward from the last tier.
 
 ---
-
-## 🔧 Local Development
-
-### Prerequisites
-- Node.js (v14+)
-- npm
-
-### Setup
-
-```bash
-cd frontend
-npm install
-npm run dev
