@@ -93,7 +93,7 @@ export function defineMonkSkills(db) {
   });
 
   // Passive Skills
-  insertSkill(db, "Willpower", "Iron Body", {
+  insertSkill(db, "Willpower", "Passive", "Iron Body", {
     description:
       "Your constitution is fortified by continuous training. Gain minor damage resistance and reduced fatigue buildup.",
     tier: "Monk",
@@ -102,7 +102,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.ironBody(level),
   });
 
-  insertSkill(db, "Willpower", "Reflex Discipline", {
+  insertSkill(db, "Willpower", "Passive", "Reflex Discipline", {
     description:
       "Your honed awareness enhances physical reflexes. Gain a permanent evasion bonus based on Willpower and Dexterity.",
     tier: "Monk",
@@ -111,7 +111,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.reflexDiscipline(level),
   });
 
-  insertSkill(db, "Willpower", "Unshakable Stance", {
+  insertSkill(db, "Willpower", "Passive", "Unshakable Stance", {
     description:
       "Strength and focus combine to make you difficult to knock down or move. Improves stability and resistance to forced movement.",
     tier: "Monk",
@@ -120,7 +120,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.unshakableStance(level),
   });
 
-  insertSkill(db, "Willpower", "Mental Resilience", {
+  insertSkill(db, "Willpower", "Passive", "Mental Resilience", {
     description:
       "Wisdom reinforced by Willpower protects your mind. Reduces chance of being stunned, charmed, or disoriented.",
     tier: "Monk",
@@ -129,7 +129,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.mentalResilience(level),
   });
 
-  insertSkill(db, "Willpower", "Spiritual Pulse", {
+  insertSkill(db, "Willpower", "Passive", "Spiritual Pulse", {
     description:
       "You emit a constant ripple of internal energy. Slightly enhances all physical core stats when Willpower is high.",
     tier: "Monk",
@@ -138,7 +138,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.spiritualPulse(level),
   });
 
-  insertSkill(db, "Willpower", "Discipline of Motion", {
+  insertSkill(db, "Willpower", "Passive", "Discipline of Motion", {
     description:
       "Your training improves physical performance over time. Movement speed and reaction time improve slightly each level.",
     tier: "Monk",

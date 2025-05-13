@@ -5,6 +5,12 @@ const {
 const {
   defineMonkSkills,
 } = require("../frontend/mystical/Willpower/supernatural/monk.js");
+const {
+  defineSpiritSkills,
+} = require("../frontend/mystical/Spirit/tier-1/young.js");
+const {
+  defineRankOneSkills,
+} = require("../frontend/mystical/Presence/rank_1/rank_1.js");
 
 const fullTemplate = {
   meta: {
@@ -920,9 +926,9 @@ const fullTemplate = {
       },
     },
 
-    Willpower: {},
+    Willpower: {}, // defineMonkSkills function does this
 
-    Spirit: {},
+    Spirit: {}, // defineSpiritSkills function does this
 
     Arcane: {}, // defineAllTier1Skills function does this
 
@@ -936,5 +942,7 @@ db.ref("template")
     console.log("✅ Template uploaded to Firebase.");
     defineAllTier1Skills(db); // arcane
     defineMonkSkills(db); // willpower
+    defineSpiritSkills(db); // Spirit
+    defineRankOneSkills(db); // Presence
   })
   .catch((error) => console.error("❌ Failed to upload:", error));

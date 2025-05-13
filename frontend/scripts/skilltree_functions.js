@@ -8,16 +8,15 @@ export function insertSkill(
 ) {
   let scorePath, category, name, data, tier;
 
-  // Check if this is a 4-arg call (Willpower-style)
   if (typeof nameOrData === "object") {
-    // insertSkill(db, "Willpower", "Palm Echo", { ... }, "Monk")
+    // 4-arg form: insertSkill(db, "Willpower", "Palm Echo", { ... }, "Monk")
     scorePath = score;
     category = null;
     name = categoryOrName;
     data = nameOrData;
-    tier = maybeDataOrTier || "Monk";
+    tier = maybeDataOrTier || "Tier 1"; // corrected fallback
   } else {
-    // insertSkill(db, "Arcane", "Fire", "Cinderbolt", { ... }, "Tier 1")
+    // 5-arg form: insertSkill(db, "Willpower", "Passive", "Iron Body", { ... }, "Monk")
     scorePath = score;
     category = categoryOrName;
     name = nameOrData;
@@ -33,6 +32,9 @@ export function insertSkill(
   const path = category
     ? `template/skills/${scorePath}/${tier}/${category}/${name}`
     : `template/skills/${scorePath}/${tier}/${name}`;
+
+  // Uncomment to debug path issues:
+  // console.log("📦 Writing to:", path);
 
   return db.ref(path).set(firebaseData);
 }
