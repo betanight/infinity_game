@@ -282,22 +282,14 @@ export default class VisibleStatEquations {
 
     if (elementType === "Spirit") {
       damage += (scores[coreAbbreviations.SP] || 0) * 1.5; // Spirit
-      damage += (skills.ef || 0) * 2; // Energy Flow
-      damage += (skills.rm || 0) * 2; // Ritual Mastery
-      damage += (skills.sc || 0) * 1; // Spirit Communication
     } else if (elementType === "Arcane") {
       damage += (scores[coreAbbreviations.A] || 0) * 1.5; // Arcane
       damage += (skills.arc || 0) * 2; // Arcana
       damage += (skills.mt || 0) * 2; // Magical Theory
     } else if (elementType === "Willpower") {
       damage += (scores[coreAbbreviations.WP] || 0) * 1.5; // Willpower
-      damage += (skills.sd || 0) * 2; // Sheer Determination
-      damage += (skills.sf || 0) * 2; // Steadfast Focus
-      damage += (skills.id || 0) * 1; // Iron Discipline
     } else if (elementType === "Presence") {
       damage += (scores[coreAbbreviations.PR] || 0) * 1.5; // Presence
-      damage += (skills.da || 0) * 2; // Dominant Aura
-      damage += (skills.pm2 || 0) * 3; // Presence Manifestation
     }
 
     damage += (skills.bf || 0) * 3; // Brute Force

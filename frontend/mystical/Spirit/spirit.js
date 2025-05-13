@@ -136,17 +136,17 @@ function drawTree(nodes, links) {
       const value = d.value ?? 0;
 
       const dull = {
-        core: "#3f2950",
-        tier: "#5c4e6e",
-        category: "#593c71",
-        spell: "#39204c",
+        core: "#3a4a55",
+        tier: "#4c5c63",
+        category: "#45616e",
+        spell: "#2f4e59",
       };
 
       const bright = {
-        core: "#b76bff",
-        tier: "#d6aaff",
-        category: "#c987ff",
-        spell: "#d8b2ff",
+        core: "#7fd7ff",
+        tier: "#ace7ff",
+        category: "#9bd9ff",
+        spell: "#bdeaff",
       };
 
       if (d.isCore) return value === 0 ? dull.core : bright.core;
