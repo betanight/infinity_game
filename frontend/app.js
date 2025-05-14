@@ -159,18 +159,118 @@ function loadCharacters() {
 
       Object.entries(characters).forEach(([name, data]) => {
         const skills = data.skills || {};
-        const primary = data.primary_scores || {};
-        const secondary = data.secondary_scores || {};
+        const totalUsedPoints = Object.values(skills).reduce((sum, group) => {
+          return sum + Object.values(group).reduce((a, b) => a + b, 0);
+        }, 0);
 
-        let totalPoints = 0;
-        Object.values(skills).forEach((skillGroup) => {
-          Object.values(skillGroup).forEach((val) => {
-            totalPoints += val;
-          });
-        });
+        let available = data.meta?.available_skill_points || 0;
+        let totalAvailable = available + totalUsedPoints;
+
         const characterLi = document.createElement("li");
-        characterLi.textContent = `${name} (Character Power: ${totalPoints})`;
         characterLi.style.cursor = "pointer";
+
+        // Header with name + editable total points
+        const header = document.createElement("div");
+        header.innerHTML = `<strong>${name}</strong> <span style="margin-left: 1rem;">Total Points:</span>`;
+
+        const decrement = document.createElement("button");
+        decrement.textContent = "−";
+        decrement.style.margin = "0 0.3rem";
+
+        const counter = document.createElement("span");
+        counter.textContent = totalAvailable;
+        counter.style.margin = "0 0.3rem";
+
+        const increment = document.createElement("button");
+        increment.textContent = "+";
+
+        header.appendChild(decrement);
+        header.appendChild(counter);
+        header.appendChild(increment);
+
+        // Ascension button
+        const ascendBtn = document.createElement("button");
+        ascendBtn.textContent = "Ascension";
+        ascendBtn.style.marginLeft = "1rem";
+        ascendBtn.onclick = async (e) => {
+          e.stopPropagation();
+
+          const choice = prompt(
+            "Choose an ascension path:\n- Willpower\n- Presence\n- Spirit\n- Arcane"
+          )?.trim();
+          if (!["Willpower", "Presence", "Spirit", "Arcane"].includes(choice)) {
+            alert("Invalid choice.");
+            return;
+          }
+
+          const capitalized = choice.charAt(0).toUpperCase() + choice.slice(1);
+
+          try {
+            const tierSnap = await db
+              .ref(`template/skills/${capitalized}/Tier 1`)
+              .once("value");
+            const tierData = tierSnap.val();
+
+            if (!tierData) {
+              alert(`No Tier 1 skills found for ${capitalized}`);
+              return;
+            }
+
+            const categories = Object.keys(tierData);
+            const randomCategory =
+              categories[Math.floor(Math.random() * categories.length)];
+            const skillList = Object.keys(tierData[randomCategory]);
+            const randomSkill =
+              skillList[Math.floor(Math.random() * skillList.length)];
+
+            const charKey = name.toLowerCase(); // normalize usage
+            const skillPath = `characters/${charKey}/skills/${capitalized}/Tier 1/${randomCategory}/${randomSkill}`;
+            const scorePath = `characters/${charKey}/secondary_scores/${capitalized}`;
+            const unlockPath = `characters/${charKey}/meta/unlocked_trees/${capitalized}`;
+            await db.ref(unlockPath).set(true);
+            await db.ref(scorePath).set(1);
+            await db.ref(skillPath).set(1);
+
+            console.log("✅ Ascension complete:", {
+              unlockPath,
+              scorePath,
+              skillPath,
+            });
+
+            alert(
+              `${capitalized} tree unlocked. 1 point added to "${randomSkill}" under ${randomCategory}.`
+            );
+          } catch (err) {
+            console.error("Ascension error:", err);
+            alert("Something went wrong during ascension.");
+          }
+        };
+        header.appendChild(ascendBtn);
+
+        // THEN append the full header
+        characterLi.appendChild(header);
+
+        const updateFirebase = (value) => {
+          const newAvailable = value - totalUsedPoints;
+          db.ref(`characters/${name}/meta/available_skill_points`).set(
+            newAvailable
+          );
+        };
+
+        decrement.onclick = (e) => {
+          e.stopPropagation();
+          if (totalAvailable > totalUsedPoints) {
+            totalAvailable--;
+            counter.textContent = totalAvailable;
+            updateFirebase(totalAvailable);
+          }
+        };
+        increment.onclick = (e) => {
+          e.stopPropagation();
+          totalAvailable++;
+          counter.textContent = totalAvailable;
+          updateFirebase(totalAvailable);
+        };
 
         const detail = document.createElement("ul");
         detail.style.display = "none";
@@ -196,150 +296,6 @@ function loadCharacters() {
         });
 
         detail.appendChild(skillsDetails);
-
-        const controls = document.createElement("div");
-        controls.style.marginTop = "0.5rem";
-
-        ["Skill point +1", "Any +1", "Skill point -1", "Ascend?"].forEach(
-          (label) => {
-            const btn = document.createElement("button");
-            btn.textContent = label;
-            btn.style.marginRight = "0.5rem";
-
-            btn.onclick = async () => {
-              try {
-                if (label === "Skill point +1") {
-                  const stat = await new Promise((resolve) => {
-                    const allowed = [
-                      "Strength",
-                      "Dexterity",
-                      "Constitution",
-                      "Intelligence",
-                      "Wisdom",
-                      "Charisma",
-                    ];
-                    const modal = document.createElement("div");
-                    modal.style.position = "fixed";
-                    modal.style.top = "0";
-                    modal.style.left = "0";
-                    modal.style.width = "100%";
-                    modal.style.height = "100%";
-                    modal.style.background = "rgba(0, 0, 0, 0.8)";
-                    modal.style.display = "flex";
-                    modal.style.alignItems = "center";
-                    modal.style.justifyContent = "center";
-                    modal.style.zIndex = "9999";
-
-                    const box = document.createElement("div");
-                    box.style.background = "#222";
-                    box.style.padding = "20px";
-                    box.style.borderRadius = "10px";
-                    box.style.textAlign = "center";
-                    box.style.color = "white";
-
-                    const label = document.createElement("p");
-                    label.textContent = "Choose a stat tree to level:";
-                    box.appendChild(label);
-
-                    allowed.forEach((stat) => {
-                      const btn = document.createElement("button");
-                      btn.textContent = stat;
-                      btn.style.margin = "6px";
-                      btn.style.padding = "8px 16px";
-                      btn.onclick = () => {
-                        modal.remove();
-                        resolve(stat);
-                      };
-                      box.appendChild(btn);
-                    });
-
-                    modal.appendChild(box);
-                    document.body.appendChild(modal);
-                  });
-
-                  sessionStorage.setItem(
-                    "levelMode",
-                    JSON.stringify({ mode: "upgrade", character: name, stat })
-                  );
-                  window.location.href = `/skilltree/index.html?char=${encodeURIComponent(
-                    name
-                  )}`;
-                } else if (label === "Skill point -1") {
-                  sessionStorage.setItem(
-                    "levelMode",
-                    JSON.stringify({ mode: "downgrade", character: name })
-                  );
-                  window.location.href = `/skilltree/index.html?char=${encodeURIComponent(
-                    name
-                  )}`;
-                } else if (label === "Any +1") {
-                  sessionStorage.setItem(
-                    "levelMode",
-                    JSON.stringify({ mode: "universal", character: name })
-                  );
-                  window.location.href = `/skilltree/index.html?char=${encodeURIComponent(
-                    name
-                  )}`;
-                } else if (label === "Ascend?") {
-                  const stat = await new Promise((resolve) => {
-                    const allowed = [
-                      "Arcane",
-                      "Willpower",
-                      "Spirit",
-                      "Presence",
-                    ];
-                    const modal = document.createElement("div");
-                    modal.style.position = "fixed";
-                    modal.style.top = "0";
-                    modal.style.left = "0";
-                    modal.style.width = "100%";
-                    modal.style.height = "100%";
-                    modal.style.background = "rgba(0, 0, 0, 0.8)";
-                    modal.style.display = "flex";
-                    modal.style.alignItems = "center";
-                    modal.style.justifyContent = "center";
-                    modal.style.zIndex = "9999";
-
-                    const box = document.createElement("div");
-                    box.style.background = "#222";
-                    box.style.padding = "20px";
-                    box.style.borderRadius = "10px";
-                    box.style.textAlign = "center";
-                    box.style.color = "white";
-
-                    const label = document.createElement("p");
-                    label.textContent = "Choose a mystical tree to unlock:";
-                    box.appendChild(label);
-
-                    allowed.forEach((stat) => {
-                      const btn = document.createElement("button");
-                      btn.textContent = stat;
-                      btn.style.margin = "6px";
-                      btn.style.padding = "8px 16px";
-                      btn.onclick = () => {
-                        modal.remove();
-                        resolve(stat);
-                      };
-                      box.appendChild(btn);
-                    });
-
-                    modal.appendChild(box);
-                    document.body.appendChild(modal);
-                  });
-
-                  await unlockTree(name, stat);
-                  alert("Mystic tree unlocked!");
-                }
-              } catch (err) {
-                alert("Error: " + err.message);
-              }
-            };
-
-            controls.appendChild(btn);
-          }
-        );
-
-        detail.appendChild(controls);
 
         characterLi.onclick = () => {
           detail.style.display =

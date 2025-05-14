@@ -85,35 +85,28 @@ export default class VisibleStatEquations {
     const minRoll = Math.max(1, Math.floor(Math.sqrt(totalAccuracy)));
     const maxRoll = totalAccuracy;
 
-    // Generate a roll within the accuracy range (minRoll to maxRoll)
     const roll = Math.random() * (maxRoll - minRoll) + minRoll;
 
-    let baseCriticalChance = 1; // Base critical chance is 1%
-    let skillBonus = D * 0.2; // Each skill point increases critical chance by 20% of Dexterity
-    let totalCriticalChance = baseCriticalChance + cc * skillBonus; // Total critical chance
+    let baseCriticalChance = 1; // Base 1%
+    let skillBonus = D * 0.05; // Each point of Dex adds 5% per skill level
+    let totalCriticalChance = cc * skillBonus;
 
-    // Calculate the critical hit margin (top percentage based on totalCriticalChance)
-    let criticalMargin =
+    // Cap critical chance at 50%
+    if (totalCriticalChance > 50) totalCriticalChance = 50;
+
+    const criticalMargin =
       maxRoll - (totalCriticalChance / 100) * (maxRoll - minRoll);
 
-    // Check if the roll exceeds armor threshold for a hit
-    let isHit = roll >= armorThreshold;
-
-    // If it's a hit, check for a critical hit based on the critical margin
-    let isCriticalHit = false;
-    if (isHit) {
-      if (roll >= criticalMargin) {
-        isCriticalHit = true; // Critical hit if the roll is >= criticalMargin
-      }
-    }
+    const isHit = roll >= armorThreshold;
+    const isCriticalHit = isHit && roll >= criticalMargin;
 
     return {
       roll: Math.floor(roll),
       minRoll: Math.floor(minRoll),
       maxRoll: Math.floor(maxRoll),
-      isCriticalHit: isCriticalHit,
+      isCriticalHit,
       criticalChance: totalCriticalChance,
-      isHit: isHit,
+      isHit,
     };
   }
 
@@ -403,7 +396,7 @@ export default class VisibleStatEquations {
   static characterMovement(scores, skills) {
     let speed = 30;
 
-    speed += (scores[coreAbbreviations.D] || 0) * 2; // Dexterity
+    speed += (scores[coreAbbreviations.D] || 0) * 0.1; // Dexterity
 
     speed += (scores[coreAbbreviations.C] || 0) * 1; // Constitution
 

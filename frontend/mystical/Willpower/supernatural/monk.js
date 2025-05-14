@@ -2,7 +2,7 @@ import { insertSkill } from "../../../scripts/skilltree_functions.js";
 import { MonkEquations } from "../../Willpower/equations/monk-functions.js";
 
 export function defineMonkSkills(db) {
-  insertSkill(db, "Willpower", "Empowered Strike", {
+  insertSkill(db, "Willpower", "Ability", "Empowered Strike", {
     description:
       "Channel inner energy into your next unarmed attack. Increases damage and can stagger at high levels.",
     tier: "Monk",
@@ -11,7 +11,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.empoweredStrike(level),
   });
 
-  insertSkill(db, "Willpower", "Ki Guard", {
+  insertSkill(db, "Willpower", "Ability", "Ki Guard", {
     description:
       "Raise a brief field of force to reduce incoming damage. Scales with level and reacts to ranged or melee attacks.",
     tier: "Monk",
@@ -20,7 +20,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.kiGuard(level),
   });
 
-  insertSkill(db, "Willpower", "Stunning Palm", {
+  insertSkill(db, "Willpower", "Ability", "Stunning Palm", {
     description:
       "Target pressure points with an unarmed strike. At higher levels, has a chance to stun or stagger the target.",
     tier: "Monk",
@@ -29,7 +29,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.stunningPalm(level),
   });
 
-  insertSkill(db, "Willpower", "Flow Step", {
+  insertSkill(db, "Willpower", "Ability", "Flow Step", {
     description:
       "Enhance your movement speed for a short time and ignore opportunity attacks while moving.",
     tier: "Monk",
@@ -38,7 +38,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.flowStep(level),
   });
 
-  insertSkill(db, "Willpower", "Meditative Healing", {
+  insertSkill(db, "Willpower", "Ability", "Meditative Healing", {
     description:
       "Focus your inner energy to heal yourself over a few turns. Healing amount increases with level.",
     tier: "Monk",
@@ -47,7 +47,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.meditativeHealing(level),
   });
 
-  insertSkill(db, "Willpower", "Disruptive Pulse", {
+  insertSkill(db, "Willpower", "Ability", "Disruptive Pulse", {
     description:
       "Release a wave of negative ki to unbalance nearby enemies. Applies debuffs or knockback at higher levels.",
     tier: "Monk",
@@ -56,16 +56,16 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.disruptivePulse(level),
   });
 
-  insertSkill(db, "Willpower", "Rebounding Kick", {
+  insertSkill(db, "Willpower", "Ability", "Rebounding Kick", {
     description:
       "Leap at a target and knock them back with a powerful kick. Gains bonus damage when used with Empowered Strike.",
     tier: "Monk",
     effective_value: 0,
-    tags: ["melee", "knockback", "movement", "willpower"],
+    tags: ["melee", "knockback", "Ability", "movement", "willpower"],
     effect: ({ level }) => MonkEquations.reboundingKick(level),
   });
 
-  insertSkill(db, "Willpower", "Inner Focus", {
+  insertSkill(db, "Willpower", "Ability", "Inner Focus", {
     description:
       "Temporarily sharpen reflexes and awareness. Increases evasion and initiative. Stacks with Flow Step.",
     tier: "Monk",
@@ -74,7 +74,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.innerFocus(level),
   });
 
-  insertSkill(db, "Willpower", "Palm Echo", {
+  insertSkill(db, "Willpower", "Ability", "Palm Echo", {
     description:
       "Strike a target and imprint a delayed ki echo. The target takes additional damage after a short delay.",
     tier: "Monk",
@@ -83,7 +83,7 @@ export function defineMonkSkills(db) {
     effect: ({ level }) => MonkEquations.palmEcho(level),
   });
 
-  insertSkill(db, "Willpower", "Ki Drain", {
+  insertSkill(db, "Willpower", "Ability", "Ki Drain", {
     description:
       "On a successful unarmed hit, siphon stamina from the target and recover a portion yourself.",
     tier: "Monk",
