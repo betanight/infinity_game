@@ -1,5 +1,5 @@
 import { insertSkill } from "../../../scripts/skilltree_functions.js";
-import { RankOneEquations } from "../../Presence/equations/rank_1_functions.js";
+import { RankOneEquations } from "../equations/rank_1_functions.js";
 
 export function defineRankOneSkills(db) {
   // Champion → self + ally aura buffs

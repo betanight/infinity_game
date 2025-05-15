@@ -1,5 +1,5 @@
 import { insertSkill } from "../../../scripts/skilltree_functions.js";
-import { MonkEquations } from "../../Willpower/equations/monk-functions.js";
+import { MonkEquations } from "../equations/monk-functions.js";
 
 export function defineMonkSkills(db) {
   insertSkill(db, "Willpower", "Ability", "Empowered Strike", {
