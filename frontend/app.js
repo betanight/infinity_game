@@ -36,7 +36,6 @@ function loadTemplate() {
         return;
       }
 
-      const secondaryOrder = ["Instinct", "Presence", "Spirit", "Willpower"];
       let html = "";
 
       function buildSection(stat) {
@@ -57,7 +56,6 @@ function loadTemplate() {
       }
 
       primaryStats.forEach((stat) => buildSection(stat));
-      secondaryOrder.forEach((stat) => buildSection(stat));
 
       output.innerHTML = html;
 
