@@ -56,7 +56,6 @@ function loadTemplate() {
       }
 
       primaryStats.forEach((stat) => buildSection(stat));
-
       output.innerHTML = html;
 
       populateSkillDropdowns(skillsData);

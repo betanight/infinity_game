@@ -15,7 +15,7 @@ export async function saveCharacterData(charId, data) {
   await set(ref(db, `characters/${charId.toLowerCase()}`), data);
 }
 
-export async function upgradeSkill(
+export async function upgradeMysticalSkill(
   charId,
   stat,
   tier,
@@ -39,7 +39,23 @@ export async function upgradeSkill(
   await saveCharacterData(charId, char);
 }
 
-export async function downgradeSkill(
+export async function upgradePrimarySkill(charId, stat, skill, amount) {
+  const char = await getCharacterData(charId);
+  const available = char.meta?.available_skill_points || 0;
+  const toAdd = Math.min(amount, available);
+
+  if (!char.skills[stat]) {
+    char.skills[stat] = {};
+  }
+
+  const current = char.skills[stat][skill] || 0;
+  char.skills[stat][skill] = current + toAdd;
+  char.meta.available_skill_points = available - toAdd;
+
+  await saveCharacterData(charId, char);
+}
+
+export async function downgradeMysticalSkill(
   charId,
   stat,
   tier,
@@ -48,14 +64,62 @@ export async function downgradeSkill(
   amount
 ) {
   const char = await getCharacterData(charId);
-  if (!char.skills[stat]?.[tier]?.[category]?.[skill]) return;
+  if (!char.skills?.[stat]?.[tier]?.[category]?.[skill]) return;
+  console.log(
+    "🧪 Before downgrade:",
+    JSON.stringify(char.skills[stat], null, 2)
+  );
 
   const current = char.skills[stat][tier][category][skill] || 0;
   const toRemove = amount === "reset" ? current : Math.min(amount, current);
 
   char.skills[stat][tier][category][skill] = current - toRemove;
+  console.log(
+    "🧪 After subtraction:",
+    char.skills[stat][tier][category][skill]
+  );
+
   if (char.skills[stat][tier][category][skill] <= 0) {
     delete char.skills[stat][tier][category][skill];
+  }
+
+  if (Object.keys(char.skills[stat][tier][category] || {}).length === 0) {
+    delete char.skills[stat][tier][category];
+  }
+
+  if (Object.keys(char.skills[stat][tier] || {}).length === 0) {
+    delete char.skills[stat][tier];
+  }
+
+  if (Object.keys(char.skills[stat] || {}).length === 0) {
+    delete char.skills[stat];
+  }
+  console.log(
+    "🧼 Cleaned skill tree:",
+    JSON.stringify(char.skills[stat], null, 2)
+  );
+
+  char.meta.available_skill_points =
+    (char.meta.available_skill_points || 0) + toRemove;
+
+  await saveCharacterData(charId, char);
+}
+
+export async function downgradePrimarySkill(charId, stat, skill, amount) {
+  const char = await getCharacterData(charId);
+  if (!char.skills?.[stat]?.[skill]) return;
+
+  const current = char.skills[stat][skill] || 0;
+  const toRemove = amount === "reset" ? current : Math.min(amount, current);
+
+  char.skills[stat][skill] = current - toRemove;
+
+  if (char.skills[stat][skill] <= 0) {
+    delete char.skills[stat][skill];
+  }
+
+  if (Object.keys(char.skills[stat] || {}).length === 0) {
+    delete char.skills[stat];
   }
 
   char.meta.available_skill_points =

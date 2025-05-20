@@ -1,3 +1,29 @@
+const brightColors = {
+  Spirit: "#8fe8ff",
+  Strength: "#66ffff",
+  Dexterity: "#ff6b6b",
+  Constitution: "#5f8dff",
+  Intelligence: "#5cf87b",
+  Wisdom: "#ffd94a",
+  Charisma: "#ffb566",
+  Arcane: "#c18cff",
+  Presence: "#ffec88",
+  Willpower: "#ff2e2e",
+};
+
+const dullColors = {
+  Spirit: "#1e3a44",
+  Strength: "#1a4f4f",
+  Dexterity: "#4d1e1e",
+  Constitution: "#1a2a66",
+  Intelligence: "#1d4c29",
+  Wisdom: "#665b23",
+  Charisma: "#4c2f1a",
+  Arcane: "#2f2044",
+  Presence: "#5e5023",
+  Willpower: "#3a1010",
+};
+
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm";
 import { firebaseConfig } from "../../skilltree/src/firebaseConfig.js";
 
@@ -27,13 +53,12 @@ async function renderSpiritTree(characterData) {
   const nodes = [];
   const links = [];
 
-  const spiritScore = characterData.secondary_scores?.Spirit || 0;
-
+  // Initialize stat node (will update value later)
   nodes.push({
     id: "Spirit",
     label: "Spirit",
     isCore: true,
-    value: spiritScore,
+    value: 0,
     r: 22,
     x: 0,
     y: 0,
@@ -42,6 +67,7 @@ async function renderSpiritTree(characterData) {
   const categories = Object.keys(spiritData);
   const ringRadius = 220;
   const skillRadius = 100;
+  let spiritTotal = 0;
 
   categories.forEach((category, catIndex) => {
     const angle = (2 * Math.PI * catIndex) / categories.length;
@@ -49,17 +75,7 @@ async function renderSpiritTree(characterData) {
     const yCat = Math.sin(angle) * ringRadius;
 
     const categoryId = `Tier1-${category}`;
-    nodes.push({
-      id: categoryId,
-      label: category,
-      description: `${category} Spirit Skills`,
-      r: 12,
-      x: xCat,
-      y: yCat,
-      value: 0,
-    });
-
-    links.push({ source: "Spirit", target: categoryId });
+    let categoryValue = 0;
 
     const skills = spiritData[category];
     const skillNames = Object.keys(skills);
@@ -73,22 +89,45 @@ async function renderSpiritTree(characterData) {
       const ySkill = yCat + Math.sin(skillAngle) * skillRadius;
 
       const skillData = skills[skillName];
-      const value = characterData.skills?.Spirit?.[skillName] || 0;
+      const level =
+        characterData.skills?.Spirit?.["Tier 1"]?.[category]?.[skillName] || 0;
+
+      categoryValue += level;
+      spiritTotal += level;
 
       const skillId = `${categoryId}-${skillName}`;
       nodes.push({
         id: skillId,
         label: skillName,
         description: skillData.description,
-        value,
-        r: 5 + value,
+        value: level,
+        r: 5 + level,
         x: xSkill,
         y: ySkill,
       });
 
       links.push({ source: categoryId, target: skillId });
     });
+
+    // Push category node after calculating value
+    nodes.push({
+      id: categoryId,
+      label: category,
+      description: `${category} Spirit Skills`,
+      r: 12,
+      x: xCat,
+      y: yCat,
+      value: categoryValue,
+    });
+
+    links.push({ source: "Spirit", target: categoryId });
   });
+
+  // Update Spirit stat node with total value
+  const spiritNode = nodes.find((n) => n.id === "Spirit");
+  if (spiritNode) {
+    spiritNode.value = spiritTotal;
+  }
 
   drawTree(nodes, links);
 }
@@ -114,8 +153,14 @@ function drawTree(nodes, links) {
     .attr("y1", (d) => getNode(d.source).y)
     .attr("x2", (d) => getNode(d.target).x)
     .attr("y2", (d) => getNode(d.target).y)
-    .attr("stroke", "#888")
-    .attr("stroke-width", 1);
+    .attr("stroke", (d) => {
+      const target = getNode(d.target);
+      const stat = target?.stat || target?.id;
+
+      return target?.value > 0
+        ? brightColors?.[stat] || "#ccc"
+        : dullColors?.[stat] || "#555";
+    });
 
   function getNode(id) {
     return nodes.find((n) => n.id === id);
@@ -158,12 +203,25 @@ function drawTree(nodes, links) {
       return value === 0 ? dull.spell : bright.spell;
     });
 
+  // Add stat label
   nodeGroup
     .append("text")
-    .text((d) => (d.isCore ? d.label : ""))
-    .attr("dy", "-1.4em")
+    .filter((d) => d.isCore)
+    .text((d) => d.label)
+    .attr("dy", "-0.3em")
     .attr("text-anchor", "middle")
-    .attr("font-size", "16px")
+    .attr("font-size", "15px")
+    .attr("fill", "white")
+    .attr("font-weight", "bold");
+
+  // Add value below the label
+  nodeGroup
+    .append("text")
+    .filter((d) => d.isCore && d.value > 0)
+    .text((d) => d.value)
+    .attr("dy", "1em")
+    .attr("text-anchor", "middle")
+    .attr("font-size", "14px")
     .attr("fill", "white")
     .attr("font-weight", "bold");
 
