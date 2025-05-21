@@ -42,7 +42,7 @@ export const skillAbbreviations = {
   // Dexterity skills
   ac: "Acrobatics",
   as2: "Aimed Shot",
-  ad: "Ambidexterity",
+  amb: "Ambidexterity",
   ms: "Missile Snaring",
   bl: "Balance",
   bp: "Blade Precision",

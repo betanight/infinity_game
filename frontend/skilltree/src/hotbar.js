@@ -83,10 +83,6 @@ function renderHotbarContent(drawer, characterData) {
     }
   }
 
-  console.log("🧪 Flattened Skills Object:", skills);
-  console.log("🧪 ad (Ambidexterity):", skills.ad);
-  console.log("🧪 ins (Insight):", skills.ins);
-
   const baseStat = "Strength";
   const baseDamage = VisibleStatEquations.rawPhysicalDamage(
     scores,
@@ -118,6 +114,9 @@ function renderHotbarContent(drawer, characterData) {
     description: "A basic physical attack using fists or body.",
     roll: VisibleStatEquations.rawMeleeAccuracy(scores, skills),
     damage: baseDamage,
+    characterData,
+    scores,
+    skills,
   });
 
   const mysticalStats = ["Arcane", "Willpower", "Presence", "Spirit"];
@@ -148,37 +147,130 @@ function renderHotbarContent(drawer, characterData) {
           console.log(
             `  Total Damage = ${damage} → Range: ${minDmg} – ${maxDmg}`
           );
-
-          addAbilityCard(drawer, {
-            name: skill,
-            description: "No description provided.",
-            roll: VisibleStatEquations.rawMeleeAccuracy(scores, skills),
-            damage: damage,
-          });
         }
       }
     }
   }
 }
 
-function addAbilityCard(drawer, { name, description, roll, damage }) {
-  const minRoll = Math.floor(Math.sqrt(roll));
-  const maxRoll = roll;
+function addAbilityCard(
+  drawer,
+  { name, description, roll, damage, characterData, scores, skills }
+) {
+  const minRoll = Math.floor(Math.sqrt(roll.totalAccuracy || roll));
+  const maxRoll = Math.floor(roll.totalAccuracy || roll);
+  const minDmg = Math.floor(Math.sqrt(damage));
+  const maxDmg = Math.floor(damage);
+
+  const estimatedMax = VisibleStatEquations.characterHealth(
+    0,
+    scores,
+    skills
+  ).maxHealth;
+  const currentHP = characterData.meta?.currentHealth ?? estimatedMax;
+
+  const healthData = VisibleStatEquations.characterHealth(
+    currentHP,
+    scores,
+    skills
+  );
+  const maxHP = healthData.maxHealth;
+  const armor = VisibleStatEquations.characterArmor(
+    scores,
+    skills,
+    "Unarmored"
+  );
 
   const card = document.createElement("div");
+  card.style.display = "flex";
+  card.style.justifyContent = "space-between";
+  card.style.alignItems = "flex-start";
   card.style.marginBottom = "16px";
   card.style.padding = "16px";
   card.style.border = "1px solid #444";
   card.style.borderRadius = "8px";
   card.style.background = "#2a2a2a";
 
-  card.innerHTML = `
-    <h3>${name}</h3>
-    <p style="margin-top: 4px;">${description}</p>
-    <p><strong>Roll Range:</strong> ${minRoll} – ${maxRoll}</p>
-    <p><strong>Damage Range:</strong> ${Math.floor(
-      Math.sqrt(damage)
-    )} – ${damage}</p>`;
+  const leftSide = document.createElement("div");
+  leftSide.style.flex = "1";
 
+  const title = document.createElement("h3");
+  title.textContent = name;
+
+  const desc = document.createElement("p");
+  desc.textContent = description;
+
+  const rollText = document.createElement("p");
+  rollText.innerHTML = `<strong>Roll Range:</strong> ${minRoll} – ${maxRoll}`;
+
+  const dmgText = document.createElement("p");
+  dmgText.innerHTML = `<strong>Damage Range:</strong> ${minDmg} – ${maxDmg}`;
+
+  const output = document.createElement("div");
+  output.style.marginTop = "12px";
+
+  const rollBtn = document.createElement("button");
+  rollBtn.textContent = "Roll";
+  rollBtn.style.padding = "6px 12px";
+  rollBtn.style.marginTop = "8px";
+  rollBtn.style.background = "#0af";
+  rollBtn.style.color = "white";
+  rollBtn.style.border = "none";
+  rollBtn.style.borderRadius = "6px";
+  rollBtn.style.cursor = "pointer";
+
+  rollBtn.onclick = () => {
+    const rollValue =
+      Math.floor(Math.random() * (maxRoll - minRoll + 1)) + minRoll;
+    output.innerHTML = `<p>🎯 Roll: <strong>${rollValue}</strong></p>`;
+
+    const yesBtn = document.createElement("button");
+    const noBtn = document.createElement("button");
+
+    yesBtn.textContent = "Yes";
+    noBtn.textContent = "No";
+
+    [yesBtn, noBtn].forEach((btn) => {
+      btn.style.margin = "6px";
+      btn.style.padding = "4px 10px";
+      btn.style.borderRadius = "6px";
+      btn.style.border = "none";
+      btn.style.cursor = "pointer";
+      btn.style.background = "#555";
+      btn.style.color = "white";
+    });
+
+    yesBtn.onclick = () => {
+      const dmgValue =
+        Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
+      output.innerHTML = `<p>🎯 Roll: <strong>${rollValue}</strong></p><p>💥 Hit! Damage: <strong>${dmgValue}</strong></p>`;
+    };
+
+    noBtn.onclick = () => {
+      output.innerHTML = "";
+    };
+
+    output.appendChild(document.createTextNode("Hit? "));
+    output.appendChild(yesBtn);
+    output.appendChild(noBtn);
+  };
+
+  leftSide.appendChild(title);
+  leftSide.appendChild(desc);
+  leftSide.appendChild(rollText);
+  leftSide.appendChild(dmgText);
+  leftSide.appendChild(rollBtn);
+  leftSide.appendChild(output);
+
+  const statPanel = document.createElement("div");
+  statPanel.style.marginLeft = "24px";
+  statPanel.style.minWidth = "100px";
+  statPanel.innerHTML = `
+  <p><strong>HP:</strong> ${currentHP} / ${maxHP}</p>
+  <p><strong>Armor:</strong> ${armor}</p>
+`;
+
+  card.appendChild(leftSide);
+  card.appendChild(statPanel);
   drawer.appendChild(card);
 }

@@ -298,7 +298,7 @@ export default class VisibleStatEquations {
     damage += (skills.ls || 0) * 2; // Load Stabilization
     damage += (skills.mm || 0) * 2; // Momentum Management
     damage += (skills.ps || 0) * 2; // Postural Strength
-    damage += (skills.ad || 0) * 2; // Ambidexterity
+    damage += (skills.amb || 0) * 2; // Ambidexterity
 
     damage += (skills.tp || 0) * 1; // Tactical Planning
     damage += (skills.sf || 0) * 2; // Strategic Foresight

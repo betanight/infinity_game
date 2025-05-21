@@ -89,3 +89,11 @@ Below are Jason’s current mystical arts trees. As you can see, they appear dul
 Arcane is already much more diverse than the others — and what you’re seeing is only `Tier 1`! Each mystical stat will eventually expand to include `4` full tiers, either as expanding rings or entirely new trees branching outward from the last tier.
 
 ---
+
+## Drawers
+
+A new addition to the project is the added feature of drawers, which will showcase all abilities, current health, armor class, and much more!
+
+![meleeCard](images/meleeDrawer.png)
+
+---
