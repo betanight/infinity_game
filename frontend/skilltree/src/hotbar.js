@@ -3,6 +3,7 @@ import {
   skillAbbreviations,
   coreAbbreviations,
 } from "../../scripts/abbreviations.js";
+import { createSkillCheckDrawer } from "./skill_checks.js";
 
 export function createHotbar(characterData) {
   const existing = document.getElementById("hotbar-toggle");
