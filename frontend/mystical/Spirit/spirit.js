@@ -26,6 +26,11 @@ const dullColors = {
 
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm";
 import { firebaseConfig } from "../../skilltree/src/firebaseConfig.js";
+import {
+  upgradeMysticalSkill,
+  downgradeMysticalSkill,
+  getCharacterData,
+} from "../../skilltree/levelUp/levelingFunctions.js";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -129,10 +134,10 @@ async function renderSpiritTree(characterData) {
     spiritNode.value = spiritTotal;
   }
 
-  drawTree(nodes, links);
+  drawTree(nodes, links, characterData);
 }
 
-function drawTree(nodes, links) {
+function drawTree(nodes, links, characterData) {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
@@ -155,11 +160,9 @@ function drawTree(nodes, links) {
     .attr("y2", (d) => getNode(d.target).y)
     .attr("stroke", (d) => {
       const target = getNode(d.target);
-      const stat = target?.stat || target?.id;
+      const stat = "Spirit";
 
-      return target?.value > 0
-        ? brightColors?.[stat] || "#ccc"
-        : dullColors?.[stat] || "#555";
+      return target?.value > 0 ? brightColors[stat] : dullColors[stat];
     });
 
   function getNode(id) {
@@ -248,6 +251,134 @@ function drawTree(nodes, links) {
 
   nodeGroup.on("mouseout", () => {
     d3.select(".tooltip").remove();
+  });
+
+  nodeGroup.on("click", async function (event, d) {
+    if (!d.description || !d.id.includes("Tier1")) return;
+
+    const charId = characterName.toLowerCase();
+    const stat = "Spirit";
+    const [tierRaw, category, ...rest] = d.id.split("-");
+    const tier = tierRaw.replace("Tier", "Tier ");
+    const skillName = rest.join("-");
+    const skillLevel = d.value || 0;
+    const available = characterData.meta?.available_skill_points || 0;
+
+    const modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = 0;
+    modal.style.left = 0;
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.background = "rgba(0,0,0,0.85)";
+    modal.style.display = "flex";
+    modal.style.alignItems = "center";
+    modal.style.justifyContent = "center";
+    modal.style.zIndex = 9999;
+
+    const box = document.createElement("div");
+    box.style.background = "#222";
+    box.style.padding = "24px";
+    box.style.borderRadius = "12px";
+    box.style.color = "white";
+    box.style.textAlign = "center";
+    box.style.maxWidth = "400px";
+
+    box.innerHTML = `
+      <h2>${d.label}</h2>
+      <p>${d.description}</p>
+      <p><strong>Current Level:</strong> ${skillLevel}</p>
+      <p><strong>Available Skill Points:</strong> ${available}</p>
+      <hr>
+    `;
+
+    const addButton = (label, cb, disabled = false) => {
+      const btn = document.createElement("button");
+      btn.textContent = label;
+      btn.style.margin = "6px";
+      btn.style.padding = "8px 16px";
+      btn.style.borderRadius = "6px";
+      btn.style.border = "none";
+      btn.style.cursor = disabled ? "not-allowed" : "pointer";
+      btn.style.background = disabled ? "#555" : "#0af";
+      btn.style.color = "white";
+      btn.disabled = disabled;
+      btn.onclick = async () => {
+        modal.remove();
+        await cb();
+        const updated = await getCharacterData(charId);
+        d3.select("svg").selectAll("*").remove(); // clear entire SVG
+        renderSpiritTree(updated); // rebuilds fresh from template + updated character data
+      };
+      box.appendChild(btn);
+    };
+
+    addButton(
+      "+1",
+      () => upgradeMysticalSkill(charId, stat, tier, category, skillName, 1),
+      available < 1
+    );
+    addButton(
+      "+5",
+      () => upgradeMysticalSkill(charId, stat, tier, category, skillName, 5),
+      available < 1
+    );
+    addButton(
+      "Max",
+      () =>
+        upgradeMysticalSkill(
+          charId,
+          stat,
+          tier,
+          category,
+          skillName,
+          available
+        ),
+      available < 1
+    );
+
+    box.appendChild(document.createElement("br"));
+
+    addButton(
+      "-1",
+      () => downgradeMysticalSkill(charId, stat, tier, category, skillName, 1),
+      skillLevel === 0
+    );
+    addButton(
+      "-5",
+      () => downgradeMysticalSkill(charId, stat, tier, category, skillName, 5),
+      skillLevel === 0
+    );
+    addButton(
+      "Reset",
+      () =>
+        downgradeMysticalSkill(
+          charId,
+          stat,
+          tier,
+          category,
+          skillName,
+          "reset"
+        ),
+      skillLevel === 0
+    );
+
+    const close = document.createElement("button");
+    close.textContent = "Close";
+    close.style.marginTop = "12px";
+    close.style.padding = "8px 16px";
+    close.style.borderRadius = "6px";
+    close.style.border = "none";
+    close.style.background = "#888";
+    close.style.color = "white";
+    close.style.cursor = "pointer";
+    close.onclick = () => modal.remove();
+
+    box.appendChild(document.createElement("br"));
+    box.appendChild(close);
+
+    modal.appendChild(box);
+    document.body.appendChild(modal);
   });
 
   const zoom = d3

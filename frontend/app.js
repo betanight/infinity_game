@@ -1,11 +1,4 @@
-import visibleStatEquations from "./scripts/visible_stat_equations.js";
 import { firebaseConfig } from "./skilltree/src/firebaseConfig.js";
-import {
-  upgradeSkill,
-  downgradeSkill,
-  getCharacterData,
-  calculateRank,
-} from "./skilltree/levelUp/levelingFunctions.js";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -131,11 +124,19 @@ function attachCreateForm() {
 
 function flattenSkills(skills) {
   const flat = {};
-  Object.values(skills).forEach((skillGroup) => {
-    Object.entries(skillGroup).forEach(([name, val]) => {
-      flat[name] = val;
-    });
-  });
+
+  function dive(obj) {
+    for (const key in obj) {
+      const val = obj[key];
+      if (typeof val === "number") {
+        flat[key] = (flat[key] || 0) + val;
+      } else if (typeof val === "object" && val !== null) {
+        dive(val); // go deeper
+      }
+    }
+  }
+
+  dive(skills);
   return flat;
 }
 
@@ -156,9 +157,11 @@ function loadCharacters() {
 
       Object.entries(characters).forEach(([name, data]) => {
         const skills = data.skills || {};
-        const totalUsedPoints = Object.values(skills).reduce((sum, group) => {
-          return sum + Object.values(group).reduce((a, b) => a + b, 0);
-        }, 0);
+        const flatSkills = flattenSkills(skills);
+        const totalUsedPoints = Object.values(flatSkills).reduce(
+          (sum, val) => sum + val,
+          0
+        );
 
         let available = data.meta?.available_skill_points || 0;
         let totalAvailable = available + totalUsedPoints;
