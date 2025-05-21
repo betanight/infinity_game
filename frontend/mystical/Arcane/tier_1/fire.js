@@ -1,5 +1,5 @@
-import { FireEquations } from "../../equations/tier-1/fire-functions.js";
-import { insertSkill } from "../../../../scripts/skilltree_functions.js";
+import { FireEquations } from "../equations/tier_1/fire-functions.js";
+import { insertSkill } from "../../../scripts/skilltree_functions.js";
 
 export function defineFireSkills(db) {
   insertSkill(

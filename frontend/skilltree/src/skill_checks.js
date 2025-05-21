@@ -64,54 +64,38 @@ async function renderSkillChecks(drawer, characterData) {
   const snapshot = await get(ref(db, "template/skills"));
   const templateSkills = snapshot.val();
 
-  const skills = {};
-  const abbrevMap = {};
-  for (const [abbr, full] of Object.entries(skillAbbreviations)) {
-    abbrevMap[full] = abbr;
-  }
+  const scores = characterData.skills || {};
+  const output = {};
 
-  for (const stat in characterData.skills || {}) {
-    const statBlock = characterData.skills[stat];
-    if (typeof statBlock !== "object") continue;
+  for (const stat in templateSkills) {
+    const skills = templateSkills[stat];
+    for (const skillName in skills) {
+      const meta = skills[skillName];
+      if (!meta || !Array.isArray(meta.boost)) continue;
 
-    for (const key in statBlock) {
-      const val = statBlock[key];
+      const boostsSkills = meta.boost.some((b) => b.startsWith("skill:"));
+      if (!boostsSkills) continue;
 
-      if (typeof val === "number") {
-        const meta = templateSkills?.[stat]?.[key];
-        if (!meta || meta.boost) continue;
+      const level =
+        characterData.skills?.[stat]?.[skillName] ||
+        characterData.skills?.[stat]?.[skillName.replace(/\s+/g, "_")] ||
+        0;
 
-        const desc = meta?.description || "No description.";
-        if (!skills[stat]) skills[stat] = [];
-        skills[stat].push({ name: key, level: val, desc });
-      } else if (typeof val === "object") {
-        for (const subcat in val) {
-          for (const skill in val[subcat]) {
-            const meta =
-              templateSkills?.[stat]?.[subcat]?.[skill] ||
-              templateSkills?.[stat]?.[skill];
-
-            if (!meta || meta.boost) continue;
-
-            const desc = meta.description || "No description.";
-            if (!skills[stat]) skills[stat] = [];
-            skills[stat].push({
-              name: skill,
-              level: val[subcat][skill],
-              desc,
-            });
-          }
-        }
-      }
+      if (!output[stat]) output[stat] = [];
+      output[stat].push({
+        name: skillName,
+        level: level,
+        desc: meta.description || "No description.",
+      });
     }
   }
 
-  for (const stat of Object.keys(skills).sort()) {
+  for (const stat of Object.keys(output).sort()) {
     const section = document.createElement("div");
     section.style.marginBottom = "14px";
     section.innerHTML = `<h3 style="margin: 8px 0;">${stat}</h3>`;
 
-    skills[stat]
+    output[stat]
       .sort((a, b) => b.level - a.level)
       .forEach(({ name, level, desc }) => {
         const div = document.createElement("div");
@@ -135,8 +119,13 @@ async function renderSkillChecks(drawer, characterData) {
         rollBtn.style.color = "white";
         rollBtn.style.cursor = "pointer";
 
-        const min = Math.max(1, Math.floor(Math.sqrt(level)));
-        const max = level * 2;
+        const statScore =
+          characterData.primary_scores?.[stat] ??
+          characterData.secondary_scores?.[stat] ??
+          0;
+
+        const min = Math.floor(Math.sqrt(level)) + statScore;
+        const max = level + statScore;
 
         rollBtn.onmouseover = (event) => {
           const existing = document.getElementById("skillcheck-tooltip");
@@ -173,8 +162,6 @@ async function renderSkillChecks(drawer, characterData) {
         };
 
         rollBtn.onclick = () => {
-          const min = Math.max(1, Math.floor(Math.sqrt(level)));
-          const max = level + 5;
           const roll = Math.floor(Math.random() * (max - min + 1)) + min;
 
           let result = div.querySelector(".roll-result");

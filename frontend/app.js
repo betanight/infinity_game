@@ -114,6 +114,18 @@ function attachCreateForm() {
     if (!allChosen)
       return alert("Please choose a skill for every primary stat.");
 
+    // ✅ CHECK AUTH FIRST
+    const auth = firebase.auth(); // or use getAuth() if using modular SDK
+    const user = auth.currentUser;
+
+    console.log("🧪 currentUser UID:", user?.uid);
+
+    if (!user) {
+      alert("You must be signed in to create characters.");
+      return;
+    }
+
+    // ✅ Now safe to write
     await db.ref(`characters/${name.toLowerCase()}`).set(template);
 
     alert(`Character '${name}' created!`);

@@ -1,5 +1,5 @@
-import { WindEquations } from "../../equations/tier-1/wind-functions.js";
-import { insertSkill } from "../../../../scripts/skilltree_functions.js";
+import { WindEquations } from "../equations/tier_1/wind-functions.js";
+import { insertSkill } from "../../../scripts/skilltree_functions.js";
 
 export function defineWindSkills(db) {
   insertSkill(

@@ -160,6 +160,7 @@ export function calculateRank(skills) {
 
 export async function updateCoreStatTotals(charId) {
   const char = await getCharacterData(charId);
+  console.log("Updating core stats");
 
   const coreStats = [
     "Strength",
@@ -182,7 +183,7 @@ export async function updateCoreStatTotals(charId) {
         total += skillBlock[skill] || 0;
       }
     }
-    updatedPrimary[stat] = 1 + total;
+    updatedPrimary[stat] = total;
   });
 
   // Update mystical stats

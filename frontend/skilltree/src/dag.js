@@ -42,6 +42,8 @@ const dullColors = {
   Wisdom: "#665b23",
   Charisma: "#4c2f1a",
 };
+import { getAuth } from "firebase/auth";
+console.log("👤 skilltree auth user:", getAuth().currentUser?.uid);
 
 import * as d3 from "d3";
 import { createHotbar } from "./hotbar.js";
@@ -55,7 +57,6 @@ import {
   downgradePrimarySkill,
   calculateRank,
   getCharacterData,
-  saveCharacterData,
 } from "../levelUp/levelingFunctions.js";
 
 // Firebase setup

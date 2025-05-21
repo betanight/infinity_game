@@ -87,7 +87,7 @@ export const skillAbbreviations = {
   pier: "Piercing Resistance",
   poisr: "Poison Resistance",
   rb: "Recovery Boost",
-  sr2: "Shock Resistance",
+  sr2: "Stun Resistance",
   slr: "Slashing Resistance",
   se: "Sleep Efficiency",
   sr3: "Stamina Recovery",
@@ -143,6 +143,7 @@ export const skillAbbreviations = {
   sa: "Situational Awareness",
   si: "Spiritual Intuition",
   wr: "Wisdom Reception",
+  perc: "Perception",
 
   // Charisma skills
   ap: "Ambassadorial Presence",

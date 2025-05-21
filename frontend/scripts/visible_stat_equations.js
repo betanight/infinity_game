@@ -61,6 +61,7 @@ export default class VisibleStatEquations {
       accuracy += (skills.vp || 0) * 2; // Vital Point Targeting
       accuracy += (skills.td || 0) * 2; // Trigger Discipline
       accuracy += (skills.wpn || 0) * 2; // Weapon Mastery
+      accuracy += (skills.amb || 0) * 2; // Ambidexterity
       primaryStatUsed = "D"; // Dexterity
     } else if (rangedStyle === "Firearm") {
       accuracy += (scores[coreAbbreviations.I] || 0) * 3; // Intelligence
@@ -72,6 +73,7 @@ export default class VisibleStatEquations {
       accuracy += (skills.sf || 0) * 3; // Strategic Foresight
       accuracy += (skills.sa || 0) * 2; // Situational Awareness
       accuracy += (skills.ins || 0) * 2; // Insight
+      accuracy += (skills.amb || 0) * 2; // Ambidexterity
       primaryStatUsed = "I"; // Intelligence
     }
 
@@ -372,9 +374,9 @@ export default class VisibleStatEquations {
       armor += (skills.ac || 0) * 3; // Acrobatics
       armor += (skills.bl || 0) * 2; // Balance
       armor += (skills.ms || 0) * 1; // Missile Snaring
-      armor += (skills.amb || 0) * 1; // Ambidexterity
       armor += (skills.qc || 0) * 1; // Quick Draw
       armor += (skills.wf || 0) * 1; // Weapon Finesse
+      armor += (skills.sa || 0) * 2; // Shock Absorption
     }
 
     if (armorType === "Heavy") {
@@ -454,6 +456,7 @@ export default class VisibleStatEquations {
 
     evasion += (skills.mc || 0) * 3; // Muscle Control
     evasion += (skills.mm || 0) * 3; // Momentum Management
+    evasion += (skills.ofa || 0) * 4; // Opposing Force Application
 
     evasion += (skills.ca || 0) * 1; // Cognitive Ability
     evasion += (skills.log || 0) * 2; // Logic

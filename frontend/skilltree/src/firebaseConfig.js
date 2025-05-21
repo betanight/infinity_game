@@ -1,5 +1,5 @@
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyC2V2EUMC8YdoDeNEB2btla_NJLQ5bPWv0",
   authDomain: "infinity-e0f55.firebaseapp.com",
   databaseURL: "https://infinity-e0f55-default-rtdb.firebaseio.com",
   projectId: "infinity-e0f55",

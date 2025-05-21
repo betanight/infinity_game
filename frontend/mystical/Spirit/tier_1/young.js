@@ -1,5 +1,5 @@
 import { insertSkill } from "../../../scripts/skilltree_functions.js";
-import { youngEquations } from "../../Spirit/equations/young-functions.js";
+import { youngEquations } from "../equations/young-functions.js";
 
 export function defineSpiritSkills(db) {
   insertSkill(db, "Spirit", "Spectre", "Soul Channel", {

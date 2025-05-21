@@ -1,4 +1,4 @@
-import { PoisonEquations } from "../equations/tier-1/poison-functions.js";
+import { PoisonEquations } from "../equations/tier_1/poison-functions.js";
 import { insertSkill } from "../../../scripts/skilltree_functions.js";
 
 export function definePoisonSkills(db) {
