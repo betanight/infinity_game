@@ -1,5 +1,18 @@
+const brightColors = {
+  Willpower: "#ff2e2e",
+};
+
+const dullColors = {
+  Willpower: "#3a1010",
+};
+
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm";
 import { firebaseConfig } from "../../skilltree/src/firebaseConfig.js";
+import {
+  upgradeMysticalSkill,
+  downgradeMysticalSkill,
+  getCharacterData,
+} from "../../skilltree/levelUp/levelingFunctions.js";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -27,78 +40,84 @@ async function renderWillpowerTree(characterData) {
   const nodes = [];
   const links = [];
 
-  const willScore = characterData.secondary_scores?.Willpower || 0;
-
   nodes.push({
     id: "Willpower",
     label: "Willpower",
     isCore: true,
-    value: willScore,
+    value: 0,
     r: 22,
     x: 0,
     y: 0,
   });
 
-  const categories = ["Active", "Passive"];
-  const radius = 220;
-  const skills = { Active: {}, Passive: willData?.Passive || {} };
+  const categories = Object.keys(willData);
+  const ringRadius = 220;
+  const skillRadius = 100;
+  let willpowerTotal = 0;
 
-  // Everything not Passive is active
-  Object.entries(willData || {}).forEach(([key, val]) => {
-    if (key !== "Passive") skills.Active[key] = val;
-  });
-
-  categories.forEach((category, i) => {
-    const angle = (i / categories.length) * 2 * Math.PI;
-    const xCat = Math.cos(angle) * radius;
-    const yCat = Math.sin(angle) * radius;
+  categories.forEach((category, catIndex) => {
+    const angle = (2 * Math.PI * catIndex) / categories.length;
+    const xCat = Math.cos(angle) * ringRadius;
+    const yCat = Math.sin(angle) * ringRadius;
 
     const categoryId = `Tier1-${category}`;
-    nodes.push({
-      id: categoryId,
-      label: category,
-      description:
-        category === "Passive"
-          ? "Passive Willpower Abilities"
-          : "Active Monk Techniques",
-      r: 12,
-      x: xCat,
-      y: yCat,
-      value: 0,
-    });
+    let categoryValue = 0;
 
-    links.push({ source: "Willpower", target: categoryId });
+    const skills = willData[category];
+    const skillNames = Object.keys(skills);
+    const angleSpread = Math.PI / 2;
+    const skillBase = angle - angleSpread / 2;
+    const skillStep = angleSpread / Math.max(skillNames.length - 1, 1);
 
-    const skillEntries = Object.entries(skills[category]);
-    const spread = Math.PI / 2;
-    const base = angle - spread / 2;
-    const step = spread / Math.max(skillEntries.length - 1, 1);
+    skillNames.forEach((skillName, skillIndex) => {
+      const skillAngle = skillBase + skillStep * skillIndex;
+      const xSkill = xCat + Math.cos(skillAngle) * skillRadius;
+      const ySkill = yCat + Math.sin(skillAngle) * skillRadius;
 
-    skillEntries.forEach(([skillName, skillData], index) => {
-      const skillAngle = base + index * step;
-      const xSkill = xCat + Math.cos(skillAngle) * 100;
-      const ySkill = yCat + Math.sin(skillAngle) * 100;
+      const skillData = skills[skillName];
+      const level =
+        characterData.skills?.Willpower?.["Tier 1"]?.[category]?.[skillName] ||
+        0;
 
-      const value = characterData.skills?.Willpower?.[skillName] || 0;
+      categoryValue += level;
+      willpowerTotal += level;
 
+      const skillId = `${categoryId}-${skillName}`;
       nodes.push({
-        id: `${categoryId}-${skillName}`,
+        id: skillId,
         label: skillName,
         description: skillData.description,
-        value,
-        r: 5 + value,
+        value: level,
+        r: 5 + level,
         x: xSkill,
         y: ySkill,
       });
 
-      links.push({ source: categoryId, target: `${categoryId}-${skillName}` });
+      links.push({ source: categoryId, target: skillId });
     });
+
+    nodes.push({
+      id: categoryId,
+      label: category,
+      description: `${category} Willpower Skills`,
+      r: 12,
+      x: xCat,
+      y: yCat,
+      value: categoryValue,
+    });
+
+    links.push({ source: "Willpower", target: categoryId });
   });
 
-  drawTree(nodes, links);
+  const willNode = nodes.find((n) => n.id === "Willpower");
+  if (willNode) {
+    willNode.value = willpowerTotal;
+  }
+
+  drawTree(nodes, links, characterData);
 }
 
-function drawTree(nodes, links) {
+function drawTree(nodes, links, characterData) {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
@@ -119,8 +138,11 @@ function drawTree(nodes, links) {
     .attr("y1", (d) => getNode(d.source).y)
     .attr("x2", (d) => getNode(d.target).x)
     .attr("y2", (d) => getNode(d.target).y)
-    .attr("stroke", "#999")
-    .attr("stroke-width", 1);
+    .attr("stroke", (d) => {
+      const target = getNode(d.target);
+      const stat = "Willpower";
+      return target?.value > 0 ? brightColors[stat] : dullColors[stat];
+    });
 
   function getNode(id) {
     return nodes.find((n) => n.id === id);
@@ -141,33 +163,48 @@ function drawTree(nodes, links) {
       const value = d.value ?? 0;
 
       const dull = {
-        core: "#4a1515",
-        tier: "#663131",
-        active: "#772c2c",
-        passive: "#5c2323",
+        core: "#3a1010",
+        tier: "#4c1a1a",
+        category: "#612727",
+        skill: "#591f1f",
       };
 
       const bright = {
-        core: "#ff5e5e",
-        tier: "#ff9e9e",
-        active: "#ff4d4d",
-        passive: "#ff7777",
+        core: "#ff2e2e",
+        tier: "#ff5a5a",
+        category: "#ff7878",
+        skill: "#ff9999",
       };
 
       if (d.isCore) return value === 0 ? dull.core : bright.core;
-      if (d.label === "Active")
-        return value === 0 ? dull.active : bright.active;
-      if (d.label === "Passive")
-        return value === 0 ? dull.passive : bright.passive;
-      return value === 0 ? dull.tier : bright.tier;
+      if (d.label?.startsWith("Tier"))
+        return value === 0 ? dull.tier : bright.tier;
+
+      const isCategory = nodes.find(
+        (n) => n.id === d.id && !n.id.includes("-")
+      );
+      if (isCategory) return value === 0 ? dull.category : bright.category;
+
+      return value === 0 ? dull.skill : bright.skill;
     });
 
   nodeGroup
     .append("text")
-    .text((d) => (d.isCore ? d.label : ""))
-    .attr("dy", "-1.4em")
+    .filter((d) => d.isCore)
+    .text((d) => d.label)
+    .attr("dy", "-0.3em")
     .attr("text-anchor", "middle")
-    .attr("font-size", "16px")
+    .attr("font-size", "15px")
+    .attr("fill", "white")
+    .attr("font-weight", "bold");
+
+  nodeGroup
+    .append("text")
+    .filter((d) => d.isCore && d.value > 0)
+    .text((d) => d.value)
+    .attr("dy", "1em")
+    .attr("text-anchor", "middle")
+    .attr("font-size", "14px")
     .attr("fill", "white")
     .attr("font-weight", "bold");
 
@@ -194,6 +231,133 @@ function drawTree(nodes, links) {
 
   nodeGroup.on("mouseout", () => {
     d3.select(".tooltip").remove();
+  });
+
+  nodeGroup.on("click", async function (event, d) {
+    if (!d.description || !d.id.includes("Tier1")) return;
+
+    const charId = characterName.toLowerCase();
+    const stat = "Willpower";
+    const [tierRaw, category, ...rest] = d.id.split("-");
+    const tier = tierRaw.replace("Tier", "Tier ");
+    const skillName = rest.join("-");
+    const skillLevel = d.value || 0;
+    const available = characterData.meta?.available_skill_points || 0;
+
+    const modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = 0;
+    modal.style.left = 0;
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.background = "rgba(0,0,0,0.85)";
+    modal.style.display = "flex";
+    modal.style.alignItems = "center";
+    modal.style.justifyContent = "center";
+    modal.style.zIndex = 9999;
+
+    const box = document.createElement("div");
+    box.style.background = "#222";
+    box.style.padding = "24px";
+    box.style.borderRadius = "12px";
+    box.style.color = "white";
+    box.style.textAlign = "center";
+    box.style.maxWidth = "400px";
+
+    box.innerHTML = `
+      <h2>${d.label}</h2>
+      <p>${d.description}</p>
+      <p><strong>Current Level:</strong> ${skillLevel}</p>
+      <p><strong>Available Skill Points:</strong> ${available}</p>
+      <hr>
+    `;
+
+    const addButton = (label, cb, disabled = false) => {
+      const btn = document.createElement("button");
+      btn.textContent = label;
+      btn.style.margin = "6px";
+      btn.style.padding = "8px 16px";
+      btn.style.borderRadius = "6px";
+      btn.style.border = "none";
+      btn.style.cursor = disabled ? "not-allowed" : "pointer";
+      btn.style.background = disabled ? "#555" : "#0af";
+      btn.style.color = "white";
+      btn.disabled = disabled;
+      btn.onclick = async () => {
+        modal.remove();
+        await cb();
+        const updated = await getCharacterData(charId);
+        d3.select("svg").selectAll("*").remove();
+        renderWillpowerTree(updated);
+      };
+      box.appendChild(btn);
+    };
+
+    addButton(
+      "+1",
+      () => upgradeMysticalSkill(charId, stat, tier, category, skillName, 1),
+      available < 1
+    );
+    addButton(
+      "+5",
+      () => upgradeMysticalSkill(charId, stat, tier, category, skillName, 5),
+      available < 1
+    );
+    addButton(
+      "Max",
+      () =>
+        upgradeMysticalSkill(
+          charId,
+          stat,
+          tier,
+          category,
+          skillName,
+          available
+        ),
+      available < 1
+    );
+
+    box.appendChild(document.createElement("br"));
+
+    addButton(
+      "-1",
+      () => downgradeMysticalSkill(charId, stat, tier, category, skillName, 1),
+      skillLevel === 0
+    );
+    addButton(
+      "-5",
+      () => downgradeMysticalSkill(charId, stat, tier, category, skillName, 5),
+      skillLevel === 0
+    );
+    addButton(
+      "Reset",
+      () =>
+        downgradeMysticalSkill(
+          charId,
+          stat,
+          tier,
+          category,
+          skillName,
+          "reset"
+        ),
+      skillLevel === 0
+    );
+
+    const close = document.createElement("button");
+    close.textContent = "Close";
+    close.style.marginTop = "12px";
+    close.style.padding = "8px 16px";
+    close.style.borderRadius = "6px";
+    close.style.border = "none";
+    close.style.background = "#888";
+    close.style.color = "white";
+    close.style.cursor = "pointer";
+    close.onclick = () => modal.remove();
+
+    box.appendChild(document.createElement("br"));
+    box.appendChild(close);
+    modal.appendChild(box);
+    document.body.appendChild(modal);
   });
 
   const zoom = d3

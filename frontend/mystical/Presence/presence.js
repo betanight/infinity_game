@@ -1,8 +1,17 @@
+const brightColors = {
+  Presence: "#ffec88",
+};
+
+const dullColors = {
+  Presence: "#5e5023",
+};
+
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm";
 import { firebaseConfig } from "../../skilltree/src/firebaseConfig.js";
 import {
-  upgradeSkill,
-  downgradeSkill,
+  upgradeMysticalSkill,
+  downgradeMysticalSkill,
+  getCharacterData,
 } from "../../skilltree/levelUp/levelingFunctions.js";
 
 firebase.initializeApp(firebaseConfig);
@@ -31,14 +40,11 @@ async function renderPresenceTree(characterData) {
   const nodes = [];
   const links = [];
 
-  const presenceScore = characterData.secondary_scores?.Presence || 0;
-
-  // Central node
   nodes.push({
     id: "Presence",
     label: "Presence",
     isCore: true,
-    value: presenceScore,
+    value: 0,
     r: 22,
     x: 0,
     y: 0,
@@ -47,26 +53,15 @@ async function renderPresenceTree(characterData) {
   const categories = Object.keys(presenceData);
   const ringRadius = 220;
   const skillRadius = 100;
+  let presenceTotal = 0;
 
   categories.forEach((category, catIndex) => {
     const angle = (2 * Math.PI * catIndex) / categories.length;
     const xCat = Math.cos(angle) * ringRadius;
     const yCat = Math.sin(angle) * ringRadius;
 
-    const categoryId = `Rank1-${category}`;
-    nodes.push({
-      id: categoryId,
-      label: category,
-      description: category.includes("Passive")
-        ? "Champion (Aura Passives)"
-        : "Behemoth (Active Abilities)",
-      r: 12,
-      x: xCat,
-      y: yCat,
-      value: 0,
-    });
-
-    links.push({ source: "Presence", target: categoryId });
+    const categoryId = `Tier1-${category}`;
+    let categoryValue = 0;
 
     const skills = presenceData[category];
     const skillNames = Object.keys(skills);
@@ -80,31 +75,54 @@ async function renderPresenceTree(characterData) {
       const ySkill = yCat + Math.sin(skillAngle) * skillRadius;
 
       const skillData = skills[skillName];
-      const value =
+      const level =
         characterData.skills?.Presence?.["Tier 1"]?.[category]?.[skillName] ||
         0;
+
+      categoryValue += level;
+      presenceTotal += level;
 
       const skillId = `${categoryId}-${skillName}`;
       nodes.push({
         id: skillId,
-        label: skillName,
+        label: skillName.replace("Passive-", ""),
         description: skillData.description,
-        value,
-        r: 5 + value,
+        value: level,
+        r: 5 + level,
         x: xSkill,
         y: ySkill,
+        fullName: skillName,
+        category,
+        tier: "Tier 1",
       });
 
       links.push({ source: categoryId, target: skillId });
     });
+
+    nodes.push({
+      id: categoryId,
+      label: category,
+      description: `${category} Presence Skills`,
+      r: 12,
+      x: xCat,
+      y: yCat,
+      value: categoryValue,
+    });
+
+    links.push({ source: "Presence", target: categoryId });
   });
 
-  drawTree(nodes, links);
+  const presenceNode = nodes.find((n) => n.id === "Presence");
+  if (presenceNode) presenceNode.value = presenceTotal;
+
+  drawTree(nodes, links, characterData);
 }
 
-function drawTree(nodes, links) {
+function drawTree(nodes, links, characterData) {
   const width = window.innerWidth;
   const height = window.innerHeight;
+
+  d3.select("svg").selectAll("*").remove();
 
   const svg = d3
     .select("svg")
@@ -113,7 +131,6 @@ function drawTree(nodes, links) {
 
   const container = svg.append("g");
 
-  // Draw links
   container
     .append("g")
     .selectAll("line")
@@ -124,8 +141,10 @@ function drawTree(nodes, links) {
     .attr("y1", (d) => getNode(d.source).y)
     .attr("x2", (d) => getNode(d.target).x)
     .attr("y2", (d) => getNode(d.target).y)
-    .attr("stroke", "#888")
-    .attr("stroke-width", 1);
+    .attr("stroke", (d) => {
+      const target = getNode(d.target);
+      return target.value > 0 ? brightColors.Presence : dullColors.Presence;
+    });
 
   function getNode(id) {
     return nodes.find((n) => n.id === id);
@@ -146,171 +165,198 @@ function drawTree(nodes, links) {
       const value = d.value ?? 0;
 
       const dull = {
-        core: "#4d3c00",
-        tier: "#6a5c15",
-        element: "#6d5522",
-        spell: "#4f3b00",
+        core: "#5e5023",
+        tier: "#786634",
+        category: "#786c3a",
+        skill: "#655c3b",
       };
 
       const bright = {
-        core: "#ffe85a",
-        tier: "#ffec9a",
-        element: "#ffc93b",
-        spell: "#ffdd77",
+        core: "#ffec88",
+        tier: "#ffdf55",
+        category: "#ffe873",
+        skill: "#fff3aa",
       };
 
       if (d.isCore) return value === 0 ? dull.core : bright.core;
-      if (d.label?.startsWith("Rank"))
+      if (d.label?.startsWith("Tier"))
         return value === 0 ? dull.tier : bright.tier;
-      if (d.label?.match(/Passive|Behemoth|Champion/i))
-        return value === 0 ? dull.element : bright.element;
+      if (nodes.find((n) => n.id === d.id && !n.id.includes("-")))
+        return value === 0 ? dull.category : bright.category;
 
-      return value === 0 ? dull.spell : bright.spell;
-    })
-    .on("click", async function (event, d) {
-      console.log("🟢 Node clicked:", d.id);
+      return value === 0 ? dull.skill : bright.skill;
     });
 
   nodeGroup
     .append("text")
-    .text((d) => (d.isCore ? d.label : ""))
-    .attr("dy", "-1.4em")
+    .filter((d) => d.isCore)
+    .text((d) => d.label)
+    .attr("dy", "-0.3em")
     .attr("text-anchor", "middle")
-    .attr("font-size", "16px")
+    .attr("font-size", "15px")
     .attr("fill", "white")
     .attr("font-weight", "bold");
 
   nodeGroup
-    .on("mouseover", function (event, d) {
-      if (d.description) {
-        const tooltip = d3
-          .select("body")
-          .append("div")
-          .attr("class", "tooltip")
-          .html(
-            `<strong>${d.label}</strong><br>${d.description}<br>Level: ${d.value}`
-          );
-        tooltip
-          .style("left", `${event.pageX + 12}px`)
-          .style("top", `${event.pageY + 12}px`);
-      }
-    })
-    .on("mousemove", (event) => {
-      d3.select(".tooltip")
+    .append("text")
+    .filter((d) => d.isCore && d.value > 0)
+    .text((d) => d.value)
+    .attr("dy", "1em")
+    .attr("text-anchor", "middle")
+    .attr("font-size", "14px")
+    .attr("fill", "white")
+    .attr("font-weight", "bold");
+
+  nodeGroup.on("mouseover", function (event, d) {
+    if (d.description) {
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .html(
+          `<strong>${d.label}</strong><br>${d.description}<br>Level: ${d.value}`
+        );
+      tooltip
         .style("left", `${event.pageX + 12}px`)
         .style("top", `${event.pageY + 12}px`);
-    })
-    .on("mouseout", () => {
-      d3.select(".tooltip").remove();
-    })
-    .on("click", async function (event, d) {
-      if (d.isCore || !d.label || !d.label.includes("-")) return;
+    }
+  });
 
-      const [rankPart, category, skillName] = d.id.split("-");
-      const tier = "Tier 1";
-      const stat = "Presence";
-      const charId = characterData.meta?.character_id;
-      const skillLevel =
-        characterData.skills?.[stat]?.[tier]?.[category]?.[skillName] || 0;
-      const available = characterData.meta?.available_skill_points || 0;
+  nodeGroup.on("mousemove", (event) => {
+    d3.select(".tooltip")
+      .style("left", `${event.pageX + 12}px`)
+      .style("top", `${event.pageY + 12}px`);
+  });
 
-      const modal = document.createElement("div");
-      modal.style.position = "fixed";
-      modal.style.top = 0;
-      modal.style.left = 0;
-      modal.style.width = "100%";
-      modal.style.height = "100%";
-      modal.style.background = "rgba(0,0,0,0.85)";
-      modal.style.display = "flex";
-      modal.style.alignItems = "center";
-      modal.style.justifyContent = "center";
-      modal.style.zIndex = 9999;
+  nodeGroup.on("mouseout", () => {
+    d3.select(".tooltip").remove();
+  });
 
-      const box = document.createElement("div");
-      box.style.background = "#222";
-      box.style.padding = "24px";
-      box.style.borderRadius = "12px";
-      box.style.color = "white";
-      box.style.textAlign = "center";
-      box.style.maxWidth = "400px";
+  nodeGroup.on("click", async function (event, d) {
+    if (!d.fullName) return;
 
-      box.innerHTML = `
-        <h2>${skillName}</h2>
-        <p>${d.description || "No description."}</p>
-        <p><strong>Current Level:</strong> ${skillLevel}</p>
-        <p><strong>Available Skill Points:</strong> ${available}</p>
-      `;
+    const charId = characterName.toLowerCase();
+    const stat = "Presence";
+    const skillName = d.fullName;
+    const category = d.category;
+    const tier = d.tier;
+    const skillLevel = d.value || 0;
+    const available = characterData.meta?.available_skill_points || 0;
 
-      const addButton = (label, callback, disabled = false) => {
-        const btn = document.createElement("button");
-        btn.textContent = label;
-        btn.style.margin = "6px";
-        btn.style.padding = "8px 16px";
-        btn.style.borderRadius = "6px";
-        btn.style.border = "none";
-        btn.style.cursor = disabled ? "not-allowed" : "pointer";
-        btn.style.background = disabled ? "#555" : "#0af";
-        btn.style.color = "white";
-        btn.disabled = disabled;
-        btn.onclick = async () => {
-          modal.remove();
-          await callback();
-          const updated = await getCharacterData(charId);
-          d3.select("svg").selectAll("*").remove();
-          renderPresenceTree(updated);
-        };
-        box.appendChild(btn);
+    const modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = 0;
+    modal.style.left = 0;
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.background = "rgba(0,0,0,0.85)";
+    modal.style.display = "flex";
+    modal.style.alignItems = "center";
+    modal.style.justifyContent = "center";
+    modal.style.zIndex = 9999;
+
+    const box = document.createElement("div");
+    box.style.background = "#222";
+    box.style.padding = "24px";
+    box.style.borderRadius = "12px";
+    box.style.color = "white";
+    box.style.textAlign = "center";
+    box.style.maxWidth = "400px";
+
+    box.innerHTML = `
+      <h2>${d.label}</h2>
+      <p>${d.description}</p>
+      <p><strong>Current Level:</strong> ${skillLevel}</p>
+      <p><strong>Available Skill Points:</strong> ${available}</p>
+      <hr>
+    `;
+
+    const addButton = (label, cb, disabled = false) => {
+      const btn = document.createElement("button");
+      btn.textContent = label;
+      btn.style.margin = "6px";
+      btn.style.padding = "8px 16px";
+      btn.style.borderRadius = "6px";
+      btn.style.border = "none";
+      btn.style.cursor = disabled ? "not-allowed" : "pointer";
+      btn.style.background = disabled ? "#555" : "#0af";
+      btn.style.color = "white";
+      btn.disabled = disabled;
+      btn.onclick = async () => {
+        modal.remove();
+        await cb();
+        const updated = await getCharacterData(charId);
+        renderPresenceTree(updated);
       };
+      box.appendChild(btn);
+    };
 
-      addButton(
-        "+1",
-        () => upgradeSkill(charId, stat, tier, category, skillName, 1),
-        available < 1
-      );
-      addButton(
-        "+5",
-        () => upgradeSkill(charId, stat, tier, category, skillName, 5),
-        available < 1
-      );
-      addButton(
-        "Max",
-        () => upgradeSkill(charId, stat, tier, category, skillName, available),
-        available < 1
-      );
-      box.appendChild(document.createElement("br"));
+    addButton(
+      "+1",
+      () => upgradeMysticalSkill(charId, stat, tier, category, skillName, 1),
+      available < 1
+    );
+    addButton(
+      "+5",
+      () => upgradeMysticalSkill(charId, stat, tier, category, skillName, 5),
+      available < 1
+    );
+    addButton(
+      "Max",
+      () =>
+        upgradeMysticalSkill(
+          charId,
+          stat,
+          tier,
+          category,
+          skillName,
+          available
+        ),
+      available < 1
+    );
 
-      addButton(
-        "-1",
-        () => downgradeSkill(charId, stat, tier, category, skillName, 1),
-        skillLevel === 0
-      );
-      addButton(
-        "-5",
-        () => downgradeSkill(charId, stat, tier, category, skillName, 5),
-        skillLevel === 0
-      );
-      addButton(
-        "Reset",
-        () => downgradeSkill(charId, stat, tier, category, skillName, "reset"),
-        skillLevel === 0
-      );
+    box.appendChild(document.createElement("br"));
 
-      const closeBtn = document.createElement("button");
-      closeBtn.textContent = "Close";
-      closeBtn.style.marginTop = "12px";
-      closeBtn.style.padding = "8px 16px";
-      closeBtn.style.borderRadius = "6px";
-      closeBtn.style.border = "none";
-      closeBtn.style.background = "#888";
-      closeBtn.style.color = "white";
-      closeBtn.style.cursor = "pointer";
-      closeBtn.onclick = () => modal.remove();
-      box.appendChild(document.createElement("br"));
-      box.appendChild(closeBtn);
+    addButton(
+      "-1",
+      () => downgradeMysticalSkill(charId, stat, tier, category, skillName, 1),
+      skillLevel === 0
+    );
+    addButton(
+      "-5",
+      () => downgradeMysticalSkill(charId, stat, tier, category, skillName, 5),
+      skillLevel === 0
+    );
+    addButton(
+      "Reset",
+      () =>
+        downgradeMysticalSkill(
+          charId,
+          stat,
+          tier,
+          category,
+          skillName,
+          "reset"
+        ),
+      skillLevel === 0
+    );
 
-      modal.appendChild(box);
-      document.body.appendChild(modal);
-    });
+    const close = document.createElement("button");
+    close.textContent = "Close";
+    close.style.marginTop = "12px";
+    close.style.padding = "8px 16px";
+    close.style.borderRadius = "6px";
+    close.style.border = "none";
+    close.style.background = "#888";
+    close.style.color = "white";
+    close.style.cursor = "pointer";
+    close.onclick = () => modal.remove();
+
+    box.appendChild(document.createElement("br"));
+    box.appendChild(close);
+    modal.appendChild(box);
+    document.body.appendChild(modal);
+  });
 
   const zoom = d3
     .zoom()

@@ -44,6 +44,7 @@ const dullColors = {
 };
 
 import * as d3 from "d3";
+import { createHotbar } from "./hotbar.js";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, get } from "firebase/database";
 import { firebaseConfig } from "./firebaseConfig.js";
@@ -87,17 +88,21 @@ function getTotalSkillPoints(skills) {
   let total = 0;
 
   for (const stat in skills) {
-    const entries = skills[stat];
-    for (const key in entries) {
-      const value = entries[key];
+    const statBlock = skills[stat];
+
+    if (typeof statBlock !== "object") continue;
+
+    for (const key in statBlock) {
+      const value = statBlock[key];
+
       if (typeof value === "number") {
-        total += value;
+        total += value; // primary stat skill like Strength → "Power Strike": 3
       } else if (typeof value === "object") {
-        for (const sub1 in value) {
-          for (const sub2 in value[sub1]) {
-            for (const skill in value[sub1][sub2]) {
-              total += value[sub1][sub2][skill] || 0;
-            }
+        // mystical tiered layout
+        for (const category in value) {
+          const skillGroup = value[category];
+          for (const skillName in skillGroup) {
+            total += skillGroup[skillName] || 0;
           }
         }
       }
@@ -106,6 +111,7 @@ function getTotalSkillPoints(skills) {
 
   return total;
 }
+
 export async function renderSkillTree(characterData) {
   d3.select("g.zoom-container").remove();
   const container = svg.append("g").attr("class", "zoom-container");
@@ -563,4 +569,6 @@ export async function renderSkillTree(characterData) {
     .style("font-size", "24px")
     .style("font-weight", "bold")
     .text(`${totalCapacity}`);
+
+  createHotbar(characterData);
 }
