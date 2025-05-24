@@ -909,7 +909,7 @@ const fullTemplate = {
 
     Arcane: {}, // defineAllTier1Skills function does this
 
-    Presence: {},
+    Presence: {}, // defineAllRankOneSkills function does this
   },
 };
 
