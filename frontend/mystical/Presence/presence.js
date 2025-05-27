@@ -6,6 +6,9 @@ const dullColors = {
   Presence: "#5e5023",
 };
 
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, get } from "firebase/database";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm";
 import { firebaseConfig } from "../../skilltree/src/firebaseConfig.js";
 import {
@@ -14,27 +17,52 @@ import {
   getCharacterData,
 } from "../../skilltree/levelUp/levelingFunctions.js";
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+// Firebase setup
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
 const params = new URLSearchParams(window.location.search);
 const characterName = params.get("char");
 
-if (characterName) loadCharacter(characterName);
+// Wait for auth state before loading character
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    if (characterName) loadCharacter(characterName);
+  } else {
+    document.body.innerHTML = `
+      <div style="text-align: center; padding: 2rem;">
+        <h2>Please Sign In</h2>
+        <p>You need to be signed in to view this page.</p>
+        <a href="/" style="color: #0af;">Return to Dashboard</a>
+      </div>
+    `;
+  }
+});
 
 async function loadCharacter(name) {
-  const snapshot = await db
-    .ref(`characters/${name.toLowerCase()}`)
-    .once("value");
-  if (!snapshot.exists()) return alert("Character not found.");
-  const characterData = snapshot.val();
-  renderPresenceTree(characterData);
+  try {
+    const snapshot = await get(ref(db, `characters/${name.toLowerCase()}`));
+    if (!snapshot.exists()) {
+      alert("Character not found.");
+      return;
+    }
+    const characterData = snapshot.val();
+    renderPresenceTree(characterData);
+  } catch (error) {
+    console.error("Error loading character:", error);
+    document.body.innerHTML = `
+      <div style="text-align: center; padding: 2rem;">
+        <h2>Error Loading Character</h2>
+        <p>There was an error loading the character data. Please try again.</p>
+        <a href="/" style="color: #0af;">Return to Dashboard</a>
+      </div>
+    `;
+  }
 }
 
 async function renderPresenceTree(characterData) {
-  const templateSnap = await db
-    .ref("template/skills/Presence/Tier 1")
-    .once("value");
+  const templateSnap = await get(ref(db, "template/skills/Presence/Tier 1"));
   const presenceData = templateSnap.val();
 
   const nodes = [];
