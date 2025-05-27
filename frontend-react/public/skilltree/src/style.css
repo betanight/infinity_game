@@ -1,0 +1,16 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background-color: #1e1e1e;
+}
+svg {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  margin: auto;
+}
+text {
+  fill: white;
+  font-size: 12px;
+  text-anchor: middle;
+}
