@@ -7,6 +7,7 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script type="module" src="/skilltree/src/auth.js"></script>
   <script type="module" src="app.js"></script>
@@ -24,6 +25,34 @@
       font-size: 1.5rem;
       font-weight: bold;
       border-bottom: 2px solid #444;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .sign-out-btn {
+      background-color: #f68282;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      z-index: 1;
+    }
+
+    .sign-out-btn:hover {
+      background-color: #d66b6b;
+    }
+
+    #google-signin {
+      z-index: 0;
     }
 
     main {
@@ -75,7 +104,12 @@
 </head>
 
 <body>
-  <header>Infinity Game Dashboard</header>
+  <header>
+    <span>Infinity Game Dashboard</span>
+    <div class="header-right">
+      <button class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
   <main>
     <section>
       <h2>Create Character</h2>

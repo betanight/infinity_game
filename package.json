@@ -1,5 +1,24 @@
 {
   "dependencies": {
     "firebase-admin": "^13.3.0"
-  }
+  },
+  "name": "infinity_game",
+  "version": "1.0.0",
+  "description": "The Infinity Game Dashboard is a modular character manager and stat visualizer built for deep skill-based RPG campaigns. It supports character creation, stat progression, and a dynamic radial skill tree that visually reflects chosen abilities in real time.",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betanight/infinity_game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/betanight/infinity_game/issues"
+  },
+  "homepage": "https://github.com/betanight/infinity_game#readme"
 }

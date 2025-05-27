@@ -11,19 +11,24 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Optional: add this somewhere in your UI
+// Create and style the login button
 const loginButton = document.createElement("button");
 loginButton.textContent = "Sign in with Google";
-loginButton.style.position = "fixed";
-loginButton.style.top = "12px";
-loginButton.style.right = "12px";
+loginButton.id = "google-signin";
 loginButton.style.padding = "10px 16px";
 loginButton.style.borderRadius = "8px";
 loginButton.style.background = "#0af";
 loginButton.style.color = "white";
 loginButton.style.border = "none";
 loginButton.style.cursor = "pointer";
-document.body.appendChild(loginButton);
+
+// Add the button to the header-right container
+const headerRight = document.querySelector('.header-right');
+if (headerRight) {
+  headerRight.appendChild(loginButton);
+} else {
+  console.error('Could not find header-right container');
+}
 
 loginButton.onclick = () => {
   signInWithPopup(auth, provider)
@@ -44,7 +49,9 @@ loginButton.onclick = () => {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("👤 Signed in:", user.email, "→ UID:", user.uid);
+    loginButton.style.display = 'none';
   } else {
     console.log("🔒 Signed out");
+    loginButton.style.display = 'block';
   }
 });
