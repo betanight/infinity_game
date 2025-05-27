@@ -222,11 +222,22 @@ function loadCharacters() {
         let totalAvailable = available + totalUsedPoints;
 
         const characterLi = document.createElement("li");
-        characterLi.style.cursor = "pointer";
 
         // Header with name + editable total points
         const header = document.createElement("div");
-        header.innerHTML = `<strong>${name}</strong> <span style="margin-left: 1rem;">Total Points:</span>`;
+
+        // Create the name link
+        const nameLink = document.createElement("a");
+        nameLink.href = `/skilltree/index.html?char=${encodeURIComponent(
+          name
+        )}`;
+        nameLink.innerHTML = `<strong>${name}</strong>`;
+        nameLink.style.color = "inherit";
+        nameLink.style.textDecoration = "none";
+        nameLink.style.cursor = "pointer";
+
+        header.appendChild(nameLink);
+        header.innerHTML += ` <span style="margin-left: 1rem;">Total Points:</span>`;
 
         const decrement = document.createElement("button");
         decrement.textContent = "−";
@@ -248,8 +259,6 @@ function loadCharacters() {
         ascendBtn.textContent = "Ascension";
         ascendBtn.style.marginLeft = "1rem";
         ascendBtn.onclick = async (e) => {
-          e.stopPropagation();
-
           const choice = prompt(
             "Choose an ascension path:\n- Willpower\n- Presence\n- Spirit\n- Arcane"
           )?.trim();
@@ -302,7 +311,6 @@ function loadCharacters() {
         };
         header.appendChild(ascendBtn);
 
-        // THEN append the full header
         characterLi.appendChild(header);
 
         const updateFirebase = (value) => {
@@ -314,7 +322,6 @@ function loadCharacters() {
         };
 
         decrement.onclick = (e) => {
-          e.stopPropagation();
           if (totalAvailable > totalUsedPoints) {
             totalAvailable--;
             counter.textContent = totalAvailable;
@@ -322,44 +329,12 @@ function loadCharacters() {
           }
         };
         increment.onclick = (e) => {
-          e.stopPropagation();
           totalAvailable++;
           counter.textContent = totalAvailable;
           updateFirebase(totalAvailable);
         };
 
-        const detail = document.createElement("ul");
-        detail.style.display = "none";
-        detail.style.marginTop = "0.5rem";
-
-        const skillsDetails = document.createElement("details");
-        const skillsSummary = document.createElement("summary");
-        skillsSummary.innerHTML = `<a href="/skilltree/index.html?char=${encodeURIComponent(
-          name
-        )}" style="color: inherit; text-decoration: underline;">Skills</a>`;
-        skillsDetails.appendChild(skillsSummary);
-
-        Object.entries(skills).forEach(([stat, skillMap]) => {
-          if (!skillMap) return;
-          const entries = Object.entries(skillMap).filter(([, val]) => val > 0);
-          if (entries.length === 0) return;
-
-          entries.forEach(([skill, val]) => {
-            const skillLi = document.createElement("li");
-            skillLi.innerHTML = `<em>${stat}</em>: ${skill} (level ${val})`;
-            skillsDetails.appendChild(skillLi);
-          });
-        });
-
-        detail.appendChild(skillsDetails);
-
-        characterLi.onclick = () => {
-          detail.style.display =
-            detail.style.display === "none" ? "block" : "none";
-        };
-
         list.appendChild(characterLi);
-        list.appendChild(detail);
       });
     })
     .catch((err) => {
@@ -370,69 +345,101 @@ function loadCharacters() {
 function attachEquipmentCreator() {
   const container = document.createElement("div");
   container.innerHTML = `
-    <h3>Create Equipment</h3>
-    <select id="equip-type">
-      <option value="">-- Select Type --</option>
-      <option value="Armor">Armor</option>
-      <option value="weapon">Weapon</option>
-      <option value="item">Item</option>
-    </select>
-    <select id="weapon-range" style="display:none">
-      <option value="">-- Select Weapon Type --</option>
-      <option value="Melee">Melee</option>
-      <option value="Ranged">Ranged</option>
-    </select>
-    <select id="equip-category"></select>
-    <select id="equip-rarity">
-      <option value="Common">Common</option>
-      <option value="Uncommon">Uncommon</option>
-      <option value="Rare">Rare</option>
-      <option value="Epic">Epic</option>
-      <option value="Legendary">Legendary</option>
-    </select>
-    <select id="equip-bonus">
-      <option value="Strength">Strength</option>
-      <option value="Dexterity">Dexterity</option>
-      <option value="Constitution">Constitution</option>
-      <option value="Intelligence">Intelligence</option>
-      <option value="Wisdom">Wisdom</option>
-      <option value="Charisma">Charisma</option>
-    </select>
-    <select id="equip-value">
-      ${Array.from({ length: 11 }, (_, i) => i - 5)
-        .map((n) => `<option value="${n}">${n >= 0 ? "+" : ""}${n}</option>`)
-        .join("")}
-    </select>
-    <select id="equip-player"></select>
-    <button id="create-equip-btn">Create Equipment</button>
-  `;
+    <div style="display: flex; gap: 20px;">
+      <div style="flex: 1;">
+        <h3>Create Custom Equipment</h3>
+        <input type="text" id="equip-name" placeholder="Enter equipment name" style="margin-bottom: 0.5rem;">
+        <select id="equip-type">
+          <option value="">-- Select Type --</option>
+          <option value="Armor">Armor</option>
+          <option value="weapon">Weapon</option>
+          <option value="item">Item</option>
+        </select>
+        <select id="weapon-range" style="display:none">
+          <option value="">-- Select Range --</option>
+          <option value="Melee">Melee</option>
+          <option value="Ranged">Ranged</option>
+        </select>
+        <select id="equip-category">
+          <option value="">-- Select Category --</option>
+        </select>
+        <select id="equip-rarity">
+          <option value="">-- Select Rarity --</option>
+          <option value="Common">Common</option>
+          <option value="Uncommon">Uncommon</option>
+          <option value="Rare">Rare</option>
+          <option value="Epic">Epic</option>
+          <option value="Legendary">Legendary</option>
+        </select>
+        <select id="equip-bonus">
+          <option value="">-- Select Bonus Type --</option>
+          <option value="Strength">Strength</option>
+          <option value="Dexterity">Dexterity</option>
+          <option value="Constitution">Constitution</option>
+          <option value="Intelligence">Intelligence</option>
+          <option value="Wisdom">Wisdom</option>
+          <option value="Charisma">Charisma</option>
+        </select>
+        <select id="equip-value">
+          <option value="">-- Select Bonus Value --</option>
+          ${Array.from({ length: 11 }, (_, i) => i - 5)
+            .sort((a, b) => a - b) // Sort from -5 to +5
+            .map(
+              (n) =>
+                `<option value="${n}" ${n === 0 ? "selected" : ""}>${
+                  n >= 0 ? "+" : ""
+                }${n}</option>`
+            )
+            .join("")}
+        </select>
+        <select id="equip-player">
+          <option value="">-- Select Player --</option>
+        </select>
+        <button id="create-equip-btn">Create Equipment</button>
+      </div>
+      
+      <div style="flex: 1;">
+        <h3>Equipment Templates</h3>
+        <div id="template-equipment"></div>
+      </div>
+    </div>`;
+
   document.body.appendChild(container);
 
-  // Populate category options
-  document.getElementById("equip-type").onchange = () => {
-    const type = document.getElementById("equip-type").value;
-    const weaponRange = document.getElementById("weapon-range");
-    const categorySelect = document.getElementById("equip-category");
-    categorySelect.innerHTML = "";
+  // Initialize event handlers
+  const typeSelect = document.getElementById("equip-type");
+  const weaponRange = document.getElementById("weapon-range");
+  const categorySelect = document.getElementById("equip-category");
+
+  typeSelect.addEventListener("change", () => {
+    const type = typeSelect.value;
     weaponRange.style.display = "none";
+    categorySelect.innerHTML =
+      '<option value="">-- Select Category --</option>';
 
     if (type === "Armor") {
-      categorySelect.innerHTML = `<option value="Light">Light</option><option value="Heavy">Heavy</option><option value="Unarmored">Unarmored</option>`;
+      categorySelect.innerHTML += `<option value="Light">Light</option><option value="Heavy">Heavy</option><option value="Unarmored">Unarmored</option>`;
     } else if (type === "weapon") {
       weaponRange.style.display = "inline";
-      weaponRange.onchange = () => {
-        const rangeType = weaponRange.value;
-        categorySelect.innerHTML = "";
-        if (rangeType === "Melee") {
-          categorySelect.innerHTML = `<option value="Sword">Sword</option><option value="Axe">Axe</option><option value="Staff">Staff</option><option value="Dagger">Dagger</option>`;
-        } else if (rangeType === "Ranged") {
-          categorySelect.innerHTML = `<option value="Bow">Bow</option><option value="Longbow">Longbow</option><option value="Crossbow">Crossbow</option><option value="Heavy Crossbow">Heavy Crossbow</option><option value="Dart">Dart</option><option value="Sling">Sling</option>`;
-        }
-      };
+      // Don't set any default options - they will be set by the range change event
     } else if (type === "item") {
-      categorySelect.innerHTML = `<option value="Potion">Potion</option><option value="Ring">Ring</option><option value="Scroll">Scroll</option>`;
+      categorySelect.innerHTML += `<option value="Potion">Potion</option><option value="Ring">Ring</option><option value="Scroll">Scroll</option>`;
     }
-  };
+  });
+
+  weaponRange.addEventListener("change", () => {
+    const rangeType = weaponRange.value;
+    categorySelect.innerHTML =
+      '<option value="">-- Select Category --</option>';
+    if (rangeType === "Melee") {
+      categorySelect.innerHTML += `<option value="Sword">Sword</option><option value="Axe">Axe</option><option value="Staff">Staff</option><option value="Dagger">Dagger</option>`;
+    } else if (rangeType === "Ranged") {
+      categorySelect.innerHTML += `<option value="Bow">Bow</option><option value="Longbow">Longbow</option><option value="Crossbow">Crossbow</option><option value="Heavy Crossbow">Heavy Crossbow</option><option value="Dart">Dart</option><option value="Sling">Sling</option>`;
+    }
+  });
+
+  // Load and display equipment templates
+  loadEquipmentTemplates();
 
   // Populate player list from Firebase
   get(ref(db, "characters"))
@@ -463,14 +470,15 @@ function attachEquipmentCreator() {
     const bonus = document.getElementById("equip-bonus").value;
     const value = parseInt(document.getElementById("equip-value").value);
     const charId = document.getElementById("equip-player").value;
+    const equipName = document.getElementById("equip-name").value.trim();
 
-    if (!type || !category || !charId) {
-      alert("Please fill in type, category, and select a player.");
+    if (!type || !category || !charId || !equipName) {
+      alert("Please fill in all fields including name and select a player.");
       return;
     }
 
     const itemData = {
-      name: category,
+      name: equipName,
       category,
       rarity,
       bonuses: [{ type: bonus, value }],
@@ -482,11 +490,372 @@ function attachEquipmentCreator() {
     try {
       await push(ref(db, refPath), itemData);
       alert(`✅ Equipment created for ${charId}: ${category}`);
+      displayAllEquipment(); // Refresh the equipment display after creating new item
     } catch (err) {
       console.error("❌ Error pushing equipment:", err);
       alert(`Failed to create equipment: ${err.message}`);
     }
   };
+
+  // Add equipment display container
+  const equipmentDisplayContainer = document.createElement("div");
+  equipmentDisplayContainer.id = "equipment-display";
+  equipmentDisplayContainer.innerHTML = "<h3>All Equipment</h3>";
+  document.body.appendChild(equipmentDisplayContainer);
+
+  // Initial display of equipment
+  displayAllEquipment();
+}
+
+async function displayAllEquipment() {
+  const container = document.getElementById("equipment-display");
+  if (!container) return;
+
+  // Add CSS for the popup
+  if (!document.getElementById("equipment-popup-styles")) {
+    const styleSheet = document.createElement("style");
+    styleSheet.id = "equipment-popup-styles";
+    styleSheet.textContent = `
+      .delete-popup {
+        position: absolute;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        z-index: 1000;
+        display: none;
+      }
+      .delete-popup button {
+        margin: 0 4px;
+        padding: 4px 8px;
+        cursor: pointer;
+      }
+      .delete-popup button.yes {
+        background: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 3px;
+      }
+      .delete-popup button.no {
+        background: #666;
+        color: white;
+        border: none;
+        border-radius: 3px;
+      }
+      .equipment-item {
+        position: relative;
+        margin-left: 1rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    `;
+    document.head.appendChild(styleSheet);
+  }
+
+  container.innerHTML =
+    '<h3>All Equipment</h3><div id="equipment-list">Loading...</div>';
+  const equipmentList = document.getElementById("equipment-list");
+
+  try {
+    const charactersSnapshot = await get(ref(db, "characters"));
+    const characters = charactersSnapshot.val() || {};
+    let equipmentHtml = "";
+
+    for (const [charName, charData] of Object.entries(characters)) {
+      if (!charData.Equipment) continue;
+
+      equipmentHtml += `<div class="character-equipment" style="margin-bottom: 1rem;">
+        <h4>${charName}'s Equipment</h4>`;
+
+      for (const [equipType, typeItems] of Object.entries(charData.Equipment)) {
+        equipmentHtml += `<div style="margin-left: 1rem;"><strong>${equipType}:</strong>`;
+        for (const [itemId, item] of Object.entries(typeItems)) {
+          const bonusText =
+            item.bonuses
+              ?.map((b) => `${b.type} ${b.value >= 0 ? "+" : ""}${b.value}`)
+              .join(", ") || "No bonuses";
+          equipmentHtml += `
+            <div class="equipment-item">
+              <div><strong>${item.name}</strong> (${item.category}) - ${item.rarity}</div>
+              <div style="color: #666;">${bonusText}</div>
+              <button 
+                onclick="showDeleteConfirm(this, '${charName}', '${equipType}', '${itemId}')"
+                style="margin-top: 0.5rem; color: red; cursor: pointer;">
+                Delete
+              </button>
+              <div class="delete-popup">
+                Are you sure?
+                <button class="yes" onclick="confirmDelete('${charName}', '${equipType}', '${itemId}')">Yes</button>
+                <button class="no" onclick="hideDeleteConfirm(this)">No</button>
+              </div>
+            </div>`;
+        }
+        equipmentHtml += "</div>";
+      }
+      equipmentHtml += "</div>";
+    }
+
+    equipmentList.innerHTML = equipmentHtml || "<p>No equipment found.</p>";
+
+    // Add the helper functions to window scope
+    window.showDeleteConfirm = (button, charName, equipType, itemId) => {
+      // Hide any other open popups
+      document.querySelectorAll(".delete-popup").forEach((popup) => {
+        popup.style.display = "none";
+      });
+
+      const popup = button.nextElementSibling;
+      popup.style.display = "block";
+    };
+
+    window.hideDeleteConfirm = (button) => {
+      button.closest(".delete-popup").style.display = "none";
+    };
+
+    window.confirmDelete = async (charName, equipType, itemId) => {
+      try {
+        await set(
+          ref(
+            db,
+            `characters/${charName.toLowerCase()}/Equipment/${equipType}/${itemId}`
+          ),
+          null
+        );
+        displayAllEquipment(); // Refresh the display
+      } catch (err) {
+        console.error("Error deleting equipment:", err);
+        alert("Failed to delete equipment: " + err.message);
+      }
+    };
+  } catch (err) {
+    console.error("Error loading equipment:", err);
+    equipmentList.innerHTML =
+      "<p>Error loading equipment: " + err.message + "</p>";
+  }
+}
+
+async function loadEquipmentTemplates() {
+  const container = document.getElementById("template-equipment");
+  if (!container) return;
+
+  try {
+    // First, let's create our template structure if it doesn't exist
+    const templateRef = ref(db, "template/equipment");
+    const snapshot = await get(templateRef);
+
+    if (!snapshot.exists()) {
+      // Create default equipment templates
+      const defaultTemplates = {
+        weapon: {
+          Melee: {
+            Sword: {
+              Template_Sword: {
+                name: "Sword Template",
+                category: "Sword",
+                rarity: "Common",
+              },
+            },
+            Axe: {
+              Template_Axe: {
+                name: "Axe Template",
+                category: "Axe",
+                rarity: "Common",
+              },
+            },
+            Staff: {
+              Template_Staff: {
+                name: "Staff Template",
+                category: "Staff",
+                rarity: "Common",
+              },
+            },
+            Dagger: {
+              Template_Dagger: {
+                name: "Dagger Template",
+                category: "Dagger",
+                rarity: "Common",
+              },
+            },
+          },
+          Ranged: {
+            Bow: {
+              Template_Bow: {
+                name: "Bow Template",
+                category: "Bow",
+                rarity: "Common",
+              },
+            },
+            Crossbow: {
+              Template_Crossbow: {
+                name: "Crossbow Template",
+                category: "Crossbow",
+                rarity: "Common",
+              },
+            },
+            Dart: {
+              Template_Dart: {
+                name: "Dart Template",
+                category: "Dart",
+                rarity: "Common",
+              },
+            },
+            Sling: {
+              Template_Sling: {
+                name: "Sling Template",
+                category: "Sling",
+                rarity: "Common",
+              },
+            },
+          },
+        },
+        Armor: {
+          Light: {
+            Template_Light: {
+              name: "Light Armor Template",
+              category: "Light",
+              rarity: "Common",
+            },
+          },
+          Heavy: {
+            Template_Heavy: {
+              name: "Heavy Armor Template",
+              category: "Heavy",
+              rarity: "Common",
+            },
+          },
+          Unarmored: {
+            Template_Unarmored: {
+              name: "Unarmored Template",
+              category: "Unarmored",
+              rarity: "Common",
+            },
+          },
+        },
+        item: {
+          Potion: {
+            Template_Potion: {
+              name: "Potion Template",
+              category: "Potion",
+              rarity: "Common",
+            },
+          },
+          Ring: {
+            Template_Ring: {
+              name: "Ring Template",
+              category: "Ring",
+              rarity: "Common",
+            },
+          },
+          Scroll: {
+            Template_Scroll: {
+              name: "Scroll Template",
+              category: "Scroll",
+              rarity: "Common",
+            },
+          },
+        },
+      };
+
+      await set(templateRef, defaultTemplates);
+    }
+
+    // Now load and display the templates
+    const templates = (await get(templateRef)).val();
+    let html = "";
+
+    for (const [type, typeData] of Object.entries(templates)) {
+      html += `<div class="equipment-type" style="margin-bottom: 1rem;">
+        <h4>${type.charAt(0).toUpperCase() + type.slice(1)}</h4>`;
+
+      if (type === "weapon") {
+        for (const [rangeType, rangeData] of Object.entries(typeData)) {
+          html += `<div style="margin-left: 1rem;"><strong>${rangeType}:</strong>`;
+          for (const [category, categoryData] of Object.entries(rangeData)) {
+            for (const [templateId, template] of Object.entries(categoryData)) {
+              html += createTemplateItemHtml(
+                template,
+                type,
+                rangeType,
+                category
+              );
+            }
+          }
+          html += "</div>";
+        }
+      } else {
+        for (const [category, categoryData] of Object.entries(typeData)) {
+          for (const [templateId, template] of Object.entries(categoryData)) {
+            html += createTemplateItemHtml(template, type, null, category);
+          }
+        }
+      }
+
+      html += "</div>";
+    }
+
+    container.innerHTML = html;
+
+    // Add the use template function to window scope
+    window.useTemplate = function (template, type, rangeType, category) {
+      console.log("Template data:", { template, type, rangeType, category }); // Debug log
+
+      const nameInput = document.getElementById("equip-name");
+      const typeSelect = document.getElementById("equip-type");
+      const weaponRange = document.getElementById("weapon-range");
+      const categorySelect = document.getElementById("equip-category");
+
+      // Set the type first and trigger its change event
+      if (typeSelect) {
+        typeSelect.value = type;
+        typeSelect.dispatchEvent(new Event("change"));
+      }
+
+      // Handle weapon-specific logic
+      if (type === "weapon" && weaponRange) {
+        weaponRange.style.display = "inline";
+        weaponRange.value = rangeType || "Melee";
+        weaponRange.dispatchEvent(new Event("change"));
+      }
+
+      // Wait a brief moment for the category options to be populated
+      setTimeout(() => {
+        if (categorySelect) {
+          categorySelect.value = category;
+        }
+
+        if (nameInput) {
+          nameInput.value = ""; // Clear the name for new input
+          nameInput.focus();
+        }
+      }, 100);
+    };
+  } catch (err) {
+    console.error("Error loading equipment templates:", err);
+    container.innerHTML =
+      "<p>Error loading equipment templates: " + err.message + "</p>";
+  }
+}
+
+function createTemplateItemHtml(template, type, rangeType, category) {
+  // Escape any special characters in the stringified template
+  const safeTemplate = JSON.stringify(template).replace(/'/g, "\\'");
+
+  return `
+    <div class="equipment-item" style="margin-left: 1rem;">
+      <div><strong>${template.category}</strong> (${type}${
+    rangeType ? ` - ${rangeType}` : ""
+  })</div>
+      <button 
+        onclick='useTemplate(${safeTemplate}, "${type}", ${
+    rangeType ? `"${rangeType}"` : "null"
+  }, "${category}")'
+        style="margin-top: 0.5rem; cursor: pointer;">
+        Use Template
+      </button>
+    </div>`;
 }
 
 window.onload = () => {
