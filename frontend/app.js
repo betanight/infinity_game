@@ -9,24 +9,24 @@ const auth = getAuth(app);
 
 // Add auth state listener
 onAuthStateChanged(auth, (user) => {
-  const signOutBtn = document.querySelector('.sign-out-btn');
+  const signOutBtn = document.querySelector(".sign-out-btn");
   if (user) {
-    signOutBtn.style.display = 'block';
+    signOutBtn.style.display = "block";
     // Check admin status when user is authenticated
     checkAdminAndSetupEquipment(user);
   } else {
-    signOutBtn.style.display = 'none';
+    signOutBtn.style.display = "none";
   }
 });
 
 // Add sign out handler
-document.querySelector('.sign-out-btn').addEventListener('click', async () => {
+document.querySelector(".sign-out-btn").addEventListener("click", async () => {
   try {
     await signOut(auth);
     window.location.reload(); // Reload the page to reset the state
   } catch (error) {
-    console.error('Error signing out:', error);
-    alert('Error signing out. Please try again.');
+    console.error("Error signing out:", error);
+    alert("Error signing out. Please try again.");
   }
 });
 
@@ -34,12 +34,12 @@ async function checkAdminAndSetupEquipment(user) {
   try {
     const adminSnapshot = await get(ref(db, `admins/${user.uid}`));
     const isAdmin = adminSnapshot.val() === true;
-    const isSpecialUser = user.uid === 'ch1yWOwbx7h2QUXQsSjj0pqVw8d2';
+    const isSpecialUser = user.uid === "ch1yWOwbx7h2QUXQsSjj0pqVw8d2";
 
     console.log("Admin check:", {
       uid: user.uid,
       isAdmin,
-      isSpecialUser
+      isSpecialUser,
     });
 
     if (isAdmin || isSpecialUser) {
@@ -261,7 +261,9 @@ function loadCharacters() {
           const capitalized = choice.charAt(0).toUpperCase() + choice.slice(1);
 
           try {
-            const tierSnap = await get(ref(db, `template/skills/${capitalized}/Tier 1`));
+            const tierSnap = await get(
+              ref(db, `template/skills/${capitalized}/Tier 1`)
+            );
             const tierData = tierSnap.val();
 
             if (!tierData) {
@@ -305,7 +307,10 @@ function loadCharacters() {
 
         const updateFirebase = (value) => {
           const newAvailable = value - totalUsedPoints;
-          set(ref(db, `characters/${name}/meta/available_skill_points`), newAvailable);
+          set(
+            ref(db, `characters/${name}/meta/available_skill_points`),
+            newAvailable
+          );
         };
 
         decrement.onclick = (e) => {
@@ -435,7 +440,7 @@ function attachEquipmentCreator() {
       const players = snapshot.val() || {};
       const playerSelect = document.getElementById("equip-player");
       playerSelect.innerHTML = `<option value="">-- Select Player --</option>`;
-      
+
       if (Object.keys(players).length === 0) {
         console.log("No players found in database");
         return;
