@@ -134,28 +134,79 @@ export async function downgradePrimarySkill(charId, stat, skill, amount) {
 
 export function calculateRank(skills) {
   let totalPoints = 0;
-  let unlockedStats = 0;
+  let skillTreeCount = 0;
 
+  // Calculate total points and count skill trees
   for (const stat in skills) {
     const skillSet = skills[stat];
-    const sum = Object.values(skillSet).reduce((a, b) => a + b, 0);
+    // Only count skill trees that have points invested
+    if (typeof skillSet === "object" && Object.keys(skillSet).length > 0) {
+      let hasPoints = false;
 
-    if (sum > 0) unlockedStats += 1;
-    totalPoints += sum;
+      // Check if there are any points invested in this skill tree
+      for (const tier in skillSet) {
+        if (typeof skillSet[tier] === "object") {
+          for (const category in skillSet[tier]) {
+            for (const skill in skillSet[tier][category]) {
+              if (skillSet[tier][category][skill] > 0) {
+                hasPoints = true;
+                break;
+              }
+            }
+            if (hasPoints) break;
+          }
+        } else if (skillSet[tier] > 0) {
+          hasPoints = true;
+          break;
+        }
+      }
+
+      if (hasPoints) {
+        skillTreeCount++;
+        // Add up the points
+        for (const tier in skillSet) {
+          if (typeof skillSet[tier] === "object") {
+            for (const category in skillSet[tier]) {
+              for (const skill in skillSet[tier][category]) {
+                totalPoints += skillSet[tier][category][skill] || 0;
+              }
+            }
+          } else {
+            totalPoints += skillSet[tier] || 0;
+          }
+        }
+      }
+    }
   }
 
-  const denominator = unlockedStats || 1;
-  const score = Math.floor(totalPoints / denominator);
+  // Adjust points based on number of skill trees
+  // Default is 6 trees (primary stats), so we normalize against that
+  const normalizedPoints = totalPoints * (6 / Math.max(6, skillTreeCount));
+  const score = Math.floor(Math.sqrt(normalizedPoints));
 
-  if (score >= 201) return "SS";
-  if (score >= 101) return "S";
-  if (score >= 61) return "A";
-  if (score >= 41) return "B";
-  if (score >= 26) return "C";
-  if (score >= 16) return "D";
-  if (score >= 9) return "E";
-  if (score >= 4) return "F";
-  return "G";
+  // Helper function to determine +/- modifier
+  const getModifier = (score, minThreshold, nextThreshold) => {
+    if (nextThreshold === undefined) return "+"; // For SS rank
+    const range = nextThreshold - minThreshold;
+    const position = score - minThreshold;
+    const third = range / 3;
+
+    if (position < third) return "-";
+    if (position >= third * 2) return "+";
+    return "";
+  };
+
+  // Rank thresholds
+  if (score >= 35) return "SS" + getModifier(score, 35); // 1225+ points
+  if (score >= 25) return "S" + getModifier(score, 25, 35); // 625+ points
+  if (score >= 15) return "A" + getModifier(score, 15, 25); // 225+ points
+  if (score >= 10) return "B" + getModifier(score, 10, 15); // 100+ points
+  if (score >= 8) return "C" + getModifier(score, 8, 10); // 64+ points
+  if (score >= 6) return "D" + getModifier(score, 6, 8); // 36+ points
+  if (score >= 4) return "E" + getModifier(score, 4, 6); // 16+ points
+  if (score >= 3) return "F" + getModifier(score, 3, 4); // 9+ points
+  if (score >= 1) return "G" + getModifier(score, 1, 3); // 1+ points
+  return "G-"; // 0 points
 }
 
 export async function updateCoreStatTotals(charId) {
