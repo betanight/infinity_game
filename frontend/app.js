@@ -1,7 +1,54 @@
 import { firebaseConfig } from "./skilltree/src/firebaseConfig.js";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set, push, get } from "firebase/database";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+// Add auth state listener
+onAuthStateChanged(auth, (user) => {
+  const signOutBtn = document.querySelector('.sign-out-btn');
+  if (user) {
+    signOutBtn.style.display = 'block';
+    // Check admin status when user is authenticated
+    checkAdminAndSetupEquipment(user);
+  } else {
+    signOutBtn.style.display = 'none';
+  }
+});
+
+// Add sign out handler
+document.querySelector('.sign-out-btn').addEventListener('click', async () => {
+  try {
+    await signOut(auth);
+    window.location.reload(); // Reload the page to reset the state
+  } catch (error) {
+    console.error('Error signing out:', error);
+    alert('Error signing out. Please try again.');
+  }
+});
+
+async function checkAdminAndSetupEquipment(user) {
+  try {
+    const adminSnapshot = await get(ref(db, `admins/${user.uid}`));
+    const isAdmin = adminSnapshot.val() === true;
+    const isSpecialUser = user.uid === 'ch1yWOwbx7h2QUXQsSjj0pqVw8d2';
+
+    console.log("Admin check:", {
+      uid: user.uid,
+      isAdmin,
+      isSpecialUser
+    });
+
+    if (isAdmin || isSpecialUser) {
+      attachEquipmentCreator();
+    }
+  } catch (err) {
+    console.error("Error checking admin status:", err);
+  }
+}
 
 let primaryStats = [];
 let skillsData = {};
@@ -10,8 +57,7 @@ function loadTemplate() {
   const output = document.getElementById("template-output");
   output.innerHTML = "<p>Loading...</p>";
 
-  db.ref("template")
-    .once("value")
+  get(ref(db, "template"))
     .then((templateSnapshot) => {
       const template = templateSnapshot.val();
       if (!template || !template.primary_scores) {
@@ -20,7 +66,7 @@ function loadTemplate() {
       }
 
       primaryStats = Object.keys(template.primary_scores);
-      return db.ref("template/skills").once("value");
+      return get(ref(db, "template/skills"));
     })
     .then((snapshot) => {
       skillsData = snapshot.val();
@@ -85,8 +131,7 @@ function attachCreateForm() {
     const name = document.getElementById("new-character-name").value.trim();
     if (!name) return alert("Please enter a character name.");
 
-    const templateRef = db.ref("template");
-    const templateSnapshot = await templateRef.once("value");
+    const templateSnapshot = await get(ref(db, "template"));
     const template = templateSnapshot.val();
 
     if (!template || !template.primary_scores) {
@@ -115,7 +160,6 @@ function attachCreateForm() {
       return alert("Please choose a skill for every primary stat.");
 
     // ✅ CHECK AUTH FIRST
-    const auth = firebase.auth(); // or use getAuth() if using modular SDK
     const user = auth.currentUser;
 
     console.log("🧪 currentUser UID:", user?.uid);
@@ -126,7 +170,7 @@ function attachCreateForm() {
     }
 
     // ✅ Now safe to write
-    await db.ref(`characters/${name.toLowerCase()}`).set(template);
+    await set(ref(db, `characters/${name.toLowerCase()}`), template);
 
     alert(`Character '${name}' created!`);
     form.reset();
@@ -156,8 +200,7 @@ function loadCharacters() {
   const list = document.getElementById("character-list");
   list.innerHTML = "<li>Loading...</li>";
 
-  db.ref("characters")
-    .once("value")
+  get(ref(db, "characters"))
     .then((snapshot) => {
       const characters = snapshot.val();
       list.innerHTML = "";
@@ -218,9 +261,7 @@ function loadCharacters() {
           const capitalized = choice.charAt(0).toUpperCase() + choice.slice(1);
 
           try {
-            const tierSnap = await db
-              .ref(`template/skills/${capitalized}/Tier 1`)
-              .once("value");
+            const tierSnap = await get(ref(db, `template/skills/${capitalized}/Tier 1`));
             const tierData = tierSnap.val();
 
             if (!tierData) {
@@ -239,9 +280,9 @@ function loadCharacters() {
             const skillPath = `characters/${charKey}/skills/${capitalized}/Tier 1/${randomCategory}/${randomSkill}`;
             const scorePath = `characters/${charKey}/secondary_scores/${capitalized}`;
             const unlockPath = `characters/${charKey}/meta/unlocked_trees/${capitalized}`;
-            await db.ref(unlockPath).set(true);
-            await db.ref(scorePath).set(1);
-            await db.ref(skillPath).set(1);
+            await set(ref(db, unlockPath), true);
+            await set(ref(db, scorePath), 1);
+            await set(ref(db, skillPath), 1);
 
             console.log("✅ Ascension complete:", {
               unlockPath,
@@ -264,9 +305,7 @@ function loadCharacters() {
 
         const updateFirebase = (value) => {
           const newAvailable = value - totalUsedPoints;
-          db.ref(`characters/${name}/meta/available_skill_points`).set(
-            newAvailable
-          );
+          set(ref(db, `characters/${name}/meta/available_skill_points`), newAvailable);
         };
 
         decrement.onclick = (e) => {
@@ -391,15 +430,25 @@ function attachEquipmentCreator() {
   };
 
   // Populate player list from Firebase
-  db.ref("characters")
-    .once("value")
+  get(ref(db, "characters"))
     .then((snapshot) => {
       const players = snapshot.val() || {};
       const playerSelect = document.getElementById("equip-player");
       playerSelect.innerHTML = `<option value="">-- Select Player --</option>`;
+      
+      if (Object.keys(players).length === 0) {
+        console.log("No players found in database");
+        return;
+      }
+
       Object.keys(players).forEach((player) => {
         playerSelect.innerHTML += `<option value="${player}">${player}</option>`;
       });
+    })
+    .catch((err) => {
+      console.error("Error loading players:", err);
+      const playerSelect = document.getElementById("equip-player");
+      playerSelect.innerHTML = `<option value="">Error loading players</option>`;
     });
 
   document.getElementById("create-equip-btn").onclick = async () => {
@@ -423,13 +472,14 @@ function attachEquipmentCreator() {
     };
 
     const refPath = `characters/${charId.toLowerCase()}/Equipment/${type}`;
+    console.log("Attempting to write to:", refPath);
 
     try {
-      await db.ref(refPath).push(itemData);
+      await push(ref(db, refPath), itemData);
       alert(`✅ Equipment created for ${charId}: ${category}`);
     } catch (err) {
       console.error("❌ Error pushing equipment:", err);
-      alert("Failed to create equipment.");
+      alert(`Failed to create equipment: ${err.message}`);
     }
   };
 }
@@ -437,5 +487,4 @@ function attachEquipmentCreator() {
 window.onload = () => {
   loadTemplate();
   attachCreateForm();
-  attachEquipmentCreator(); // Add this line to load the equipment creator
 };
