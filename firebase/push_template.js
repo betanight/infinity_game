@@ -17,6 +17,12 @@ const fullTemplate = {
     character_id: "",
     level: 0,
   },
+  Equipment: {
+    Armor: "none",
+    weapon: "none",
+    item: "none",
+  },
+
   primary_scores: {
     Strength: 1,
     Dexterity: 1,

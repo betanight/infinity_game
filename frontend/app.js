@@ -323,7 +323,119 @@ function loadCharacters() {
     });
 }
 
+function attachEquipmentCreator() {
+  const container = document.createElement("div");
+  container.innerHTML = `
+    <h3>Create Equipment</h3>
+    <select id="equip-type">
+      <option value="">-- Select Type --</option>
+      <option value="Armor">Armor</option>
+      <option value="weapon">Weapon</option>
+      <option value="item">Item</option>
+    </select>
+    <select id="weapon-range" style="display:none">
+      <option value="">-- Select Weapon Type --</option>
+      <option value="Melee">Melee</option>
+      <option value="Ranged">Ranged</option>
+    </select>
+    <select id="equip-category"></select>
+    <select id="equip-rarity">
+      <option value="Common">Common</option>
+      <option value="Uncommon">Uncommon</option>
+      <option value="Rare">Rare</option>
+      <option value="Epic">Epic</option>
+      <option value="Legendary">Legendary</option>
+    </select>
+    <select id="equip-bonus">
+      <option value="Strength">Strength</option>
+      <option value="Dexterity">Dexterity</option>
+      <option value="Constitution">Constitution</option>
+      <option value="Intelligence">Intelligence</option>
+      <option value="Wisdom">Wisdom</option>
+      <option value="Charisma">Charisma</option>
+    </select>
+    <select id="equip-value">
+      ${Array.from({ length: 11 }, (_, i) => i - 5)
+        .map((n) => `<option value="${n}">${n >= 0 ? "+" : ""}${n}</option>`)
+        .join("")}
+    </select>
+    <select id="equip-player"></select>
+    <button id="create-equip-btn">Create Equipment</button>
+  `;
+  document.body.appendChild(container);
+
+  // Populate category options
+  document.getElementById("equip-type").onchange = () => {
+    const type = document.getElementById("equip-type").value;
+    const weaponRange = document.getElementById("weapon-range");
+    const categorySelect = document.getElementById("equip-category");
+    categorySelect.innerHTML = "";
+    weaponRange.style.display = "none";
+
+    if (type === "Armor") {
+      categorySelect.innerHTML = `<option value="Light">Light</option><option value="Heavy">Heavy</option><option value="Unarmored">Unarmored</option>`;
+    } else if (type === "weapon") {
+      weaponRange.style.display = "inline";
+      weaponRange.onchange = () => {
+        const rangeType = weaponRange.value;
+        categorySelect.innerHTML = "";
+        if (rangeType === "Melee") {
+          categorySelect.innerHTML = `<option value="Sword">Sword</option><option value="Axe">Axe</option><option value="Staff">Staff</option><option value="Dagger">Dagger</option>`;
+        } else if (rangeType === "Ranged") {
+          categorySelect.innerHTML = `<option value="Bow">Bow</option><option value="Longbow">Longbow</option><option value="Crossbow">Crossbow</option><option value="Heavy Crossbow">Heavy Crossbow</option><option value="Dart">Dart</option><option value="Sling">Sling</option>`;
+        }
+      };
+    } else if (type === "item") {
+      categorySelect.innerHTML = `<option value="Potion">Potion</option><option value="Ring">Ring</option><option value="Scroll">Scroll</option>`;
+    }
+  };
+
+  // Populate player list from Firebase
+  db.ref("characters")
+    .once("value")
+    .then((snapshot) => {
+      const players = snapshot.val() || {};
+      const playerSelect = document.getElementById("equip-player");
+      playerSelect.innerHTML = `<option value="">-- Select Player --</option>`;
+      Object.keys(players).forEach((player) => {
+        playerSelect.innerHTML += `<option value="${player}">${player}</option>`;
+      });
+    });
+
+  document.getElementById("create-equip-btn").onclick = async () => {
+    const type = document.getElementById("equip-type").value;
+    const category = document.getElementById("equip-category").value;
+    const rarity = document.getElementById("equip-rarity").value;
+    const bonus = document.getElementById("equip-bonus").value;
+    const value = parseInt(document.getElementById("equip-value").value);
+    const charId = document.getElementById("equip-player").value;
+
+    if (!type || !category || !charId) {
+      alert("Please fill in type, category, and select a player.");
+      return;
+    }
+
+    const itemData = {
+      name: category,
+      category,
+      rarity,
+      bonuses: [{ type: bonus, value }],
+    };
+
+    const refPath = `characters/${charId.toLowerCase()}/Equipment/${type}`;
+
+    try {
+      await db.ref(refPath).push(itemData);
+      alert(`✅ Equipment created for ${charId}: ${category}`);
+    } catch (err) {
+      console.error("❌ Error pushing equipment:", err);
+      alert("Failed to create equipment.");
+    }
+  };
+}
+
 window.onload = () => {
   loadTemplate();
   attachCreateForm();
+  attachEquipmentCreator(); // Add this line to load the equipment creator
 };
