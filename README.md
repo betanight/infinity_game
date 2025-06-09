@@ -5,15 +5,15 @@ A dynamic and interactive skill tree visualization system built with React, feat
 ## System Overview
 
 ### Character Creation & Management
-![Character Creation and List](character_and_creation.png)
+![Character Creation and List](images/character_and_creation.png)
 The character creation interface allows players to create new characters and view their existing roster. Each character can be individually managed and developed through the skill system.
 
 ### Character Stats & Progression
-![Character Sheet Example](character_sheet.png)
+![Character Sheet Example](images/character_sheet.png)
 Example character sheet showing Jason's stats and current rank. The rank system (F through SS+) determines which skill tiers are available to the character.
 
 ### Skill Trees
-![Strength Skill Tree](strength_tiers.png)
+![Strength Skill Tree](images/strength_tiers.png)
 Example of the Strength skill tree visualization. Each node represents a skill that can be unlocked and upgraded. Hover tooltips (coming soon) will display:
 - Skill name and description
 - Current level and effects
@@ -21,7 +21,7 @@ Example of the Strength skill tree visualization. Each node represents a skill t
 - Upgrade costs
 
 ### Combat Calculations
-![Unarmed Strike Calculations](unarmedStrike.png)
+![Unarmed Strike Calculations](images/unarmedStrike.png)
 Example of how combat stats like accuracy and damage are calculated using the visible_stat_functions.js system. Skills and attributes combine to determine combat effectiveness.
 
 ## Features
