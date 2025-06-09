@@ -1,0 +1,42 @@
+{
+  "rules": {
+    "admins": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || !data.exists())"
+    },
+    "characters": {
+      ".read": "auth != null && (root.child('admins').child(auth.uid).val() === true)",
+      ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true)",
+      "$characterId": {
+        ".read": "auth != null && (root.child('admins').child(auth.uid).val() === true || data.child('meta/userId').val() === auth.uid)",
+        ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || data.child('meta/userId').val() === auth.uid)"
+      }
+    },
+    "equipment": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      "$equipmentId": {
+        ".read": "auth != null",
+        ".write": "root.child('admins').child(auth.uid).val() === true"
+      }
+    },
+    "gameServers": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+    "skills": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+    "template": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+    "users": {
+      "$userId": {
+        ".read": "auth.uid === $userId",
+        ".write": "root.child('admins').child(auth.uid).val() === true"
+      }
+    }
+  }
+} 

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Skill Tree</title>
+
+    <!-- Firebase SDK -->
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Skill Tree Logic -->
+    <script type="module" src="/betanight/infinity_gam/src/frontend/skilltree/src/dag.js"></script>
+    <script type="module" src="/betanight/infinity_gam/src/frontend/mystical/skilltree.js"></script>
+
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(#0f001f, #000000);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      svg {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        margin: auto;
+      }
+
+      .tooltip {
+        position: absolute;
+        background: rgba(20, 10, 40, 0.95);
+        color: #5adcee;
+        padding: 8px 12px;
+        border: 1px solid #4db1fd;
+        border-radius: 8px;
+        pointer-events: none;
+        font-size: 14px;
+        box-shadow: 0 0 8px #65c6fb88;
+        z-index: 10;
+      }
+
+      text {
+        fill: #ffffff;
+        text-anchor: middle;
+        font-family: "Verdana", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <svg></svg>
+  </body>
+</html> 

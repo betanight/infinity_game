@@ -1,15 +1,41 @@
 {
-  "dependencies": {
-    "firebase-admin": "^13.3.0",
-    "jsonwebtoken": "^9.0.2",
-    "node-fetch": "^3.3.2"
-  },
   "name": "infinity_game",
   "version": "1.0.0",
+  "type": "module",
   "description": "The Infinity Game Dashboard is a modular character manager and stat visualizer built for deep skill-based RPG campaigns. It supports character creation, stat progression, and a dynamic radial skill tree that visually reflects chosen abilities in real time.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "test:rules": "firebase emulators:exec 'jest firebase/test/rules.test.js'",
+    "emulator": "firebase emulators:start"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@react-oauth/google": "^0.12.2",
+    "@testing-library/jest-dom": "^6.1.5",
+    "d3": "^7.8.5",
+    "firebase": "^10.8.0",
+    "firebase-admin": "^12.0.0",
+    "framer-motion": "^10.16.16",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^6.21.1",
+    "react-scripts": "5.0.1",
+    "reactflow": "^11.11.4"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.1",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "jest": "^29.7.0"
   },
   "repository": {
     "type": "git",
@@ -21,5 +47,17 @@
   "bugs": {
     "url": "https://github.com/betanight/infinity_game/issues"
   },
-  "homepage": "https://github.com/betanight/infinity_game#readme"
+  "homepage": "/betanight/infinity_gam",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

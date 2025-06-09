@@ -1,0 +1,25 @@
+{
+  "short_name": "Infinity Game",
+  "name": "Infinity Game - A React-based game dashboard",
+  "icons": [
+    {
+      "src": "/betanight/infinity_gam/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/betanight/infinity_gam/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/betanight/infinity_gam/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+} 
